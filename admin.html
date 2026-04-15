@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Quản trị hệ thống - EduHealth AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root {
+            --blue-primary: #3b82f6;
+            --blue-deep: #2563eb;
+            --pink-primary: #f472b6;
+            --pink-deep: #ec489a;
+            --grad-blue-pink: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            --grad-pink-blue: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            --bg-body: linear-gradient(135deg, #ffffff 0%, #fff5f8 100%);
+            --bg-surface: #fff5f8;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-mid: #334155;
+            --text-dim: #64748b;
+            --border-light: #ffe0ec;
+            --border-soft: #fef0f5;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            --hover-glow: rgba(59, 130, 246, 0.12);
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --tag-bg: #fce7f3;
+            --input-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body.dark {
+            --bg-body: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%);
+            --bg-surface: #1e293b;
+            --card-bg: #1e293b;
+            --text-dark: #f1f5f9;
+            --text-mid: #cbd5e1;
+            --text-dim: #94a3b8;
+            --border-light: #334155;
+            --border-soft: #2d3a4e;
+            --nav-bg: rgba(15, 23, 42, 0.95);
+            --tag-bg: #2d3a4e;
+            --input-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--border-soft); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--pink-primary); border-radius: 10px; }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            height: 74px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .logo-type {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link i { color: var(--pink-primary); }
+        .nav-link:hover { color: var(--blue-primary); }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .theme-toggle:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .admin-header {
+            margin-bottom: 32px;
+        }
+        .admin-header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-mid);
+            cursor: pointer;
+            border-radius: 40px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn i { font-size: 16px; }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            color: white;
+            box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--tag-bg);
+            color: var(--blue-primary);
+        }
+
+        .form-card, .list-card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 32px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-mid);
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: block;
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-dark);
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            padding: 8px 20px;
+            border-radius: 40px;
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .col-full {
+            grid-column: span 2;
+        }
+
+        .map-picker-container {
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        #locationMap {
+            height: 300px;
+            width: 100%;
+        }
+        .map-coords-info {
+            padding: 12px;
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .map-coords-info input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+            background: var(--input-bg);
+            color: var(--text-dark);
+            font-size: 13px;
+        }
+
+        .location-item, .post-item, .handbook-item, .news-item {
+            background: var(--bg-surface);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+        }
+
+        .location-item:hover, .post-item:hover, .handbook-item:hover, .news-item:hover {
+            transform: translateX(5px);
+            border-color: var(--pink-primary);
+        }
+
+        .badge-hospital {
+            background: var(--danger);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+
+        .badge-pharmacy {
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+        }
+
+        .badge-pending {
+            background: var(--warning);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+        }
+
+        .badge-approved {
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px 20px;
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--pink-primary);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'Fraunces', serif;
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .flex-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .toast-custom {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast {
+            background: var(--success);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toast.error { background: var(--danger); }
+
+        .editor-container {
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--input-bg);
+        }
+
+        #handbookEditor, #newsEditor {
+            height: 300px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+        }
+
+        .ql-toolbar {
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .knowledge-section {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s;
+        }
+        .knowledge-section:hover {
+            border-color: var(--pink-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--blue-primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+        }
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--pink-primary);
+        }
+        .section-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            background: var(--tag-bg);
+            border-radius: 12px;
+        }
+        textarea.knowledge-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            font-size: 14px;
+            font-family: 'DM Sans', monospace;
+            resize: vertical;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        textarea.knowledge-textarea:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+        }
+        .knowledge-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .status {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin-top: 12px;
+            display: inline-block;
+        }
+        .status.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 24px;
+        }
+
+        .chat-list-container {
+            background: var(--card-bg);
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-list-header {
+            padding: 18px 20px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+        .chat-list-header h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-chat-box {
+            position: relative;
+        }
+        .search-chat-box input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 1px solid var(--border-light);
+            border-radius: 30px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+        }
+        .search-chat-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .chat-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chat-item:hover {
+            background: var(--tag-bg);
+        }
+
+        .chat-item.active {
+            background: var(--tag-bg);
+            border-left: 4px solid var(--blue-primary);
+        }
+
+        .chat-name {
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .chat-name i {
+            color: var(--pink-primary);
+            font-size: 14px;
+        }
+
+        .chat-preview {
+            font-size: 12px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-time {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        .chat-detail-container {
+            background: var(--card-bg);
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+
+        .chat-detail-header {
+            padding: 18px 24px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .chat-detail-header h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-toggle {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .ai-toggle.off {
+            background: var(--text-dim);
+        }
+        .ai-toggle:hover {
+            transform: scale(1.02);
+        }
+
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--bg-surface);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-height: 0;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            margin-bottom: 4px;
+        }
+
+        .message.admin {
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.user {
+            background: var(--card-bg);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.ai {
+            background: var(--tag-bg);
+            border-left: 4px solid var(--success);
+            align-self: flex-start;
+        }
+
+        .message-system {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            text-align: center;
+            align-self: center;
+            max-width: 90%;
+            font-size: 12px;
+        }
+
+        .message-sender {
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .message-text strong { font-weight: 700; }
+        .message-text em { font-style: italic; }
+
+        .message-time {
+            font-size: 10px;
+            margin-top: 6px;
+            opacity: 0.6;
+        }
+
+        .message-image {
+            max-width: 180px;
+            border-radius: 12px;
+            margin-top: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 12px;
+            background: var(--card-bg);
+            flex-shrink: 0;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .chat-input-area input:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+        }
+
+        .chat-input-area button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            color: white;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .chat-input-area button:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ========== MODAL STYLES ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 32px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            flex-shrink: 0;
+            background: var(--card-bg);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        .modal-header h3 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 22px; 
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-dim);
+            transition: 0.2s;
+        }
+        .modal-close:hover { color: var(--pink-primary); }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* ========== CONTENT VIEW STYLES - FIXED ========== */
+        .modal-content-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-mid);
+        }
+
+        .modal-content-text * {
+            max-width: 100%;
+        }
+
+        .modal-content-text p {
+            margin-bottom: 1.2em;
+        }
+
+        .modal-content-text h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin: 1.2em 0 0.6em;
+            font-family: 'Fraunces', serif;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin: 1em 0 0.5em;
+            font-family: 'Fraunces', serif;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text h3 {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 0.8em 0 0.4em;
+            font-family: 'Fraunces', serif;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text h4 {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 0.6em 0 0.3em;
+            font-family: 'Fraunces', serif;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text h5, .modal-content-text h6 {
+            font-size: 1em;
+            font-weight: 600;
+            margin: 0.5em 0 0.2em;
+            font-family: 'Fraunces', serif;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text ul, 
+        .modal-content-text ol {
+            margin: 0.8em 0 0.8em 1.8em;
+            padding-left: 0;
+        }
+
+        .modal-content-text li {
+            margin: 0.3em 0;
+            line-height: 1.6;
+        }
+
+        .modal-content-text img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            margin: 1em 0;
+        }
+
+        .modal-content-text a {
+            color: var(--blue-primary);
+            text-decoration: none;
+        }
+
+        .modal-content-text a:hover {
+            text-decoration: underline;
+        }
+
+        .modal-content-text blockquote {
+            border-left: 4px solid var(--pink-primary);
+            padding-left: 1.2em;
+            margin: 1em 0;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .modal-content-text code {
+            background: var(--tag-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .modal-content-text pre {
+            background: var(--bg-surface);
+            padding: 1em;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1em 0;
+        }
+
+        .modal-content-text pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .modal-content-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+
+        .modal-content-text th,
+        .modal-content-text td {
+            border: 1px solid var(--border-light);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .modal-content-text th {
+            background: var(--bg-surface);
+            font-weight: 600;
+        }
+
+        .modal-content-text hr {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 1.5em 0;
+        }
+
+        .modal-content-text .ql-align-center {
+            text-align: center !important;
+        }
+
+        .modal-content-text .ql-align-right {
+            text-align: right !important;
+        }
+
+        .modal-content-text .ql-align-left {
+            text-align: left !important;
+        }
+
+        .modal-content-text .ql-align-justify {
+            text-align: justify !important;
+        }
+
+        .modal-content-text .ql-indent-1 { padding-left: 2em !important; }
+        .modal-content-text .ql-indent-2 { padding-left: 4em !important; }
+        .modal-content-text .ql-indent-3 { padding-left: 6em !important; }
+        .modal-content-text .ql-indent-4 { padding-left: 8em !important; }
+        .modal-content-text .ql-indent-5 { padding-left: 10em !important; }
+        .modal-content-text .ql-indent-6 { padding-left: 12em !important; }
+        .modal-content-text .ql-indent-7 { padding-left: 14em !important; }
+        .modal-content-text .ql-indent-8 { padding-left: 16em !important; }
+
+        .modal-content-text strong, 
+        .modal-content-text b {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-content-text em, 
+        .modal-content-text i {
+            font-style: italic;
+        }
+
+        .post-content-box {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border-light);
+        }
+
+        .comment-section-box {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 24px;
+            border: 2px solid var(--border-light);
+        }
+
+        .comments-list {
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+        .comment-item {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            border: 1px solid var(--border-light);
+        }
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .comment-content {
+            flex: 1;
+        }
+        .comment-author { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .comment-text { font-size: 14px; color: var(--text-mid); line-height: 1.4; }
+        .comment-time { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+
+        .quiz-option {
+            background: var(--tag-bg);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            color: var(--text-dark);
+        }
+        .quiz-option:hover { background: var(--blue-primary); color: white; }
+        .quiz-option.correct { background: var(--success); color: white; border-color: var(--success); }
+        .quiz-option.wrong { background: var(--danger); color: white; border-color: var(--danger); }
+
+        .poll-option {
+            background: var(--tag-bg);
+            border-radius: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-light);
+        }
+        .poll-bar {
+            background: linear-gradient(90deg, var(--pink-primary), var(--pink-deep));
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            border-radius: 16px;
+            transition: width 0.3s ease;
+            opacity: 0.7;
+            z-index: 0;
+        }
+        .poll-text {
+            position: relative;
+            z-index: 1;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 400;
+            color: var(--text-mid);
+        }
+        .poll-percent {
+            font-weight: 500;
+            color: var(--blue-primary);
+        }
+
+        .post-title-link {
+            color: var(--blue-primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .post-title-link:hover {
+            text-decoration: underline;
+        }
+        
+        .text-pink {
+            color: var(--pink-primary);
+        }
+
+        .modal-post-stats {
+            display: flex;
+            gap: 24px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+        .modal-post-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .handbook-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-dim);
+            padding-top: 12px;
+            border-top: 1px solid var(--border-light);
+            margin-top: 24px;
+        }
+
+        .empty-chat {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+        .empty-chat i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .category-select {
+            margin-bottom: 20px;
+        }
+        .category-select label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: var(--text-mid);
+        }
+        .category-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .cat-btn {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
+            background: transparent;
+            color: var(--text-mid);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+        .cat-btn:hover, .cat-btn.active {
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+        }
+        .close-image-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .row { grid-template-columns: 1fr; }
+            .col-full { grid-column: span 1; }
+            .admin-tabs { flex-direction: column; }
+            .tab-btn { justify-content: center; }
+            .nav-menu { display: none; }
+            .form-card, .list-card { padding: 20px; }
+            .two-columns { grid-template-columns: 1fr; }
+            .messages-area { height: 350px; }
+            .message { max-width: 90%; }
+            .chat-list-container, .chat-detail-container { height: 450px; }
+            .modal-content { max-width: 95%; }
+            .modal-content-text { font-size: 15px; }
+            .modal-content-text h1 { font-size: 1.5em; }
+            .modal-content-text h2 { font-size: 1.3em; }
+            .modal-content-text ul, 
+            .modal-content-text ol {
+                margin-left: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .admin-container { padding: 90px 16px 40px; }
+            .card-title { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-mark"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-type">EduHealth AI</div>
+        </a>
+        <div class="nav-menu">
+            <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
+        </div>
+        <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-shield-alt"></i> Bảng điều khiển quản trị</h1>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="switchTab('knowledge')">
+                <i class="fas fa-database"></i> Kiến thức AI
+            </button>
+            <button class="tab-btn" onclick="switchTab('chat')">
+                <i class="fas fa-comments"></i> Quản lý trò chuyện
+            </button>
+            <button class="tab-btn" onclick="switchTab('locations')">
+                <i class="fas fa-hospital-user"></i> Cơ sở y tế
+            </button>
+            <button class="tab-btn" onclick="switchTab('posts')">
+                <i class="fas fa-newspaper"></i> Duyệt bài đăng
+            </button>
+            <button class="tab-btn" onclick="switchTab('handbook')">
+                <i class="fas fa-book-medical"></i> Cẩm nang y tế
+            </button>
+            <button class="tab-btn" onclick="switchTab('news')">
+                <i class="fas fa-newspaper"></i> Bản tin y tế
+            </button>
+        </div>
+
+        <!-- Tab: Quản lý kiến thức AI -->
+        <div id="tab-knowledge" class="tab-content">
+            <div class="form-card">
+                <h2 style="margin-bottom: 8px;"><i class="fas fa-brain"></i> Kho kiến thức của EduHealth AI</h2>
+                <p style="color: var(--text-dim); margin-bottom: 24px;">AI sẽ đọc toàn bộ nội dung dưới đây để hỗ trợ người dùng. Hãy cập nhật kiến thức đầy đủ và chính xác nhé.</p>
+                
+                <div class="knowledge-section">
+                    <div class="section-title">
+                        <i class="fas fa-list-check"></i> 1. Kiến thức tạo checklist
+                    </div>
+                    <div class="section-desc">
+                        <i class="fas fa-info-circle"></i> Nội dung này giúp AI đặt câu hỏi để thu thập thông tin triệu chứng từ người dùng.
+                    </div>
+                    <textarea id="checklistKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức về cách tạo checklist triệu chứng..."></textarea>
+                    <div class="knowledge-actions">
+                        <button class="btn-primary" onclick="saveKnowledge('checklist')">
+                            <i class="fas fa-save"></i> Lưu kiến thức
+                        </button>
+                        <div id="checklistStatus" class="status"></div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-section">
+                    <div class="section-title">
+                        <i class="fas fa-stethoscope"></i> 2. Kiến thức phân tích bệnh
+                    </div>
+                    <div class="section-desc">
+                        <i class="fas fa-info-circle"></i> Nội dung này giúp AI phân tích triệu chứng và đưa ra gợi ý ban đầu.
+                    </div>
+                    <textarea id="diagnosisKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức về phân tích bệnh da liễu..."></textarea>
+                    <div class="knowledge-actions">
+                        <button class="btn-primary" onclick="saveKnowledge('diagnosis')">
+                            <i class="fas fa-save"></i> Lưu kiến thức
+                        </button>
+                        <div id="diagnosisStatus" class="status"></div>
+                    </div>
+                </div>
+                
+                <div class="knowledge-section">
+                    <div class="section-title">
+                        <i class="fas fa-comment-dots"></i> 3. Kiến thức tư vấn chat
+                    </div>
+                    <div class="section-desc">
+                        <i class="fas fa-info-circle"></i> Nội dung này giúp AI trả lời các câu hỏi trong khung trò chuyện.
+                    </div>
+                    <textarea id="chatKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức để AI trả lời trong chat..."></textarea>
+                    <div class="knowledge-actions">
+                        <button class="btn-primary" onclick="saveKnowledge('chat_response')">
+                            <i class="fas fa-save"></i> Lưu kiến thức
+                        </button>
+                        <div id="chatStatus" class="status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Quản lý trò chuyện -->
+        <div id="tab-chat" class="tab-content" style="display: none;">
+            <div class="two-columns">
+                <div class="chat-list-container">
+                    <div class="chat-list-header">
+                        <h3><i class="fas fa-users"></i> Danh sách cuộc trò chuyện</h3>
+                        <div class="search-chat-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchChat" placeholder="Tìm theo tên người dùng...">
+                        </div>
+                    </div>
+                    <div class="chat-list" id="chatList">
+                        <div class="empty-chat"><i class="fas fa-spinner fa-pulse"></i><p>Đang tải...</p></div>
+                    </div>
+                </div>
+                
+                <div class="chat-detail-container">
+                    <div class="chat-detail-header">
+                        <h3><i class="fas fa-message"></i> <span id="currentChatName">Chọn cuộc trò chuyện</span></h3>
+                        <button class="ai-toggle" id="aiToggle" style="display: none;">
+                            <i class="fas fa-robot"></i> Bật AI
+                        </button>
+                    </div>
+                    <div class="messages-area" id="messagesArea">
+                        <div class="empty-chat">
+                            <i class="fas fa-comment-dots"></i>
+                            <p>Chọn một cuộc trò chuyện để xem tin nhắn</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-area" id="chatInputArea" style="display: none;">
+                        <input type="text" id="adminMessageInput" placeholder="Nhập tin nhắn...">
+                        <button id="sendMessageBtn"><i class="fas fa-paper-plane"></i> Gửi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Quản lý địa điểm -->
+        <div id="tab-locations" class="tab-content" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number" id="totalLocations">0</div><div class="text-muted">Tổng cơ sở</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalHospitals">0</div><div class="text-muted">🏥 Bệnh viện & Phòng khám</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalPharmacies">0</div><div class="text-muted">💊 Nhà thuốc</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalLocationsCount">0</div><div class="text-muted">📍 Tổng số</div></div>
+            </div>
+
+            <div class="form-card">
+                <div class="card-title">
+                    <span><i class="fas fa-plus-circle" style="color: var(--blue-primary);"></i> Thêm mới cơ sở y tế</span>
+                </div>
+                <form id="locationForm">
+                    <div class="row">
+                        <div class="col-full">
+                            <label class="form-label">🗺️ Chọn vị trí trên bản đồ</label>
+                            <div class="map-picker-container">
+                                <div id="locationMap" style="height: 300px;"></div>
+                                <div class="map-coords-info">
+                                    <input type="text" id="coordinates" placeholder="Tọa độ (Lat, Lng)" readonly>
+                                    <button type="button" class="btn-outline" id="getCurrentLocationBtn" style="padding: 8px 16px;">
+                                        <i class="fas fa-location-dot"></i> Vị trí hiện tại
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">🏠 Địa chỉ</label>
+                            <input type="text" class="form-control" id="address" required>
+                        </div>
+                        <div>
+                            <label class="form-label">🏷️ Phân loại</label>
+                            <select class="form-select" id="type" required>
+                                <option value="">Chọn</option>
+                                <option value="hospital">🏥 Bệnh viện & Phòng khám</option>
+                                <option value="pharmacy">💊 Nhà thuốc</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">📛 Tên cơ sở</label>
+                            <input type="text" class="form-control" id="shortNote" required>
+                        </div>
+                        <div class="col-full">
+                            <label class="form-label">📝 Mô tả chi tiết</label>
+                            <textarea class="form-control" id="longNote" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label class="form-label">⭐ Số sao (1-5)</label>
+                            <input type="number" class="form-control" id="rating" min="1" max="5" step="0.5" required>
+                        </div>
+                        <div>
+                            <label class="form-label">📞 Số điện thoại</label>
+                            <input type="tel" class="form-control" id="phone">
+                        </div>
+                        <div>
+                            <label class="form-label">🕒 Giờ mở cửa</label>
+                            <input type="text" class="form-control" id="openingHours" placeholder="7:00 - 21:00">
+                        </div>
+                        <div>
+                            <label class="form-label">🔗 Link Google Maps</label>
+                            <input type="url" class="form-control" id="googleMapsLink">
+                        </div>
+                    </div>
+                    <input type="hidden" id="editLocationId" value="">
+                    <button type="submit" class="btn-primary" style="margin-top: 24px; width: auto;">
+                        <i class="fas fa-save"></i> Lưu vào Firestore
+                    </button>
+                </form>
+            </div>
+
+            <div class="list-card">
+                <div class="card-title">
+                    <span><i class="fas fa-list"></i> Danh sách cơ sở y tế</span>
+                    <button class="btn-outline" onclick="loadLocations()">
+                        <i class="fas fa-sync-alt"></i> Tải lại
+                    </button>
+                </div>
+                <div id="locationList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Duyệt bài đăng -->
+        <div id="tab-posts" class="tab-content" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number" id="totalPending">0</div><div class="text-muted">⏳ Chờ duyệt</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalApproved">0</div><div class="text-muted">✅ Đã duyệt</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalPostsCount">0</div><div class="text-muted">📝 Tổng bài</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalComments">0</div><div class="text-muted">💬 Bình luận</div></div>
+            </div>
+
+            <div class="list-card">
+                <div class="card-title">
+                    <span><i class="fas fa-clock"></i> Bài đăng chờ duyệt</span>
+                </div>
+                <div id="pendingPostsList"></div>
+                
+                <div class="card-title" style="margin-top: 32px;">
+                    <span><i class="fas fa-check-circle"></i> Bài đăng đã duyệt</span>
+                </div>
+                <div id="approvedPostsList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Cẩm nang y tế -->
+        <div id="tab-handbook" class="tab-content" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number" id="totalHandbook">0</div><div class="text-muted">📚 Tổng bài viết</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalHandbookViews">0</div><div class="text-muted">👁️ Tổng lượt xem</div></div>
+            </div>
+
+            <div class="form-card">
+                <div class="card-title">
+                    <span><i class="fas fa-plus-circle"></i> Đăng bài viết cẩm nang</span>
+                </div>
+                <form id="handbookForm">
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">📌 Tiêu đề bài viết</label>
+                        <input type="text" class="form-control" id="handbookTitle" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">📂 Chuyên mục</label>
+                        <select class="form-select" id="handbookCategory" required>
+                            <option value="">-- Chọn chuyên mục --</option>
+                            <option value="da_lieu">I. Da liễu học đường</option>
+                            <option value="truyen_nhiem">II. Bệnh truyền nhiễm thường gặp</option>
+                            <option value="mat">III. Sức khỏe mắt và thị lực</option>
+                            <option value="tinh_than">IV. Sức khỏe tinh thần và giấc ngủ</option>
+                            <option value="tuoi_day_thi">V. Sức khỏe tuổi dậy thì</option>
+                            <option value="tieu_hoa">VI. Tiêu hóa - Dinh dưỡng - Thể chất</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">🖼️ URL ảnh bìa</label>
+                        <input type="url" class="form-control" id="handbookCover" placeholder="https://example.com/cover.jpg" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">📝 Nội dung bài viết</label>
+                        <div class="editor-container">
+                            <div id="handbookEditor"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Đăng bài
+                    </button>
+                </form>
+            </div>
+
+            <div class="list-card">
+                <div class="card-title">
+                    <span><i class="fas fa-list"></i> Danh sách bài viết cẩm nang</span>
+                    <button class="btn-outline" onclick="loadHandbook()">
+                        <i class="fas fa-sync-alt"></i> Tải lại
+                    </button>
+                </div>
+                <div id="handbookList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Bản tin y tế -->
+        <div id="tab-news" class="tab-content" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number" id="totalNews">0</div><div class="text-muted">📰 Tổng bản tin</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalNewsViews">0</div><div class="text-muted">👁️ Tổng lượt xem</div></div>
+            </div>
+
+            <div class="form-card">
+                <div class="card-title">
+                    <span><i class="fas fa-plus-circle"></i> Đăng bản tin y tế</span>
+                </div>
+                <form id="newsForm">
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">📌 Tiêu đề bản tin</label>
+                        <input type="text" class="form-control" id="newsTitle" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">🖼️ URL ảnh bìa</label>
+                        <input type="url" class="form-control" id="newsCover" placeholder="https://example.com/cover.jpg" required>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">📝 Nội dung bản tin</label>
+                        <div class="editor-container">
+                            <div id="newsEditor"></div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Đăng bản tin
+                    </button>
+                </form>
+            </div>
+
+            <div class="list-card">
+                <div class="card-title">
+                    <span><i class="fas fa-list"></i> Danh sách bản tin y tế</span>
+                    <button class="btn-outline" onclick="loadNews()">
+                        <i class="fas fa-sync-alt"></i> Tải lại
+                    </button>
+                </div>
+                <div id="newsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-custom" id="toast" style="display: none;">
+        <div class="toast" id="toastInner">
+            <i class="fas fa-check-circle"></i> <span id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Modal for viewing posts -->
+    <div id="postModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Bài viết</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Image Modal for chat -->
+    <div class="image-modal" id="imageModal">
+        <span class="close-image-modal">&times;</span>
+        <img id="modalImage" src="">
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
+            authDomain: "eduhealth-4bcab.firebaseapp.com",
+            projectId: "eduhealth-4bcab",
+            storageBucket: "eduhealth-4bcab.firebasestorage.app",
+            messagingSenderId: "390541255938",
+            appId: "1:390541255938:web:aa7b5beca0105c28f70e1b",
+            measurementId: "G-GSP46EVLYG"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let locations = [];
+        let pendingPosts = [];
+        let approvedPosts = [];
+        let handbookPosts = [];
+        let newsPosts = [];
+        let handbookQuill = null;
+        let newsQuill = null;
+        
+        let locationMap = null;
+        let mapMarker = null;
+        let currentLat = 21.0285;
+        let currentLng = 105.8542;
+        
+        let currentChatId = null;
+        let currentChatData = null;
+        let messageListener = null;
+        let allChats = [];
+        const ADMIN_ID = 'admin_support';
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastInner = document.getElementById('toastInner');
+            toastMessage.textContent = message;
+            toastInner.classList.remove('error');
+            if (isError) toastInner.classList.add('error');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+
+        function closeModal() {
+            document.getElementById('postModal').classList.remove('active');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(`tab-${tab}`).style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            if (tab === 'posts') loadPostsForApproval();
+            if (tab === 'handbook') loadHandbook();
+            if (tab === 'news') loadNews();
+            if (tab === 'chat') loadChatList();
+            if (tab === 'knowledge') loadKnowledge();
+            if (tab === 'locations') {
+                setTimeout(() => initLocationMap(), 100);
+            }
+        }
+
+        function initLocationMap() {
+            if (locationMap) return;
+            locationMap = L.map('locationMap').setView([currentLat, currentLng], 15);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(locationMap);
+            
+            locationMap.on('click', function(e) {
+                currentLat = e.latlng.lat;
+                currentLng = e.latlng.lng;
+                updateMapMarker();
+                document.getElementById('coordinates').value = `${currentLat}, ${currentLng}`;
+            });
+        }
+        
+        function updateMapMarker() {
+            if (mapMarker) locationMap.removeLayer(mapMarker);
+            mapMarker = L.marker([currentLat, currentLng]).addTo(locationMap);
+            locationMap.setView([currentLat, currentLng], 15);
+        }
+        
+        function setMapLocation(lat, lng) {
+            currentLat = lat;
+            currentLng = lng;
+            if (locationMap) {
+                updateMapMarker();
+            }
+            document.getElementById('coordinates').value = `${lat}, ${lng}`;
+        }
+        
+        document.getElementById('getCurrentLocationBtn')?.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        setMapLocation(position.coords.latitude, position.coords.longitude);
+                        showToast('📍 Đã cập nhật vị trí hiện tại');
+                    },
+                    () => showToast('⚠️ Không thể lấy vị trí', true)
+                );
+            } else {
+                showToast('⚠️ Trình duyệt không hỗ trợ định vị', true);
+            }
+        });
+
+        function formatMarkdown(text) {
+            if (!text) return '';
+            let formatted = text;
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
+            formatted = formatted.replace(/^### (.*?)$/gm, '<h4>$1</h4>');
+            formatted = formatted.replace(/^## (.*?)$/gm, '<h3>$1</h3>');
+            formatted = formatted.replace(/^# (.*?)$/gm, '<h2>$1</h2>');
+            formatted = formatted.replace(/^- (.*?)$/gm, '<li>$1</li>');
+            formatted = formatted.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
+            formatted = formatted.replace(/^\d+\. (.*?)$/gm, '<li>$1</li>');
+            formatted = formatted.replace(/\n\n/g, '</p><p>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            formatted = '<p>' + formatted + '</p>';
+            formatted = formatted.replace(/<p><\/p>/g, '');
+            formatted = formatted.replace(/<p><br><\/p>/g, '');
+            return formatted;
+        }
+
+        async function loadKnowledge() {
+            const snapshot = await db.collection('knowledge_base').get();
+            let checklistText = '';
+            let diagnosisText = '';
+            let chatText = '';
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const content = `${data.question}\n${data.answer}`;
+                if (data.type === 'checklist') {
+                    checklistText += content + '';
+                } else if (data.type === 'diagnosis') {
+                    diagnosisText += content + '';
+                } else if (data.type === 'chat_response') {
+                    chatText += content + '';
+                }
+            });
+            
+            document.getElementById('checklistKnowledge').value = checklistText || 'Chưa có kiến thức. Hãy thêm kiến thức về cách tạo checklist.';
+            document.getElementById('diagnosisKnowledge').value = diagnosisText || 'Chưa có kiến thức. Hãy thêm kiến thức về phân tích bệnh.';
+            document.getElementById('chatKnowledge').value = chatText || 'Chưa có kiến thức. Hãy thêm kiến thức để AI trả lời chat.';
+        }
+        
+        window.saveKnowledge = async (type) => {
+            let content = '';
+            let statusId = '';
+            
+            if (type === 'checklist') {
+                content = document.getElementById('checklistKnowledge').value;
+                statusId = 'checklistStatus';
+            } else if (type === 'diagnosis') {
+                content = document.getElementById('diagnosisKnowledge').value;
+                statusId = 'diagnosisStatus';
+            } else {
+                content = document.getElementById('chatKnowledge').value;
+                statusId = 'chatStatus';
+            }
+            
+            if (!content.trim()) {
+                document.getElementById(statusId).innerHTML = '<span class="status error">⚠️ Vui lòng nhập nội dung kiến thức</span>';
+                setTimeout(() => {
+                    document.getElementById(statusId).innerHTML = '';
+                }, 3000);
+                return;
+            }
+            
+            try {
+                const oldSnapshot = await db.collection('knowledge_base').where('type', '==', type).get();
+                for (const doc of oldSnapshot.docs) {
+                    await db.collection('knowledge_base').doc(doc.id).delete();
+                }
+                
+                await db.collection('knowledge_base').add({
+                    type: type,
+                    question: type === 'checklist' ? '' : (type === 'diagnosis' ? '' : ''),
+                    answer: content,
+                    keywords: [],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                document.getElementById(statusId).innerHTML = '<span class="status success">✅ Đã lưu thành công!</span>';
+                setTimeout(() => {
+                    document.getElementById(statusId).innerHTML = '';
+                }, 3000);
+                
+                await loadKnowledge();
+            } catch (error) {
+                console.error('Error saving:', error);
+                document.getElementById(statusId).innerHTML = '<span class="status error">❌ Lỗi khi lưu. Vui lòng thử lại.</span>';
+            }
+        };
+
+        async function loadChatList() {
+            const snapshot = await db.collection('health_chats')
+                .orderBy('lastMessageTime', 'desc')
+                .get();
+            
+            allChats = [];
+            snapshot.forEach(doc => {
+                allChats.push({ id: doc.id, ...doc.data() });
+            });
+            
+            filterAndDisplayChats();
+        }
+        
+        function filterAndDisplayChats() {
+            const searchTerm = document.getElementById('searchChat').value.toLowerCase();
+            let filtered = allChats;
+            
+            if (searchTerm) {
+                filtered = allChats.filter(chat => 
+                    (chat.userName || chat.name || '').toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            const chatList = document.getElementById('chatList');
+            if (filtered.length === 0) {
+                chatList.innerHTML = '<div class="empty-chat"><i class="fas fa-comments"></i><p>Không tìm thấy cuộc trò chuyện</p></div>';
+                return;
+            }
+            
+            let html = '';
+            filtered.forEach(chat => {
+                const isActive = currentChatId === chat.id ? 'active' : '';
+                const displayName = chat.userName || chat.name || 'Khách hàng';
+                const lastMsg = chat.lastMessage ? (chat.lastMessage.length > 50 ? chat.lastMessage.substring(0, 50) + '...' : chat.lastMessage) : 'Chưa có tin nhắn';
+                html += `
+                    <div class="chat-item ${isActive}" data-id="${chat.id}">
+                        <div class="chat-name">
+                            <i class="fas fa-user-circle"></i> ${escapeHtml(displayName)}
+                        </div>
+                        <div class="chat-preview">${escapeHtml(lastMsg)}</div>
+                        <div class="chat-time">${formatChatTime(chat.lastMessageTime)}</div>
+                    </div>
+                `;
+            });
+            chatList.innerHTML = html;
+            
+            document.querySelectorAll('.chat-item').forEach(item => {
+                item.addEventListener('click', () => selectChat(item.dataset.id));
+            });
+        }
+        
+        document.getElementById('searchChat')?.addEventListener('input', filterAndDisplayChats);
+        
+        async function selectChat(chatId) {
+            if (messageListener) messageListener();
+            currentChatId = chatId;
+            
+            const doc = await db.collection('health_chats').doc(chatId).get();
+            currentChatData = doc.data();
+            
+            const displayName = currentChatData.userName || currentChatData.name || 'Khách hàng';
+            document.getElementById('currentChatName').textContent = displayName;
+            document.getElementById('chatInputArea').style.display = 'flex';
+            
+            const aiToggle = document.getElementById('aiToggle');
+            aiToggle.style.display = 'inline-flex';
+            const isAIEnabled = currentChatData.aiEnabled !== false;
+            aiToggle.innerHTML = isAIEnabled ? '<i class="fas fa-robot"></i> Tắt AI' : '<i class="fas fa-robot"></i> Bật AI';
+            aiToggle.className = isAIEnabled ? 'ai-toggle' : 'ai-toggle off';
+            
+            aiToggle.onclick = async () => {
+                const newStatus = currentChatData.aiEnabled !== false ? false : true;
+                await db.collection('health_chats').doc(chatId).update({ aiEnabled: newStatus });
+                currentChatData.aiEnabled = newStatus;
+                aiToggle.innerHTML = newStatus ? '<i class="fas fa-robot"></i> Tắt AI' : '<i class="fas fa-robot"></i> Bật AI';
+                aiToggle.className = newStatus ? 'ai-toggle' : 'ai-toggle off';
+            };
+            
+            loadMessages(chatId);
+            
+            document.querySelectorAll('.chat-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.id === chatId) item.classList.add('active');
+            });
+        }
+        
+        function loadMessages(chatId) {
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.innerHTML = '';
+            
+            messageListener = db.collection('health_chats')
+                .doc(chatId)
+                .collection('messages')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot((snapshot) => {
+                    if (snapshot.empty && messagesArea.children.length === 0) {
+                        messagesArea.innerHTML = '<div class="empty-chat"><i class="fas fa-comment-dots"></i><p>Chưa có tin nhắn</p></div>';
+                    }
+                    
+                    snapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added') {
+                            const message = { id: change.doc.id, ...change.doc.data() };
+                            displayAdminMessage(message);
+                        }
+                    });
+                    scrollToBottomAdmin();
+                });
+        }
+        
+        function displayAdminMessage(message) {
+            const container = document.getElementById('messagesArea');
+            const msgDiv = document.createElement('div');
+            
+            if (message.senderId === ADMIN_ID) {
+                msgDiv.className = 'message admin';
+            } else if (message.senderId === 'ai') {
+                msgDiv.className = 'message ai';
+            } else if (message.senderId === 'system') {
+                msgDiv.className = 'message message-system';
+            } else {
+                msgDiv.className = 'message user';
+            }
+            
+            if (message.senderId !== ADMIN_ID && message.senderId !== 'system') {
+                const sender = document.createElement('div');
+                sender.className = 'message-sender';
+                let senderName = '';
+                if (message.senderId === 'ai') senderName = '🤖 EduHealth AI';
+                else if (message.senderId === 'user') senderName = message.senderName || 'Khách hàng';
+                else senderName = message.senderName || 'Khách hàng';
+                sender.textContent = senderName;
+                msgDiv.appendChild(sender);
+            }
+            
+            const textDiv = document.createElement('div');
+            textDiv.className = 'message-text';
+            textDiv.innerHTML = formatMarkdown(message.text || '');
+            msgDiv.appendChild(textDiv);
+            
+            if (message.imageData) {
+                const img = document.createElement('img');
+                img.src = message.imageData;
+                img.className = 'message-image';
+                img.onclick = () => openImageModal(message.imageData);
+                msgDiv.appendChild(img);
+            }
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            if (message.timestamp) {
+                const date = message.timestamp.toDate();
+                timeDiv.textContent = date.toLocaleString('vi-VN');
+            }
+            msgDiv.appendChild(timeDiv);
+            
+            container.appendChild(msgDiv);
+        }
+        
+        function scrollToBottomAdmin() {
+            const area = document.getElementById('messagesArea');
+            setTimeout(() => {
+                area.scrollTop = area.scrollHeight;
+            }, 100);
+        }
+        
+        document.getElementById('sendMessageBtn')?.addEventListener('click', async () => {
+            const input = document.getElementById('adminMessageInput');
+            const text = input.value.trim();
+            if (!text || !currentChatId) return;
+            
+            await db.collection('health_chats').doc(currentChatId).collection('messages').add({
+                text: text,
+                senderId: ADMIN_ID,
+                senderName: 'Cộng tác viên y tế',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            await db.collection('health_chats').doc(currentChatId).update({
+                lastMessage: text,
+                lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            input.value = '';
+        });
+        
+        document.getElementById('adminMessageInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('sendMessageBtn').click();
+        });
+        
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            document.getElementById('modalImage').src = src;
+            modal.style.display = 'flex';
+        }
+        
+        document.querySelector('.close-image-modal')?.addEventListener('click', () => {
+            document.getElementById('imageModal').style.display = 'none';
+        });
+
+        async function loadLocations() {
+            try {
+                const querySnapshot = await db.collection('medicalLocations').orderBy('createdAt', 'desc').get();
+                locations = [];
+                querySnapshot.forEach((doc) => {
+                    locations.push({ id: doc.id, ...doc.data() });
+                });
+                displayLocations();
+                updateLocationStats();
+            } catch (error) {
+                showToast('Lỗi: ' + error.message, true);
+            }
+        }
+
+        function updateLocationStats() {
+            const hospitals = locations.filter(l => l.type === 'hospital').length;
+            const pharmacies = locations.filter(l => l.type === 'pharmacy').length;
+            document.getElementById('totalLocations').textContent = locations.length;
+            document.getElementById('totalHospitals').textContent = hospitals;
+            document.getElementById('totalPharmacies').textContent = pharmacies;
+            document.getElementById('totalLocationsCount').textContent = locations.length;
+        }
+
+        function displayLocations() {
+            const container = document.getElementById('locationList');
+            if (locations.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">📭 Chưa có dữ liệu cơ sở y tế</div>';
+                return;
+            }
+            container.innerHTML = locations.map(loc => `
+                <div class="location-item">
+                    <div class="flex-between">
+                        <div>
+                            <h6 style="margin-bottom: 8px;">
+                                ${loc.type === 'hospital' ? '🏥' : '💊'} ${escapeHtml(loc.shortNote)}
+                                <span class="${loc.type === 'hospital' ? 'badge-hospital' : 'badge-pharmacy'} ms-2">
+                                    ${loc.type === 'hospital' ? 'Bệnh viện & Phòng khám' : 'Nhà thuốc'}
+                                </span>
+                            </h6>
+                            <p class="text-muted small" style="margin-bottom: 4px;">${escapeHtml(loc.address)}</p>
+                            <div class="small">⭐ ${loc.rating || 0}/5</div>
+                            ${loc.phone ? `<small class="text-muted"><i class="fas fa-phone"></i> ${escapeHtml(loc.phone)}</small>` : ''}
+                        </div>
+                        <div class="flex-buttons">
+                            <button class="btn-warning" onclick="editLocation('${loc.id}')">
+                                <i class="fas fa-edit"></i> Sửa
+                            </button>
+                            <button class="btn-danger" onclick="deleteLocation('${loc.id}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editLocation(id) {
+            const location = locations.find(l => l.id === id);
+            if (!location) return;
+            
+            document.getElementById('address').value = location.address || '';
+            document.getElementById('type').value = location.type || '';
+            document.getElementById('shortNote').value = location.shortNote || '';
+            document.getElementById('longNote').value = location.longNote || '';
+            document.getElementById('rating').value = location.rating || 5;
+            document.getElementById('phone').value = location.phone || '';
+            document.getElementById('openingHours').value = location.openingHours || '';
+            document.getElementById('googleMapsLink').value = location.googleMapsLink || '';
+            document.getElementById('editLocationId').value = id;
+            
+            if (location.lat && location.lng) {
+                setMapLocation(location.lat, location.lng);
+            } else if (location.coordinates) {
+                const [lat, lng] = location.coordinates.split(',').map(c => parseFloat(c.trim()));
+                if (!isNaN(lat) && !isNaN(lng)) setMapLocation(lat, lng);
+            }
+            
+            document.querySelector('#locationForm .btn-primary').innerHTML = '<i class="fas fa-save"></i> Cập nhật cơ sở';
+            
+            document.getElementById('locationForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function deleteLocation(id) {
+            if (confirm('⚠️ Xóa cơ sở này?')) {
+                await db.collection('medicalLocations').doc(id).delete();
+                showToast('Đã xóa cơ sở y tế!');
+                loadLocations();
+            }
+        }
+
+        document.getElementById('locationForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const locationData = {
+                coordinates: `${currentLat}, ${currentLng}`,
+                lat: currentLat,
+                lng: currentLng,
+                address: document.getElementById('address').value,
+                type: document.getElementById('type').value,
+                shortNote: document.getElementById('shortNote').value,
+                longNote: document.getElementById('longNote').value,
+                rating: parseFloat(document.getElementById('rating').value),
+                phone: document.getElementById('phone').value,
+                openingHours: document.getElementById('openingHours').value,
+                googleMapsLink: document.getElementById('googleMapsLink').value,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            const editId = document.getElementById('editLocationId').value;
+            if (editId) {
+                await db.collection('medicalLocations').doc(editId).update(locationData);
+                showToast('✅ Đã cập nhật cơ sở y tế!');
+                document.getElementById('editLocationId').value = '';
+                document.querySelector('#locationForm .btn-primary').innerHTML = '<i class="fas fa-save"></i> Lưu vào Firestore';
+            } else {
+                locationData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('medicalLocations').add(locationData);
+                showToast('✅ Đã thêm cơ sở y tế!');
+            }
+            document.getElementById('locationForm').reset();
+            loadLocations();
+        });
+
+        async function loadPostsForApproval() {
+            try {
+                const pendingSnap = await db.collection('posts').where('status', '==', 'pending').orderBy('createdAt', 'desc').get();
+                const approvedSnap = await db.collection('posts').where('status', '==', 'approved').orderBy('createdAt', 'desc').get();
+                
+                pendingPosts = [];
+                approvedPosts = [];
+                pendingSnap.forEach(doc => pendingPosts.push({ id: doc.id, ...doc.data() }));
+                approvedSnap.forEach(doc => approvedPosts.push({ id: doc.id, ...doc.data() }));
+                
+                const totalComments = [...pendingPosts, ...approvedPosts].reduce((sum, p) => sum + (p.comments?.length || 0), 0);
+                
+                document.getElementById('totalPending').textContent = pendingPosts.length;
+                document.getElementById('totalApproved').textContent = approvedPosts.length;
+                document.getElementById('totalPostsCount').textContent = pendingPosts.length + approvedPosts.length;
+                document.getElementById('totalComments').textContent = totalComments;
+                
+                displayPendingPosts();
+                displayApprovedPosts();
+            } catch (error) {
+                console.error('Lỗi:', error);
+            }
+        }
+
+        function truncateHtml(html, maxLength = 100) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            const text = temp.textContent || temp.innerText || '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        function displayPendingPosts() {
+            const container = document.getElementById('pendingPostsList');
+            if (pendingPosts.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">✨ Không có bài đăng chờ duyệt</div>';
+                return;
+            }
+            container.innerHTML = pendingPosts.map(post => `
+                <div class="post-item">
+                    <div class="flex-between">
+                        <div style="flex:1">
+                            <div class="post-title-link" onclick="viewForumPost('${post.id}')">
+                                <strong style="color: var(--blue-primary);">${escapeHtml(post.title || 'Không tiêu đề')}</strong>
+                            </div>
+                            <span class="badge-pending">Chờ duyệt</span>
+                            <div class="small text-pink mt-1">
+                                <i class="fas fa-user"></i> ${escapeHtml(post.author || 'Ẩn danh')} | 
+                                <i class="far fa-clock"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}
+                                ${post.type ? ` | <i class="fas fa-tag"></i> ${post.type}` : ''}
+                            </div>
+                            <div class="small mt-2 text-muted">${truncateHtml(post.content || '', 120)}</div>
+                        </div>
+                        <div class="flex-buttons">
+                            <button class="btn-success" onclick="viewForumPost('${post.id}')">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="btn-success" onclick="approvePost('${post.id}')">
+                                <i class="fas fa-check"></i> Duyệt
+                            </button>
+                            <button class="btn-danger" onclick="rejectPost('${post.id}')">
+                                <i class="fas fa-times"></i> Từ chối
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayApprovedPosts() {
+            const container = document.getElementById('approvedPostsList');
+            if (approvedPosts.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">📭 Chưa có bài đăng nào được duyệt</div>';
+                return;
+            }
+            container.innerHTML = approvedPosts.map(post => `
+                <div class="post-item">
+                    <div class="flex-between">
+                        <div>
+                            <div class="post-title-link" onclick="viewForumPost('${post.id}')">
+                                <strong style="color: var(--blue-primary);">${escapeHtml(post.title || 'Không tiêu đề')}</strong>
+                            </div>
+                            <span class="badge-approved">Đã duyệt</span>
+                            <div class="small text-pink mt-1">
+                                <i class="fas fa-user"></i> ${escapeHtml(post.author || 'Ẩn danh')} | 
+                                <i class="far fa-heart"></i> ${post.likes || 0} thích | 
+                                <i class="far fa-comment"></i> ${post.comments?.length || 0} bình luận
+                            </div>
+                        </div>
+                        <div class="flex-buttons">
+                            <button class="btn-warning" onclick="viewForumPost('${post.id}')">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="btn-danger" onclick="deletePost('${post.id}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function viewForumPost(postId) {
+            const post = [...pendingPosts, ...approvedPosts].find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            let videoHtml = '';
+            if (post.type === 'video' && post.videoUrl) {
+                let embedUrl = post.videoUrl;
+                if (post.videoUrl.includes('youtube.com/watch')) {
+                    const vid = post.videoUrl.split('v=')[1]?.split('&')[0];
+                    if (vid) embedUrl = `https://www.youtube.com/embed/${vid}`;
+                }
+                videoHtml = `<div style="position:relative; padding-bottom:56.25%; margin-bottom:20px;"><iframe src="${embedUrl}" style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:16px;" frameborder="0" allowfullscreen></iframe></div>`;
+            }
+            
+            let imageHtml = '';
+            if (post.type === 'infographic' && post.imageUrl) {
+                imageHtml = `<img src="${post.imageUrl}" style="max-width:100%; border-radius:20px; margin-top:20px;" onerror="this.src='https://placehold.co/800x400?text=Image+not+found'">`;
+            }
+
+            let quizHtml = '';
+            if (post.type === 'quiz' && post.quizData) {
+                quizHtml = `<div id="quizContainer" style="margin: 20px 0;"></div>`;
+                setTimeout(() => {
+                    const qc = document.getElementById('quizContainer');
+                    if (qc && post.quizData.questions) {
+                        qc.innerHTML = post.quizData.questions.map((q, idx) => `
+                            <div style="margin-bottom: 24px;">
+                                <strong style="font-size:16px;">Câu ${idx+1}: ${escapeHtml(q.question)}</strong>
+                                ${q.options.map((opt, oi) => `
+                                    <div class="quiz-option" onclick="selectQuizAnswer(${idx}, ${oi}, ${q.correct})" data-q="${idx}" data-opt="${oi}" data-correct="${q.correct}">
+                                        ${String.fromCharCode(65+oi)}. ${escapeHtml(opt)}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('');
+                    }
+                }, 50);
+            }
+
+            let pollHtml = '';
+            if (post.type === 'poll' && post.pollData) {
+                const totalVotes = post.pollData.votes?.reduce((a, b) => a + b, 0) || 0;
+                pollHtml = `<div id="pollContainer" style="margin: 20px 0;"></div>`;
+                setTimeout(() => {
+                    const pc = document.getElementById('pollContainer');
+                    if (pc && post.pollData.options) {
+                        pc.innerHTML = post.pollData.options.map((opt, idx) => {
+                            const votes = post.pollData.votes?.[idx] || 0;
+                            const percent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+                            return `
+                                <div class="poll-option">
+                                    <div class="poll-bar" style="width: ${percent}%;"></div>
+                                    <div class="poll-text">
+                                        <span>${escapeHtml(opt)}</span>
+                                        <span class="poll-percent">${percent}% (${votes} phiếu)</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }, 50);
+            }
+
+            modalBody.innerHTML = `
+                <div class="post-content-box">
+                    <div class="modal-content-text">
+                        ${videoHtml}
+                        <div>${post.content || ''}</div>
+                        ${post.type === 'infographic' ? imageHtml : ''}
+                        ${quizHtml}
+                        ${pollHtml}
+                    </div>
+                    <div class="modal-post-stats">
+                        <span><i class="fas fa-heart"></i> ${post.likes || 0} thích</span>
+                        <span><i class="far fa-comment"></i> ${post.comments?.length || 0} bình luận</span>
+                        <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
+                    </div>
+                </div>
+                <div class="comment-section-box">
+                    <h6 style="margin-bottom:16px;">💬 Bình luận (${post.comments?.length || 0})</h6>
+                    <div class="comments-list" id="commentsList">
+                        ${(post.comments || []).map(c => `
+                            <div class="comment-item">
+                                <div class="comment-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="comment-content">
+                                    <div class="comment-author">${escapeHtml(c.author)}</div>
+                                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                                    <div class="comment-time">${new Date(c.timestamp).toLocaleString('vi-VN')}</div>
+                                </div>
+                            </div>
+                        `).join('') || '<div class="empty-state" style="padding:20px;">Chưa có bình luận nào.</div>'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').innerText = post.title || 'Bài đăng diễn đàn';
+            modal.classList.add('active');
+        }
+
+        async function viewHandbookPost(postId) {
+            const post = handbookPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <div class="modal-content-text">${post.content || ''}</div>
+                <div class="handbook-stats">
+                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
+                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+                    <span><i class="fas fa-folder"></i> ${getCategoryName(post.category)}</span>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').innerText = post.title || 'Bài viết cẩm nang';
+            modal.classList.add('active');
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'da_lieu': 'I. Da liễu học đường',
+                'truyen_nhiem': 'II. Bệnh truyền nhiễm thường gặp',
+                'mat': 'III. Sức khỏe mắt và thị lực',
+                'tinh_than': 'IV. Sức khỏe tinh thần và giấc ngủ',
+                'tuoi_day_thi': 'V. Sức khỏe tuổi dậy thì',
+                'tieu_hoa': 'VI. Tiêu hóa - Dinh dưỡng - Thể chất'
+            };
+            return categories[category] || 'Chưa phân loại';
+        }
+
+        async function viewNewsPost(postId) {
+            const post = newsPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <div class="modal-content-text">${post.content || ''}</div>
+                <div class="handbook-stats">
+                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
+                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').innerText = post.title || 'Bản tin y tế';
+            modal.classList.add('active');
+        }
+
+        async function approvePost(id) {
+            await db.collection('posts').doc(id).update({ status: 'approved', approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            showToast('✅ Đã duyệt bài đăng!');
+            loadPostsForApproval();
+        }
+
+        async function rejectPost(id) {
+            if (confirm('Xóa bài đăng này?')) {
+                await db.collection('posts').doc(id).delete();
+                showToast('Đã từ chối bài đăng');
+                loadPostsForApproval();
+            }
+        }
+
+        async function deletePost(id) {
+            if (confirm('Xóa bài đăng này?')) {
+                await db.collection('posts').doc(id).delete();
+                showToast('Đã xóa bài đăng');
+                loadPostsForApproval();
+            }
+        }
+
+        function initHandbookEditor() {
+            if (handbookQuill) return;
+            handbookQuill = new Quill('#handbookEditor', {
+                theme: 'snow',
+                placeholder: '✍️ Viết nội dung bài viết cẩm nang...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image'],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['clean']
+                    ]
+                }
+            });
+        }
+
+        function initNewsEditor() {
+            if (newsQuill) return;
+            newsQuill = new Quill('#newsEditor', {
+                theme: 'snow',
+                placeholder: '✍️ Viết nội dung bản tin y tế...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image'],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['clean']
+                    ]
+                }
+            });
+        }
+
+        async function loadHandbook() {
+            try {
+                const querySnapshot = await db.collection('handbook').orderBy('createdAt', 'desc').get();
+                handbookPosts = [];
+                querySnapshot.forEach((doc) => {
+                    handbookPosts.push({ id: doc.id, ...doc.data() });
+                });
+                displayHandbook();
+                updateHandbookStats();
+            } catch (error) {
+                console.error('Lỗi tải cẩm nang:', error);
+            }
+        }
+
+        function updateHandbookStats() {
+            const totalViews = handbookPosts.reduce((sum, p) => sum + (p.views || 0), 0);
+            document.getElementById('totalHandbook').textContent = handbookPosts.length;
+            document.getElementById('totalHandbookViews').textContent = totalViews;
+        }
+
+        function displayHandbook() {
+            const container = document.getElementById('handbookList');
+            if (handbookPosts.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">📭 Chưa có bài viết cẩm nang nào</div>';
+                return;
+            }
+            container.innerHTML = handbookPosts.map(post => `
+                <div class="handbook-item">
+                    <div class="flex-between">
+                        <div style="flex:1">
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${post.coverImage ? `<img src="${post.coverImage}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'">` : ''}
+                                <div>
+                                    <div class="post-title-link" onclick="viewHandbookPost('${post.id}')">
+                                        <strong style="color: var(--blue-primary);">${escapeHtml(post.title)}</strong>
+                                    </div>
+                                    <div class="small text-pink mt-1">
+                                        <i class="fas fa-folder"></i> ${getCategoryName(post.category)} |
+                                        <i class="far fa-clock"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'} |
+                                        <i class="far fa-eye"></i> ${post.views || 0} lượt xem
+                                    </div>
+                                    <div class="small mt-1 text-muted">${truncateHtml(post.content || '', 100)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-buttons">
+                            <button class="btn-warning" onclick="viewHandbookPost('${post.id}')">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="btn-danger" onclick="deleteHandbookPost('${post.id}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteHandbookPost(id) {
+            if (confirm('Xóa bài viết cẩm nang này?')) {
+                await db.collection('handbook').doc(id).delete();
+                showToast('Đã xóa bài viết cẩm nang');
+                loadHandbook();
+            }
+        }
+
+        document.getElementById('handbookForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            initHandbookEditor();
+            
+            const title = document.getElementById('handbookTitle').value.trim();
+            const category = document.getElementById('handbookCategory').value;
+            const coverImage = document.getElementById('handbookCover').value.trim();
+            const content = handbookQuill.root.innerHTML;
+            
+            if (!title) {
+                showToast('Vui lòng nhập tiêu đề!', true);
+                return;
+            }
+            if (!category) {
+                showToast('Vui lòng chọn chuyên mục!', true);
+                return;
+            }
+            if (!coverImage) {
+                showToast('Vui lòng nhập URL ảnh bìa!', true);
+                return;
+            }
+            if (!content || content === '<p><br></p>') {
+                showToast('Vui lòng nhập nội dung!', true);
+                return;
+            }
+            
+            const handbookData = {
+                title: title,
+                category: category,
+                coverImage: coverImage,
+                content: content,
+                author: 'Quản trị viên',
+                type: 'handbook',
+                status: 'approved',
+                views: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await db.collection('handbook').add(handbookData);
+                showToast('✅ Đã đăng bài viết cẩm nang!');
+                document.getElementById('handbookForm').reset();
+                if (handbookQuill) handbookQuill.root.innerHTML = '';
+                loadHandbook();
+            } catch (error) {
+                showToast('Lỗi: ' + error.message, true);
+            }
+        });
+
+        async function loadNews() {
+            try {
+                const querySnapshot = await db.collection('news').orderBy('createdAt', 'desc').get();
+                newsPosts = [];
+                querySnapshot.forEach((doc) => {
+                    newsPosts.push({ id: doc.id, ...doc.data() });
+                });
+                displayNews();
+                updateNewsStats();
+            } catch (error) {
+                console.error('Lỗi tải bản tin:', error);
+            }
+        }
+
+        function updateNewsStats() {
+            const totalViews = newsPosts.reduce((sum, p) => sum + (p.views || 0), 0);
+            document.getElementById('totalNews').textContent = newsPosts.length;
+            document.getElementById('totalNewsViews').textContent = totalViews;
+        }
+
+        function displayNews() {
+            const container = document.getElementById('newsList');
+            if (newsPosts.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted" style="padding: 40px;">📭 Chưa có bản tin y tế nào</div>';
+                return;
+            }
+            container.innerHTML = newsPosts.map(post => `
+                <div class="news-item">
+                    <div class="flex-between">
+                        <div style="flex:1">
+                            <div style="display: flex; gap: 16px; align-items: flex-start;">
+                                ${post.coverImage ? `<img src="${post.coverImage}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;" onerror="this.style.display='none'">` : ''}
+                                <div>
+                                    <div class="post-title-link" onclick="viewNewsPost('${post.id}')">
+                                        <strong style="color: var(--blue-primary);">${escapeHtml(post.title)}</strong>
+                                    </div>
+                                    <div class="small text-pink mt-1">
+                                        <i class="far fa-clock"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'} |
+                                        <i class="far fa-eye"></i> ${post.views || 0} lượt xem
+                                    </div>
+                                    <div class="small mt-1 text-muted">${truncateHtml(post.content || '', 100)}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-buttons">
+                            <button class="btn-warning" onclick="viewNewsPost('${post.id}')">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="btn-danger" onclick="deleteNewsPost('${post.id}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteNewsPost(id) {
+            if (confirm('Xóa bản tin y tế này?')) {
+                await db.collection('news').doc(id).delete();
+                showToast('Đã xóa bản tin y tế');
+                loadNews();
+            }
+        }
+
+        document.getElementById('newsForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            initNewsEditor();
+            
+            const title = document.getElementById('newsTitle').value.trim();
+            const coverImage = document.getElementById('newsCover').value.trim();
+            const content = newsQuill.root.innerHTML;
+            
+            if (!title) {
+                showToast('Vui lòng nhập tiêu đề!', true);
+                return;
+            }
+            if (!coverImage) {
+                showToast('Vui lòng nhập URL ảnh bìa!', true);
+                return;
+            }
+            if (!content || content === '<p><br></p>') {
+                showToast('Vui lòng nhập nội dung!', true);
+                return;
+            }
+            
+            const newsData = {
+                title: title,
+                coverImage: coverImage,
+                content: content,
+                author: 'Quản trị viên',
+                type: 'news',
+                status: 'approved',
+                views: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            try {
+                await db.collection('news').add(newsData);
+                showToast('✅ Đã đăng bản tin y tế!');
+                document.getElementById('newsForm').reset();
+                if (newsQuill) newsQuill.root.innerHTML = '';
+                loadNews();
+            } catch (error) {
+                showToast('Lỗi: ' + error.message, true);
+            }
+        });
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+        
+        function formatChatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = timestamp.toDate();
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} phút trước`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)} giờ trước`;
+            return date.toLocaleDateString('vi-VN');
+        }
+
+        window.selectQuizAnswer = (qIdx, optIdx, correctIdx) => {
+            const options = document.querySelectorAll(`.quiz-option[data-q="${qIdx}"]`);
+            const selected = document.querySelector(`.quiz-option[data-q="${qIdx}"][data-opt="${optIdx}"]`);
+            
+            options.forEach(opt => {
+                const optVal = parseInt(opt.dataset.opt);
+                const isCorrect = (optVal === correctIdx);
+                
+                if (isCorrect) {
+                    opt.classList.add('correct');
+                } else if (opt === selected) {
+                    opt.classList.add('wrong');
+                }
+                
+                if (opt === selected) {
+                    opt.classList.add('selected');
+                }
+            });
+        };
+
+        window.switchTab = switchTab;
+        window.deleteLocation = deleteLocation;
+        window.editLocation = editLocation;
+        window.approvePost = approvePost;
+        window.rejectPost = rejectPost;
+        window.deletePost = deletePost;
+        window.deleteHandbookPost = deleteHandbookPost;
+        window.deleteNewsPost = deleteNewsPost;
+        window.loadLocations = loadLocations;
+        window.loadHandbook = loadHandbook;
+        window.loadNews = loadNews;
+        window.viewForumPost = viewForumPost;
+        window.viewHandbookPost = viewHandbookPost;
+        window.viewNewsPost = viewNewsPost;
+        window.closeModal = closeModal;
+        window.saveKnowledge = saveKnowledge;
+
+        loadLocations();
+        loadPostsForApproval();
+        loadHandbook();
+        loadNews();
+        loadKnowledge();
+        initHandbookEditor();
+        initNewsEditor();
+        initLocationMap();
+
+        document.getElementById('postModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('postModal')) closeModal();
+        });
+
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const body = document.body;
+        function setTheme(theme) {
+            body.classList.toggle('dark', theme === 'dark');
+            localStorage.setItem('eduhealth-theme', theme);
+            const icon = themeBtn.querySelector('i');
+            const span = themeBtn.querySelector('span');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                span.innerText = 'Chế độ sáng';
+            } else {
+                icon.className = 'fas fa-moon';
+                span.innerText = 'Chế độ tối';
+            }
+        }
+        const savedTheme = localStorage.getItem('eduhealth-theme');
+        if (savedTheme === 'dark') setTheme('dark');
+        else setTheme('light');
+        themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
+    </script>
+</body>
+</html>
