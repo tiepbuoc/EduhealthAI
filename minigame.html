@@ -1,0 +1,938 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Câu hỏi giáo dục sức khỏe học đường - EduHealth AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-primary: #3b82f6;
+            --blue-deep: #2563eb;
+            --pink-primary: #f472b6;
+            --pink-deep: #ec489a;
+            --grad-blue-pink: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            --grad-pink-blue: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            --bg-body: #ffffff;
+            --bg-surface: #fef9ff;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-mid: #334155;
+            --text-dim: #64748b;
+            --border-light: #ffe4f0;
+            --border-soft: #f1f5f9;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.92);
+            --tag-bg: #fce7f3;
+            --input-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --correct: #10b981;
+            --incorrect: #ef4444;
+        }
+
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --card-bg: #1e293b;
+            --text-dark: #f1f5f9;
+            --text-mid: #cbd5e1;
+            --text-dim: #94a3b8;
+            --border-light: #334155;
+            --border-soft: #2d3a4e;
+            --nav-bg: rgba(15, 23, 42, 0.94);
+            --tag-bg: #2d3a4e;
+            --input-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--border-soft); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--pink-primary); border-radius: 10px; }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            height: 74px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: var(--grad-blue-pink);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .logo-type {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link i { color: var(--pink-primary); }
+        .nav-link:hover { color: var(--blue-primary); }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .theme-toggle:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pink-primary);
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+        }
+        .menu-toggle:hover {
+            background: var(--grad-pink-blue);
+            color: white;
+            border-color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mobile-menu-panel {
+            position: fixed;
+            top: 74px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 99;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            pointer-events: none;
+        }
+        .mobile-menu-panel.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mobile-menu-panel .nav-links-mobile {
+            display: flex;
+            flex-direction: column;
+            padding: 24px 6%;
+            gap: 20px;
+        }
+        .mobile-menu-panel .nav-link-mobile {
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .mobile-menu-panel .nav-link-mobile i {
+            width: 28px;
+            color: var(--blue-primary);
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .page-desc {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* Sections Grid */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--pink-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--grad-blue-pink);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+            color: white;
+        }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .section-name {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .section-stats {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-dim);
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            background: var(--card-bg);
+            border-radius: 32px;
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .quiz-header {
+            background: var(--grad-blue-pink);
+            padding: 20px 28px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .quiz-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-progress {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .questions-area {
+            padding: 28px;
+        }
+
+        .question-item {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        .question-item.answered-correct {
+            border-left: 4px solid var(--correct);
+        }
+
+        .question-item.answered-wrong {
+            border-left: 4px solid var(--incorrect);
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .question-number {
+            background: var(--grad-blue-pink);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .options {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-left: 40px;
+        }
+
+        .option-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-light);
+            padding: 10px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-mid);
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+            transform: scale(1.02);
+        }
+
+        .option-btn.selected-true {
+            background: var(--correct);
+            border-color: var(--correct);
+            color: white;
+        }
+
+        .option-btn.selected-false {
+            background: var(--incorrect);
+            border-color: var(--incorrect);
+            color: white;
+        }
+
+        .option-btn.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-left: 40px;
+            margin-top: 12px;
+            padding: 10px 16px;
+            border-radius: 16px;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feedback.show {
+            display: flex;
+        }
+
+        .feedback.correct {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--correct);
+        }
+
+        .feedback.incorrect {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--incorrect);
+        }
+
+        .quiz-actions {
+            padding: 20px 28px 28px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-mid);
+        }
+
+        .btn-primary {
+            background: var(--grad-blue-pink);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-summary {
+            background: var(--bg-surface);
+            border-radius: 32px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid var(--border-light);
+            margin-top: 20px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--grad-blue-pink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            font-family: 'Fraunces', serif;
+        }
+
+        .score-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .score-message {
+            color: var(--text-dim);
+            margin-bottom: 24px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .no-quiz {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+
+        .no-quiz i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* UI step visibility */
+        .ui-step {
+            transition: all 0.2s ease;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .menu-toggle { display: flex; }
+            .sections-grid { grid-template-columns: repeat(2, 1fr); }
+            .page-title { font-size: 24px; }
+            .options { margin-left: 0; }
+            .feedback { margin-left: 0; }
+            .question-text { flex-direction: column; }
+            .options { margin-left: 0; }
+        }
+
+        @media (max-width: 480px) {
+            .sections-grid { grid-template-columns: 1fr; }
+            .quiz-header { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav id="nav">
+        <a href="#" class="logo">
+            <div class="logo-mark"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-type">EduHealth AI</div>
+        </a>
+        <div class="nav-menu">
+            <a href="index.html" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
+        </div>
+        <div class="nav-right">
+            <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
+            <button class="menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i> Menu</button>
+        </div>
+    </nav>
+    <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="nav-links-mobile">
+            <a href="index.html" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="minigame.html" class="nav-link-mobile"><i class="fas fa-brain"></i> Minigame</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-graduation-cap"></i> Câu hỏi giáo dục sức khỏe học đường</h1>
+            <p class="page-desc">📚 Bộ câu hỏi đúng/sai giúp học sinh tự đánh giá kiến thức về chăm sóc sức khỏe, vệ sinh cá nhân, chăm sóc da, lối sống lành mạnh và an toàn học đường. Mỗi lần làm bài, câu hỏi sẽ được xáo trộn để thử thách kiến thức thực sự của bạn!</p>
+        </div>
+
+        <!-- STEP 1: CHỌN MỤC (luôn hiển thị khi chưa chọn phần) -->
+        <div id="stepSectionSelection" class="ui-step">
+            <div class="sections-grid" id="sectionsGrid"></div>
+        </div>
+
+        <!-- STEP 2: UI LÀM BÀI (Ẩn mặc định) -->
+        <div id="stepQuiz" class="ui-step" style="display: none;">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <h2 id="quizHeaderTitle"><i class="fas fa-pen-alt"></i> Đang tải...</h2>
+                    <div class="quiz-progress" id="quizProgress">0/0 câu đã trả lời</div>
+                </div>
+                <div class="questions-area" id="questionsArea"></div>
+                <div class="quiz-actions">
+                    <button class="btn btn-outline" id="backToSectionsBtn"><i class="fas fa-arrow-left"></i> Chọn phần khác</button>
+                    <button class="btn btn-primary" id="submitQuizBtn"><i class="fas fa-check-circle"></i> Nộp bài & Xem kết quả</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: UI KẾT QUẢ (Ẩn mặc định) -->
+        <div id="stepResult" class="ui-step" style="display: none;">
+            <div id="resultArea"></div>
+            <div style="margin-top: 24px; text-align: center;">
+                <button class="btn btn-outline" id="newQuizFromResultBtn"><i class="fas fa-plus-circle"></i> Chọn phần mới</button>
+                <button class="btn btn-primary" id="retrySameFromResultBtn"><i class="fas fa-redo-alt"></i> Làm lại phần này</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DỮ LIỆU CÂU HỎI
+        const SECTIONS = {
+            A: { name: "Vệ sinh cá nhân và phòng bệnh", icon: "🧼", questions: [
+                { text: "Rửa tay bằng xà phòng trước khi ăn và sau khi đi vệ sinh là một cách quan trọng để phòng bệnh.", correct: true },
+                { text: "Nếu tay nhìn sạch thì không cần rửa tay.", correct: false },
+                { text: "Khi ho hoặc hắt hơi, nên che miệng và mũi bằng khăn giấy hoặc khuỷu tay áo.", correct: true },
+                { text: "Dùng chung khăn mặt, khăn tắm hoặc bàn chải đánh răng với bạn bè là an toàn nếu đó là người thân quen.", correct: false },
+                { text: "Tắm rửa và thay quần áo sạch sau khi vận động mạnh giúp cơ thể dễ chịu hơn và giảm nguy cơ viêm da.", correct: true },
+                { text: "Có thể tự ý dùng thuốc kháng sinh khi bị cảm cúm thông thường để mau khỏi.", correct: false },
+                { text: "Ngủ đủ giấc là một phần quan trọng của chăm sóc sức khỏe.", correct: true },
+                { text: "Khi có sốt cao, khó thở hoặc đau tăng dần, học sinh nên báo cho người lớn và đi khám.", correct: true }
+            ]},
+            B: { name: "Chăm sóc da và mụn tuổi dậy thì", icon: "🧴", questions: [
+                { text: "Da có mụn nên được rửa nhẹ nhàng, không cần chà xát mạnh.", correct: true },
+                { text: "Nặn mụn bằng tay bẩn có thể làm viêm nặng hơn và tăng nguy cơ để lại thâm sẹo.", correct: true },
+                { text: "Càng dùng nhiều sản phẩm chăm sóc da cùng lúc thì da càng khỏe nhanh.", correct: false },
+                { text: "Kem chống nắng phù hợp có thể là một phần của chăm sóc da hằng ngày, kể cả với da dầu hoặc da có mụn.", correct: true },
+                { text: "Dùng chung mỹ phẩm hoặc dụng cụ trang điểm với người khác luôn an toàn nếu chỉ dùng trong lớp học.", correct: false },
+                { text: "Nếu da bị kích ứng, đỏ rát kéo dài sau khi dùng sản phẩm mới, nên ngừng dùng và trao đổi với người lớn hoặc nhân viên y tế.", correct: true },
+                { text: "Tự làm theo mọi mẹo trị mụn trên mạng xã hội đều an toàn vì đó là kinh nghiệm thật.", correct: false },
+                { text: "Mụn tuổi dậy thì là vấn đề da liễu thường gặp, nhưng mụn nặng hoặc để lại sẹo nên được khám chuyên môn.", correct: true }
+            ]},
+            C: { name: "Tự chăm sóc cơ thể và lối sống lành mạnh", icon: "💪", questions: [
+                { text: "Ăn đa dạng thực phẩm, uống đủ nước và vận động phù hợp là những thói quen có lợi cho sức khỏe.", correct: true },
+                { text: "Bỏ bữa sáng thường xuyên không ảnh hưởng gì đến việc học tập và sức khỏe.", correct: false },
+                { text: "Thức khuya kéo dài có thể ảnh hưởng đến tâm trạng, khả năng tập trung và làn da.", correct: true },
+                { text: "Khi thấy căng thẳng kéo dài, mất ngủ hoặc buồn bã nhiều ngày, học sinh có thể tìm hỗ trợ từ người lớn tin cậy.", correct: true },
+                { text: "Tập thể dục quá sức dù cơ thể đang đau, chóng mặt hoặc kiệt sức vẫn là điều nên làm để tăng sức bền.", correct: false },
+                { text: "Đọc kỹ hướng dẫn sử dụng trước khi dùng thuốc bôi da hoặc sản phẩm chăm sóc cá nhân là cần thiết.", correct: true },
+                { text: "Không cần uống nước khi học thể dục nếu chưa thấy khát.", correct: false }
+            ]},
+            D: { name: "An toàn trong học đường và sinh hoạt", icon: "🛡️", questions: [
+                { text: "Đội mũ bảo hiểm đúng cách khi đi xe máy, xe đạp điện là một hành vi an toàn quan trọng.", correct: true },
+                { text: "Có thể tự ý dùng thuốc, thực phẩm chức năng hoặc thuốc giảm cân do bạn bè giới thiệu nếu thấy quảng cáo tốt.", correct: false },
+                { text: "Khi bị bỏng nhẹ, cần báo người lớn để được sơ cứu đúng cách.", correct: true },
+                { text: "Đăng tải hình ảnh riêng tư của người khác khi chưa được đồng ý là điều không nên.", correct: true },
+                { text: "Nếu bị bắt nạt, quấy rối hoặc đe dọa, học sinh nên giữ im lặng hoàn toàn để tránh phiền phức.", correct: false },
+                { text: "Khi tham gia bơi lội hoặc hoạt động ngoài trời, cần tuân thủ hướng dẫn an toàn.", correct: true },
+                { text: "Tiếp xúc nắng gắt quá lâu mà không bảo vệ da có thể gây hại cho da.", correct: true }
+            ]},
+            E: { name: "Tình huống cần tìm hỗ trợ", icon: "🆘", questions: [
+                { text: "Khi có vết thương chảy máu nhiều, đau dữ dội hoặc ngất, cần gọi người lớn hỗ trợ ngay.", correct: true },
+                { text: "Các vấn đề về sức khỏe tinh thần như lo âu, buồn bã kéo dài cũng đáng được quan tâm và hỗ trợ.", correct: true },
+                { text: "Nếu ngại, học sinh không nên hỏi nhân viên y tế học đường về các vấn đề sức khỏe cá nhân.", correct: false },
+                { text: "Khi có dấu hiệu dị ứng nặng như khó thở, sưng môi lưỡi hoặc nổi mề đay nhanh, cần đi cấp cứu.", correct: true },
+                { text: "Không nên tự ý che giấu việc đau bụng dữ dội, đau ngực hoặc khó thở khi đang ở trường.", correct: true }
+            ]}
+        };
+
+        function shuffleArray(arr) {
+            const shuffled = [...arr];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        let currentSectionKey = null;
+        let currentQuestions = [];
+        let quizSubmittedFlag = false;
+
+        // DOM elements
+        const stepSelection = document.getElementById('stepSectionSelection');
+        const stepQuiz = document.getElementById('stepQuiz');
+        const stepResult = document.getElementById('stepResult');
+        const sectionsGrid = document.getElementById('sectionsGrid');
+        const questionsArea = document.getElementById('questionsArea');
+        const quizHeaderTitle = document.getElementById('quizHeaderTitle');
+        const quizProgressSpan = document.getElementById('quizProgress');
+        const resultAreaDiv = document.getElementById('resultArea');
+
+        // Helper: show/hide steps
+        function showStep(step) {
+            stepSelection.style.display = 'none';
+            stepQuiz.style.display = 'none';
+            stepResult.style.display = 'none';
+            if (step === 'selection') stepSelection.style.display = 'block';
+            if (step === 'quiz') stepQuiz.style.display = 'block';
+            if (step === 'result') stepResult.style.display = 'block';
+        }
+
+        // Render các phần
+        function renderSections() {
+            const sections = ['A', 'B', 'C', 'D', 'E'];
+            sectionsGrid.innerHTML = sections.map(key => {
+                const sec = SECTIONS[key];
+                return `
+                    <div class="section-card" data-section="${key}">
+                        <div class="section-icon">${sec.icon}</div>
+                        <div class="section-title">Phần ${key}</div>
+                        <div class="section-name">${sec.name}</div>
+                        <div class="section-stats"><span><i class="fas fa-question-circle"></i> ${sec.questions.length} câu</span></div>
+                    </div>
+                `;
+            }).join('');
+            document.querySelectorAll('.section-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const sectionKey = card.dataset.section;
+                    startQuiz(sectionKey);
+                });
+            });
+        }
+
+        function startQuiz(sectionKey) {
+            currentSectionKey = sectionKey;
+            const original = SECTIONS[sectionKey].questions;
+            const shuffled = shuffleArray(original);
+            currentQuestions = shuffled.map((q, idx) => ({
+                id: idx,
+                text: q.text,
+                correct: q.correct,
+                userAnswer: null
+            }));
+            quizSubmittedFlag = false;
+            renderQuizUI();
+            showStep('quiz');
+        }
+
+        function renderQuizUI() {
+            const section = SECTIONS[currentSectionKey];
+            quizHeaderTitle.innerHTML = `<i class="fas fa-${currentSectionKey === 'A' ? 'soap' : currentSectionKey === 'B' ? 'face-smile' : currentSectionKey === 'C' ? 'heart-pulse' : currentSectionKey === 'D' ? 'shield' : 'hand-holding-heart'}"></i> Phần ${currentSectionKey}: ${section.name}`;
+            updateProgressUI();
+            
+            if (!currentQuestions.length) {
+                questionsArea.innerHTML = '<div class="no-quiz"><i class="fas fa-exclamation-triangle"></i><p>Không có câu hỏi.</p></div>';
+                return;
+            }
+
+            questionsArea.innerHTML = currentQuestions.map((q, idx) => {
+                const selectedTrue = q.userAnswer === true ? 'selected-true' : '';
+                const selectedFalse = q.userAnswer === false ? 'selected-false' : '';
+                const answerClass = (q.userAnswer !== null) ? (q.userAnswer === q.correct ? 'answered-correct' : 'answered-wrong') : '';
+                return `
+                    <div class="question-item ${answerClass}" data-qidx="${idx}">
+                        <div class="question-text"><span class="question-number">${idx+1}</span><span>${escapeHtml(q.text)}</span></div>
+                        <div class="options">
+                            <button class="option-btn ${selectedTrue}" data-qidx="${idx}" data-answer="true"><i class="fas fa-check-circle"></i> Đúng</button>
+                            <button class="option-btn ${selectedFalse}" data-qidx="${idx}" data-answer="false"><i class="fas fa-times-circle"></i> Sai</button>
+                        </div>
+                        <div class="feedback" id="feedback-${idx}"><i class="fas fa-info-circle"></i> <span class="feedback-text"></span></div>
+                    </div>
+                `;
+            }).join('');
+
+            // Gắn sự kiện
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (quizSubmittedFlag) return;
+                    const qidx = parseInt(btn.dataset.qidx);
+                    const answer = btn.dataset.answer === 'true';
+                    handleAnswer(qidx, answer);
+                });
+            });
+            // Hiển thị feedback nếu có
+            currentQuestions.forEach((q, idx) => {
+                if (q.userAnswer !== null) showFeedbackUI(idx, q.userAnswer, q.correct);
+            });
+        }
+
+        function handleAnswer(qidx, answer) {
+            if (quizSubmittedFlag) return;
+            const question = currentQuestions[qidx];
+            if (!question) return;
+            question.userAnswer = answer;
+            const isCorrect = (answer === question.correct);
+            const questionDiv = document.querySelector(`.question-item[data-qidx="${qidx}"]`);
+            if (questionDiv) {
+                questionDiv.classList.remove('answered-correct', 'answered-wrong');
+                questionDiv.classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
+                const trueBtn = questionDiv.querySelector('.option-btn[data-answer="true"]');
+                const falseBtn = questionDiv.querySelector('.option-btn[data-answer="false"]');
+                if (trueBtn) { trueBtn.classList.remove('selected-true', 'selected-false'); if (answer === true) trueBtn.classList.add('selected-true'); }
+                if (falseBtn) { falseBtn.classList.remove('selected-true', 'selected-false'); if (answer === false) falseBtn.classList.add('selected-false'); }
+            }
+            showFeedbackUI(qidx, answer, question.correct);
+            updateProgressUI();
+        }
+
+        function showFeedbackUI(qidx, userAnswer, correctAnswer) {
+            const fbDiv = document.getElementById(`feedback-${qidx}`);
+            if (!fbDiv) return;
+            const isCorrect = (userAnswer === correctAnswer);
+            const correctText = correctAnswer ? "Đúng" : "Sai";
+            const explanation = isCorrect ? `✅ Chính xác! Đáp án là ${correctText}.` : `❌ Chưa đúng. Đáp án đúng là ${correctText}. Hãy ghi nhớ để chăm sóc sức khỏe tốt hơn nhé!`;
+            fbDiv.querySelector('.feedback-text').innerHTML = explanation;
+            fbDiv.classList.add('show');
+            fbDiv.classList.remove('correct', 'incorrect');
+            fbDiv.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+
+        function updateProgressUI() {
+            const answered = currentQuestions.filter(q => q.userAnswer !== null).length;
+            const total = currentQuestions.length;
+            quizProgressSpan.innerHTML = `${answered}/${total} câu đã trả lời`;
+        }
+
+        function submitQuizAndShowResult() {
+            if (quizSubmittedFlag) return;
+            const unanswered = currentQuestions.filter(q => q.userAnswer === null);
+            if (unanswered.length > 0) {
+                alert(`⚠️ Bạn còn ${unanswered.length} câu chưa trả lời. Hãy hoàn thành tất cả câu hỏi trước khi nộp bài!`);
+                return;
+            }
+            quizSubmittedFlag = true;
+            let correctCount = 0;
+            currentQuestions.forEach(q => { if (q.userAnswer === q.correct) correctCount++; });
+            const total = currentQuestions.length;
+            const percentage = Math.round((correctCount / total) * 100);
+            let message = "";
+            if (percentage >= 90) message = "🏆 Xuất sắc! Bạn là chuyên gia sức khỏe học đường đấy!";
+            else if (percentage >= 75) message = "🎉 Rất tốt! Bạn có kiến thức vững vàng về chăm sóc sức khỏe.";
+            else if (percentage >= 60) message = "👍 Khá ổn! Hãy xem lại những câu sai để nâng cao kiến thức nhé.";
+            else if (percentage >= 40) message = "📚 Cố gắng hơn nữa! Đọc lại các câu hỏi và ghi nhớ đáp án đúng.";
+            else message = "💪 Đừng nản! Hãy học thêm về chủ đề này để bảo vệ sức khỏe bản thân tốt hơn.";
+
+            // Disable all option buttons
+            document.querySelectorAll('.option-btn').forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
+            
+            const sectionName = SECTIONS[currentSectionKey].name;
+            resultAreaDiv.innerHTML = `
+                <div class="result-summary">
+                    <div class="score-circle">${correctCount}/${total}</div>
+                    <div class="score-text">${percentage}%</div>
+                    <div class="score-message">${message}</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-outline" id="reviewWrongResultBtn"><i class="fas fa-search"></i> Xem lại câu sai</button>
+                    </div>
+                </div>
+            `;
+            showStep('result');
+            document.getElementById('reviewWrongResultBtn')?.addEventListener('click', () => {
+                showStep('quiz');
+                setTimeout(() => {
+                    const wrongs = document.querySelectorAll('.question-item.answered-wrong');
+                    if (wrongs.length) wrongs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    else alert('🎉 Chúc mừng! Bạn đã trả lời đúng tất cả!');
+                }, 100);
+            });
+        }
+
+        function resetAndRetrySame() {
+            if (currentSectionKey) startQuiz(currentSectionKey);
+        }
+
+        function goToSelection() {
+            showStep('selection');
+        }
+
+        // Event binding & init
+        document.getElementById('submitQuizBtn').addEventListener('click', submitQuizAndShowResult);
+        document.getElementById('backToSectionsBtn').addEventListener('click', goToSelection);
+        document.getElementById('newQuizFromResultBtn').addEventListener('click', goToSelection);
+        document.getElementById('retrySameFromResultBtn').addEventListener('click', () => { resetAndRetrySame(); });
+        
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
+        
+        renderSections();
+        showStep('selection');
+
+        // Theme
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const body = document.body;
+        function setTheme(theme) {
+            body.classList.toggle('dark', theme === 'dark');
+            localStorage.setItem('eduhealth-theme', theme);
+            const icon = themeBtn.querySelector('i');
+            const span = themeBtn.querySelector('span');
+            if (theme === 'dark') { icon.className = 'fas fa-sun'; span.innerText = 'Chế độ sáng'; }
+            else { icon.className = 'fas fa-moon'; span.innerText = 'Chế độ tối'; }
+        }
+        const saved = localStorage.getItem('eduhealth-theme');
+        if (saved === 'dark') setTheme('dark'); else setTheme('light');
+        themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
+        
+        const menuToggle = document.getElementById('menuToggleBtn');
+        const mobilePanel = document.getElementById('mobileMenuPanel');
+        if(menuToggle) menuToggle.addEventListener('click', () => { mobilePanel.classList.toggle('open'); const icon = menuToggle.querySelector('i'); if(mobilePanel.classList.contains('open')){ icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); } else { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } });
+    </script>
+</body>
+</html>
