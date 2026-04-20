@@ -1,13 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Câu hỏi giáo dục sức khỏe học đường - EduHealth AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EduHealth AI - Kho báu tri thức</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
         :root {
             --blue-primary: #3b82f6;
             --blue-deep: #2563eb;
@@ -26,13 +32,9 @@
             --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
             --nav-bg: rgba(255, 255, 255, 0.92);
-            --tag-bg: #fce7f3;
-            --input-bg: #ffffff;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --correct: #10b981;
-            --incorrect: #ef4444;
         }
 
         body.dark {
@@ -45,14 +47,6 @@
             --border-light: #334155;
             --border-soft: #2d3a4e;
             --nav-bg: rgba(15, 23, 42, 0.94);
-            --tag-bg: #2d3a4e;
-            --input-bg: #1e293b;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
         }
 
         body {
@@ -61,12 +55,10 @@
             color: var(--text-dark);
             transition: background-color 0.3s ease;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--border-soft); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: var(--pink-primary); border-radius: 10px; }
-
+        /* Navigation */
         nav {
             position: fixed;
             top: 0;
@@ -144,6 +136,7 @@
             color: var(--text-mid);
             font-family: 'DM Sans', sans-serif;
         }
+
         .theme-toggle:hover {
             border-color: var(--blue-primary);
             color: var(--blue-primary);
@@ -162,6 +155,7 @@
             align-items: center;
             gap: 8px;
         }
+
         .menu-toggle:hover {
             background: var(--grad-pink-blue);
             color: white;
@@ -188,17 +182,20 @@
             transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             pointer-events: none;
         }
+
         .mobile-menu-panel.open {
             transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
+
         .mobile-menu-panel .nav-links-mobile {
             display: flex;
             flex-direction: column;
             padding: 24px 6%;
             gap: 20px;
         }
+
         .mobile-menu-panel .nav-link-mobile {
             padding: 12px 0;
             font-size: 16px;
@@ -210,60 +207,47 @@
             gap: 14px;
             border-bottom: 1px solid var(--border-light);
         }
+
         .mobile-menu-panel .nav-link-mobile i {
             width: 28px;
             color: var(--blue-primary);
             font-size: 18px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 100px 20px 60px;
-        }
-
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-title {
-            font-family: 'Fraunces', serif;
-            font-size: 32px;
-            font-weight: 500;
-            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        /* Main Layout */
+        .main-container {
+            padding-top: 74px;
+            min-height: 100vh;
             display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            flex-direction: column;
         }
 
-        .page-desc {
-            color: var(--text-dim);
-            font-size: 15px;
-            line-height: 1.5;
+        .content-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
         }
 
         /* Sections Grid */
         .sections-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 20px;
         }
 
         .section-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 24px 20px;
+            border-radius: 28px;
+            padding: 28px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid var(--border-light);
-            position: relative;
-            overflow: hidden;
         }
 
         .section-card:hover {
@@ -273,320 +257,310 @@
         }
 
         .section-icon {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background: var(--grad-blue-pink);
-            border-radius: 20px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 16px;
-            font-size: 28px;
+            font-size: 32px;
             color: white;
         }
 
         .section-title {
             font-family: 'Fraunces', serif;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             margin-bottom: 6px;
         }
 
         .section-name {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-dim);
         }
 
         .section-stats {
             margin-top: 12px;
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-dim);
+        }
+
+        /* Game Board */
+        .game-wrapper {
             display: flex;
             justify-content: center;
-            gap: 16px;
+            align-items: center;
+            background: #1a1e2a;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow-md);
         }
 
-        /* Quiz Container */
-        .quiz-container {
-            background: var(--card-bg);
-            border-radius: 32px;
-            border: 1px solid var(--border-light);
+        .board {
+            position: relative;
+            background: #0f172a;
+            border-radius: 12px;
             overflow: hidden;
-            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .quiz-header {
-            background: var(--grad-blue-pink);
-            padding: 20px 28px;
-            color: white;
+        .board-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            z-index: 0;
+        }
+
+        .game-row {
+            display: flex;
+            position: relative;
+            z-index: 1;
+        }
+
+        .game-cell {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Zoom hero and demon to 125% */
+        .hero-entity, .demon-entity {
+            width: 55px;
+            height: 55px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            image-rendering: crisp-edges;
+            transform: scale(1.25);
+        }
+        
+        .hero-entity {
+            background-image: url('hero.gif');
+        }
+        
+        .demon-entity {
+            background-image: url('demon.gif');
+        }
+        
+        .trap-entity {
+            width: 44px;
+            height: 44px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-image: url('trap.png');
+            image-rendering: crisp-edges;
+        }
+        
+        /* Invisible door - no display */
+        .door-entity {
+            display: none;
+        }
+
+        .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            margin-bottom: 16px;
+            padding: 0 10px;
         }
-
-        .quiz-header h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .quiz-progress {
-            background: rgba(255,255,255,0.2);
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .questions-area {
-            padding: 28px;
-        }
-
-        .question-item {
-            background: var(--bg-surface);
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-light);
-            transition: all 0.2s;
-        }
-
-        .question-item.answered-correct {
-            border-left: 4px solid var(--correct);
-        }
-
-        .question-item.answered-wrong {
-            border-left: 4px solid var(--incorrect);
-        }
-
-        .question-text {
-            font-size: 16px;
-            font-weight: 500;
-            line-height: 1.5;
-            margin-bottom: 18px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .question-number {
-            background: var(--grad-blue-pink);
-            color: white;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .options {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-left: 40px;
-        }
-
-        .option-btn {
+        
+        .game-info {
             background: var(--card-bg);
-            border: 2px solid var(--border-light);
-            padding: 10px 28px;
-            border-radius: 50px;
-            font-size: 14px;
+            padding: 8px 20px;
+            border-radius: 40px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'DM Sans', sans-serif;
             color: var(--text-mid);
+            border: 1px solid var(--border-light);
+            font-size: 14px;
         }
-
-        .option-btn:hover:not(:disabled) {
+        
+        .back-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-light);
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+        
+        .back-btn:hover {
             border-color: var(--blue-primary);
             color: var(--blue-primary);
+        }
+
+        /* Popup chung */
+        .custom-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .popup-container {
+            background: var(--bg-surface);
+            border-radius: 32px;
+            max-width: 450px;
+            width: 90%;
+            padding: 28px 24px;
+            text-align: center;
+            border: 2px solid var(--pink-primary);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .popup-container h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .popup-container .popup-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .popup-container p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-mid);
+            margin-bottom: 20px;
+        }
+
+        .popup-container .popup-btn {
+            background: var(--grad-blue-pink);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            transition: transform 0.2s;
+        }
+
+        .popup-container .popup-btn:hover {
             transform: scale(1.02);
         }
 
-        .option-btn.selected-true {
-            background: var(--correct);
-            border-color: var(--correct);
-            color: white;
+        .popup-container .instruction-list {
+            text-align: left;
+            margin: 16px 0;
+            padding-left: 20px;
         }
 
-        .option-btn.selected-false {
-            background: var(--incorrect);
-            border-color: var(--incorrect);
-            color: white;
-        }
-
-        .option-btn.disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .feedback {
-            margin-left: 40px;
-            margin-top: 12px;
-            padding: 10px 16px;
-            border-radius: 16px;
-            font-size: 13px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .feedback.show {
-            display: flex;
-        }
-
-        .feedback.correct {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--correct);
-        }
-
-        .feedback.incorrect {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--incorrect);
-        }
-
-        .quiz-actions {
-            padding: 20px 28px 28px;
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .btn {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-light);
-            padding: 12px 28px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'DM Sans', sans-serif;
+        .popup-container .instruction-list li {
+            margin: 10px 0;
             color: var(--text-mid);
         }
 
-        .btn-primary {
-            background: var(--grad-blue-pink);
-            color: white;
-            border: none;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-light);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--blue-primary);
-            color: var(--blue-primary);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-            border: none;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-        }
-
-        .result-summary {
-            background: var(--bg-surface);
-            border-radius: 32px;
-            padding: 32px;
-            text-align: center;
-            border: 1px solid var(--border-light);
-            margin-top: 20px;
-        }
-
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--grad-blue-pink);
+        /* Quiz Modal */
+        .quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
-            color: white;
-            font-size: 36px;
-            font-weight: 700;
-            font-family: 'Fraunces', serif;
+            z-index: 1000;
         }
 
-        .score-text {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .score-message {
-            color: var(--text-dim);
-            margin-bottom: 24px;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .no-quiz {
+        .quiz-container {
+            background: var(--bg-surface);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 28px 24px;
             text-align: center;
-            padding: 60px 20px;
-            color: var(--text-dim);
+            border: 2px solid var(--pink-primary);
+            animation: fadeIn 0.2s ease;
         }
 
-        .no-quiz i {
-            font-size: 64px;
+        .quiz-container h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            color: var(--pink-deep);
             margin-bottom: 16px;
-            opacity: 0.5;
         }
 
-        /* UI step visibility */
-        .ui-step {
-            transition: all 0.2s ease;
+        .quiz-question {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 20px 0;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .quiz-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--border-light);
+            padding: 12px;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.1s linear;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .quiz-btn:hover {
+            background: var(--grad-blue-pink);
+            color: white;
+            border-color: transparent;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.96);}
+            to { opacity: 1; transform: scale(1);}
         }
 
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .menu-toggle { display: flex; }
-            .sections-grid { grid-template-columns: repeat(2, 1fr); }
-            .page-title { font-size: 24px; }
-            .options { margin-left: 0; }
-            .feedback { margin-left: 0; }
-            .question-text { flex-direction: column; }
-            .options { margin-left: 0; }
-        }
-
-        @media (max-width: 480px) {
+            .game-cell { width: 38px; height: 38px; }
+            .hero-entity, .demon-entity { width: 43px; height: 43px; }
+            .trap-entity { width: 34px; height: 34px; }
             .sections-grid { grid-template-columns: 1fr; }
-            .quiz-header { flex-direction: column; text-align: center; }
+            .content-area { padding: 20px 15px; }
+            .game-info { font-size: 11px; padding: 6px 12px; }
+        }
+        
+        @media (max-width: 640px) {
+            .game-cell { width: 32px; height: 32px; }
+            .hero-entity, .demon-entity { width: 36px; height: 36px; }
+            .trap-entity { width: 28px; height: 28px; }
         }
     </style>
 </head>
@@ -597,11 +571,11 @@
             <div class="logo-type">EduHealth AI</div>
         </a>
         <div class="nav-menu">
-            <a href="index.html" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
-            <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
-            <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
-            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
+            <a href="#" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="#" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="#" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="#" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="#" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
         </div>
         <div class="nav-right">
             <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
@@ -610,52 +584,40 @@
     </nav>
     <div class="mobile-menu-panel" id="mobileMenuPanel">
         <div class="nav-links-mobile">
-            <a href="index.html" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
-            <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
-            <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
-            <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="minigame.html" class="nav-link-mobile"><i class="fas fa-brain"></i> Minigame</a>
+            <a href="#" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="#" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="#" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="#" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="#" class="nav-link-mobile"><i class="fas fa-brain"></i> Minigame</a>
         </div>
     </div>
 
-    <div class="container">
-        <div class="page-header">
-            <h1 class="page-title"><i class="fas fa-graduation-cap"></i> Câu hỏi giáo dục sức khỏe học đường</h1>
-            <p class="page-desc">📚 Bộ câu hỏi đúng/sai giúp học sinh tự đánh giá kiến thức về chăm sóc sức khỏe, vệ sinh cá nhân, chăm sóc da, lối sống lành mạnh và an toàn học đường. Mỗi lần làm bài, câu hỏi sẽ được xáo trộn để thử thách kiến thức thực sự của bạn!</p>
-        </div>
-
-        <!-- STEP 1: CHỌN MỤC (luôn hiển thị khi chưa chọn phần) -->
-        <div id="stepSectionSelection" class="ui-step">
-            <div class="sections-grid" id="sectionsGrid"></div>
-        </div>
-
-        <!-- STEP 2: UI LÀM BÀI (Ẩn mặc định) -->
-        <div id="stepQuiz" class="ui-step" style="display: none;">
-            <div class="quiz-container">
-                <div class="quiz-header">
-                    <h2 id="quizHeaderTitle"><i class="fas fa-pen-alt"></i> Đang tải...</h2>
-                    <div class="quiz-progress" id="quizProgress">0/0 câu đã trả lời</div>
-                </div>
-                <div class="questions-area" id="questionsArea"></div>
-                <div class="quiz-actions">
-                    <button class="btn btn-outline" id="backToSectionsBtn"><i class="fas fa-arrow-left"></i> Chọn phần khác</button>
-                    <button class="btn btn-primary" id="submitQuizBtn"><i class="fas fa-check-circle"></i> Nộp bài & Xem kết quả</button>
-                </div>
+    <div class="main-container">
+        <div class="content-area" id="contentArea">
+            <!-- Step 1: Chọn danh mục -->
+            <div id="stepSelection" style="width: 100%; display: flex; justify-content: center;">
+                <div class="sections-grid" id="sectionsGrid"></div>
             </div>
-        </div>
-
-        <!-- STEP 3: UI KẾT QUẢ (Ẩn mặc định) -->
-        <div id="stepResult" class="ui-step" style="display: none;">
-            <div id="resultArea"></div>
-            <div style="margin-top: 24px; text-align: center;">
-                <button class="btn btn-outline" id="newQuizFromResultBtn"><i class="fas fa-plus-circle"></i> Chọn phần mới</button>
-                <button class="btn btn-primary" id="retrySameFromResultBtn"><i class="fas fa-redo-alt"></i> Làm lại phần này</button>
+            
+            <!-- Step 2: Game Board -->
+            <div id="stepGame" style="display: none; width: 100%;">
+                <div class="game-wrapper">
+                    <div>
+                        <div class="game-header">
+                            <button class="back-btn" id="gameBackBtn"><i class="fas fa-arrow-left"></i> Đổi chủ đề</button>
+                            <div class="game-info" id="gameStats">🐉 Quái vật: 0 | 🚪 Cửa thoát: 2 ô</div>
+                        </div>
+                        <div id="gameBoard" class="board">
+                            <img class="board-img" src="https://github.com/LucasLevino/Heroway/blob/main/src/assets/imgs/tileset.gif?raw=true" alt="Cenário" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // DỮ LIỆU CÂU HỎI
+        // ==================== DỮ LIỆU CÂU HỎI ====================
         const SECTIONS = {
             A: { name: "Vệ sinh cá nhân và phòng bệnh", icon: "🧼", questions: [
                 { text: "Rửa tay bằng xà phòng trước khi ăn và sau khi đi vệ sinh là một cách quan trọng để phòng bệnh.", correct: true },
@@ -704,217 +666,416 @@
             ]}
         };
 
-        function shuffleArray(arr) {
-            const shuffled = [...arr];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-
+        const TILE_SIZE = 48;
+        const MAP_WIDTH = 20;
+        const MAP_HEIGHT = 20;
+        
         let currentSectionKey = null;
-        let currentQuestions = [];
-        let quizSubmittedFlag = false;
-
-        // DOM elements
-        const stepSelection = document.getElementById('stepSectionSelection');
-        const stepQuiz = document.getElementById('stepQuiz');
-        const stepResult = document.getElementById('stepResult');
-        const sectionsGrid = document.getElementById('sectionsGrid');
-        const questionsArea = document.getElementById('questionsArea');
-        const quizHeaderTitle = document.getElementById('quizHeaderTitle');
-        const quizProgressSpan = document.getElementById('quizProgress');
-        const resultAreaDiv = document.getElementById('resultArea');
-
-        // Helper: show/hide steps
-        function showStep(step) {
-            stepSelection.style.display = 'none';
-            stepQuiz.style.display = 'none';
-            stepResult.style.display = 'none';
-            if (step === 'selection') stepSelection.style.display = 'block';
-            if (step === 'quiz') stepQuiz.style.display = 'block';
-            if (step === 'result') stepResult.style.display = 'block';
+        let currentQuestionsList = [];
+        let gameActive = true;
+        let waitingForQuiz = false;
+        
+        // Game state
+        let heroPos = { x: 2, y: 16 };
+        let demons = [];
+        let traps = [];
+        // 2 doors (invisible) at (13, 2) and (14, 2) - coordinates (x, y) with (0,0) top-left
+        let doors = [
+            { x: 13, y: 2 },
+            { x: 14, y: 2 }
+        ];
+        let walls = [];
+        
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
         }
-
-        // Render các phần
+        
+        // Check if position is in locked top rows (y < 2)
+        function isLockedArea(x, y) {
+            return y < 2;
+        }
+        
+        function initGameMap() {
+            // Walls (furniture positions)
+            walls = [
+                { x: 2, y: 17 }, { x: 8, y: 2 }, { x: 16, y: 2 }, { x: 3, y: 2 }
+            ];
+            
+            // Traps
+            traps = [
+                { x: 16, y: 15 }, { x: 4, y: 10 }, { x: 8, y: 6 }, { x: 8, y: 2 }, { x: 11, y: 5 }, { x: 13, y: 4 }
+            ];
+            
+            // Demons - ensure they don't spawn in locked area
+            demons = [];
+            const demonPositions = [
+                { x: 15, y: 15 }, { x: 15, y: 14 }, { x: 10, y: 10 }, { x: 10, y: 9 },
+                { x: 10, y: 5 }, { x: 9, y: 5 }, { x: 4, y: 4 }, { x: 5, y: 4 },
+                { x: 15, y: 4 }, { x: 14, y: 4 }
+            ];
+            demonPositions.forEach(pos => {
+                if (!isLockedArea(pos.x, pos.y)) {
+                    demons.push({ ...pos });
+                }
+            });
+            
+            heroPos = { x: 2, y: 16 };
+            // doors are fixed at (13,2) and (14,2)
+            doors = [
+                { x: 13, y: 2 },
+                { x: 14, y: 2 }
+            ];
+        }
+        
+        function isWall(x, y) {
+            return walls.some(w => w.x === x && w.y === y);
+        }
+        
+        function isTrap(x, y) {
+            return traps.some(t => t.x === x && t.y === y);
+        }
+        
+        function isDoor(x, y) {
+            return doors.some(d => d.x === x && d.y === y);
+        }
+        
+        function getDemonAt(x, y) {
+            return demons.find(d => d.x === x && d.y === y);
+        }
+        
+        function removeDemonAt(x, y) {
+            const index = demons.findIndex(d => d.x === x && d.y === y);
+            if (index !== -1) demons.splice(index, 1);
+        }
+        
+        function renderGame() {
+            const boardDiv = document.getElementById('gameBoard');
+            if (!boardDiv) return;
+            
+            // Clear previous cells but keep background image
+            const existingRows = boardDiv.querySelectorAll('.game-row');
+            existingRows.forEach(row => row.remove());
+            
+            for (let row = 0; row < MAP_HEIGHT; row++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'game-row';
+                for (let col = 0; col < MAP_WIDTH; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'game-cell';
+                    
+                    // Render entities
+                    if (heroPos.x === col && heroPos.y === row) {
+                        const heroDiv = document.createElement('div');
+                        heroDiv.className = 'hero-entity';
+                        cell.appendChild(heroDiv);
+                    } else if (getDemonAt(col, row)) {
+                        const demonDiv = document.createElement('div');
+                        demonDiv.className = 'demon-entity';
+                        cell.appendChild(demonDiv);
+                    } else if (isTrap(col, row)) {
+                        const trapDiv = document.createElement('div');
+                        trapDiv.className = 'trap-entity';
+                        cell.appendChild(trapDiv);
+                    } else if (isDoor(col, row)) {
+                        // Invisible door - no visual element
+                        const doorDiv = document.createElement('div');
+                        doorDiv.className = 'door-entity';
+                        cell.appendChild(doorDiv);
+                    }
+                    
+                    rowDiv.appendChild(cell);
+                }
+                boardDiv.appendChild(rowDiv);
+            }
+            
+            const statsDiv = document.getElementById('gameStats');
+            if (statsDiv) {
+                if (demons.length === 0) {
+                    statsDiv.innerHTML = `✨ Đã tiêu diệt HẾT quái vật! ✨ | 🚪 Hãy đến ô cửa để chiến thắng!`;
+                } else {
+                    statsDiv.innerHTML = `🐉 Quái vật còn lại: ${demons.length} | 🚪 Cửa thoát: ${doors.length} ô (cần diệt hết quái trước)`;
+                }
+            }
+        }
+        
+        // Custom popup thay thế alert
+        function showPopup(title, message, icon, onClose = null) {
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'custom-popup';
+            modalDiv.innerHTML = `
+                <div class="popup-container">
+                    <div class="popup-icon">${icon}</div>
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <button class="popup-btn" id="popupCloseBtn">Đóng</button>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            
+            const closeBtn = modalDiv.querySelector('#popupCloseBtn');
+            closeBtn.addEventListener('click', () => {
+                modalDiv.remove();
+                if (onClose) onClose();
+            });
+        }
+        
+        // Popup hướng dẫn
+        function showGuidePopup(onComplete) {
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'custom-popup';
+            modalDiv.innerHTML = `
+                <div class="popup-container">
+                    <div class="popup-icon">🎮</div>
+                    <h3>HƯỚNG DẪN CHƠI</h3>
+                    <ul class="instruction-list">
+                        <li>🕹️ <strong>Di chuyển:</strong> Dùng phím mũi tên (↑ ↓ ← →)</li>
+                        <li>👾 <strong>Tiêu diệt quái vật:</strong> Chạm vào quái vật → Trả lời đúng câu hỏi để tiêu diệt chúng</li>
+                        <li>⚠️ <strong>Tránh bẫy:</strong> Dẫm vào bẫy sẽ thua ngay lập tức</li>
+                        <li>🚪 <strong>Chiến thắng:</strong> Tiêu diệt HẾT quái vật → Đi đến 2 ô cửa (phía trên bản đồ) để chiến thắng</li>
+                        <li>💡 <strong>Mẹo:</strong> Mỗi câu hỏi là kiến thức y tế học đường bổ ích!</li>
+                    </ul>
+                    <button class="popup-btn" id="guideCloseBtn">BẮT ĐẦU CHƠI!</button>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            
+            const closeBtn = modalDiv.querySelector('#guideCloseBtn');
+            closeBtn.addEventListener('click', () => {
+                modalDiv.remove();
+                if (onComplete) onComplete();
+            });
+        }
+        
+        function showQuizForDemon(demonAt) {
+            if (!currentQuestionsList || currentQuestionsList.length === 0) {
+                showPopup("Lỗi!", "Không tìm thấy câu hỏi!", "❌", () => finishGame(false, "Lỗi dữ liệu câu hỏi!"));
+                return;
+            }
+            
+            waitingForQuiz = true;
+            const randomQ = { ...currentQuestionsList[Math.floor(Math.random() * currentQuestionsList.length)] };
+            
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'quiz-modal';
+            modalDiv.innerHTML = `
+                <div class="quiz-container">
+                    <h3>⚔️ Đối mặt với quái vật! ⚔️</h3>
+                    <div class="quiz-question">${escapeHtml(randomQ.text)}</div>
+                    <div class="quiz-options">
+                        <button class="quiz-btn" data-answer="true"><i class="fas fa-check-circle"></i> Đúng</button>
+                        <button class="quiz-btn" data-answer="false"><i class="fas fa-times-circle"></i> Sai</button>
+                    </div>
+                    <p style="margin-top: 12px; font-size:13px; color:var(--text-dim);">Trả lời đúng để tiêu diệt quái vật!</p>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            
+            const btns = modalDiv.querySelectorAll('.quiz-btn');
+            const handleAnswer = (e) => {
+                const selectedAnswer = e.currentTarget.getAttribute('data-answer') === 'true';
+                const isCorrect = (selectedAnswer === randomQ.correct);
+                modalDiv.remove();
+                
+                if (isCorrect) {
+                    removeDemonAt(demonAt.x, demonAt.y);
+                    renderGame();
+                    waitingForQuiz = false;
+                    if (demons.length === 0) {
+                        showPopup("🎉 CHÚC MỪNG!", "Bạn đã tiêu diệt toàn bộ quái vật! Hãy đến ô cửa (2 ô phía trên bản đồ) để chiến thắng!", "🏆");
+                    }
+                } else {
+                    showPopup("💀 GAME OVER", "Trả lời SAI! Quái vật đã tấn công bạn...", "💀", () => finishGame(false, ""));
+                }
+            };
+            btns.forEach(btn => btn.addEventListener('click', handleAnswer));
+        }
+        
+        function finishGame(isWin, message) {
+            if (!gameActive) return;
+            gameActive = false;
+            waitingForQuiz = false;
+            if (window.demonInterval) clearInterval(window.demonInterval);
+            
+            if (isWin) {
+                showPopup("🏆 CHIẾN THẮNG!", "Bạn đã tiêu diệt hết quái vật và tìm được cửa thoát!", "🏆", () => {
+                    startGameWithSection(currentSectionKey);
+                });
+            } else if (message) {
+                showPopup("💀 GAME OVER", message, "💀", () => {
+                    document.getElementById('stepGame').style.display = 'none';
+                    document.getElementById('stepSelection').style.display = 'flex';
+                    gameActive = true;
+                });
+            } else {
+                document.getElementById('stepGame').style.display = 'none';
+                document.getElementById('stepSelection').style.display = 'flex';
+                gameActive = true;
+            }
+        }
+        
+        function moveHero(dx, dy) {
+            if (!gameActive || waitingForQuiz) return false;
+            
+            const newX = heroPos.x + dx;
+            const newY = heroPos.y + dy;
+            
+            if (newX < 0 || newX >= MAP_WIDTH || newY < 0 || newY >= MAP_HEIGHT) return false;
+            // Check locked area (y < 2)
+            if (isLockedArea(newX, newY)) return false;
+            if (isWall(newX, newY)) return false;
+            
+            // Check trap
+            if (isTrap(newX, newY)) {
+                finishGame(false, "Bạn đã dẫm vào bẫy!");
+                return false;
+            }
+            
+            // Check demon
+            const demonHere = getDemonAt(newX, newY);
+            if (demonHere) {
+                showQuizForDemon(demonHere);
+                return false;
+            }
+            
+            // Check door - WIN CONDITION: only if all demons are dead
+            if (isDoor(newX, newY)) {
+                if (demons.length === 0) {
+                    finishGame(true, "");
+                } else {
+                    showPopup("⚠️ CHƯA THỂ THOÁT", `Còn ${demons.length} con quái vật đang canh giữ. Hãy tiêu diệt hết chúng trước khi đến cửa!`, "⚠️");
+                }
+                return false;
+            }
+            
+            heroPos.x = newX;
+            heroPos.y = newY;
+            renderGame();
+            return true;
+        }
+        
+        function moveDemons() {
+            if (!gameActive || waitingForQuiz) return;
+            
+            const directions = [[-1,0], [1,0], [0,-1], [0,1]];
+            for (let demon of demons) {
+                const shuffledDirs = shuffleArray([...directions]);
+                for (let [dx, dy] of shuffledDirs) {
+                    const newX = demon.x + dx;
+                    const newY = demon.y + dy;
+                    if (newX >= 0 && newX < MAP_WIDTH && newY >= 0 && newY < MAP_HEIGHT && 
+                        !isLockedArea(newX, newY) && !isWall(newX, newY)) {
+                        if (heroPos.x === newX && heroPos.y === newY) {
+                            showQuizForDemon(demon);
+                            return;
+                        }
+                        demon.x = newX;
+                        demon.y = newY;
+                        break;
+                    }
+                }
+            }
+            renderGame();
+        }
+        
+        function startGameWithSection(sectionKey) {
+            currentSectionKey = sectionKey;
+            const section = SECTIONS[sectionKey];
+            currentQuestionsList = shuffleArray([...section.questions]);
+            initGameMap();
+            gameActive = true;
+            waitingForQuiz = false;
+            renderGame();
+            
+            document.getElementById('stepSelection').style.display = 'none';
+            document.getElementById('stepGame').style.display = 'block';
+            
+            if (window.demonInterval) clearInterval(window.demonInterval);
+            window.demonInterval = setInterval(() => moveDemons(), 1000);
+            
+            // Auto scroll to BOTTOM of page
+            setTimeout(() => {
+                window.scrollTo({
+                    top: document.body.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 150);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
         function renderSections() {
+            const grid = document.getElementById('sectionsGrid');
             const sections = ['A', 'B', 'C', 'D', 'E'];
-            sectionsGrid.innerHTML = sections.map(key => {
+            grid.innerHTML = sections.map(key => {
                 const sec = SECTIONS[key];
                 return `
                     <div class="section-card" data-section="${key}">
                         <div class="section-icon">${sec.icon}</div>
                         <div class="section-title">Phần ${key}</div>
                         <div class="section-name">${sec.name}</div>
-                        <div class="section-stats"><span><i class="fas fa-question-circle"></i> ${sec.questions.length} câu</span></div>
+                        <div class="section-stats"><span><i class="fas fa-question-circle"></i> ${sec.questions.length} câu hỏi</span></div>
                     </div>
                 `;
             }).join('');
+            
             document.querySelectorAll('.section-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const sectionKey = card.dataset.section;
-                    startQuiz(sectionKey);
+                    startGameWithSection(sectionKey);
                 });
             });
         }
-
-        function startQuiz(sectionKey) {
-            currentSectionKey = sectionKey;
-            const original = SECTIONS[sectionKey].questions;
-            const shuffled = shuffleArray(original);
-            currentQuestions = shuffled.map((q, idx) => ({
-                id: idx,
-                text: q.text,
-                correct: q.correct,
-                userAnswer: null
-            }));
-            quizSubmittedFlag = false;
-            renderQuizUI();
-            showStep('quiz');
-        }
-
-        function renderQuizUI() {
-            const section = SECTIONS[currentSectionKey];
-            quizHeaderTitle.innerHTML = `<i class="fas fa-${currentSectionKey === 'A' ? 'soap' : currentSectionKey === 'B' ? 'face-smile' : currentSectionKey === 'C' ? 'heart-pulse' : currentSectionKey === 'D' ? 'shield' : 'hand-holding-heart'}"></i> Phần ${currentSectionKey}: ${section.name}`;
-            updateProgressUI();
-            
-            if (!currentQuestions.length) {
-                questionsArea.innerHTML = '<div class="no-quiz"><i class="fas fa-exclamation-triangle"></i><p>Không có câu hỏi.</p></div>';
-                return;
-            }
-
-            questionsArea.innerHTML = currentQuestions.map((q, idx) => {
-                const selectedTrue = q.userAnswer === true ? 'selected-true' : '';
-                const selectedFalse = q.userAnswer === false ? 'selected-false' : '';
-                const answerClass = (q.userAnswer !== null) ? (q.userAnswer === q.correct ? 'answered-correct' : 'answered-wrong') : '';
-                return `
-                    <div class="question-item ${answerClass}" data-qidx="${idx}">
-                        <div class="question-text"><span class="question-number">${idx+1}</span><span>${escapeHtml(q.text)}</span></div>
-                        <div class="options">
-                            <button class="option-btn ${selectedTrue}" data-qidx="${idx}" data-answer="true"><i class="fas fa-check-circle"></i> Đúng</button>
-                            <button class="option-btn ${selectedFalse}" data-qidx="${idx}" data-answer="false"><i class="fas fa-times-circle"></i> Sai</button>
-                        </div>
-                        <div class="feedback" id="feedback-${idx}"><i class="fas fa-info-circle"></i> <span class="feedback-text"></span></div>
-                    </div>
-                `;
-            }).join('');
-
-            // Gắn sự kiện
-            document.querySelectorAll('.option-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    if (quizSubmittedFlag) return;
-                    const qidx = parseInt(btn.dataset.qidx);
-                    const answer = btn.dataset.answer === 'true';
-                    handleAnswer(qidx, answer);
-                });
-            });
-            // Hiển thị feedback nếu có
-            currentQuestions.forEach((q, idx) => {
-                if (q.userAnswer !== null) showFeedbackUI(idx, q.userAnswer, q.correct);
-            });
-        }
-
-        function handleAnswer(qidx, answer) {
-            if (quizSubmittedFlag) return;
-            const question = currentQuestions[qidx];
-            if (!question) return;
-            question.userAnswer = answer;
-            const isCorrect = (answer === question.correct);
-            const questionDiv = document.querySelector(`.question-item[data-qidx="${qidx}"]`);
-            if (questionDiv) {
-                questionDiv.classList.remove('answered-correct', 'answered-wrong');
-                questionDiv.classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
-                const trueBtn = questionDiv.querySelector('.option-btn[data-answer="true"]');
-                const falseBtn = questionDiv.querySelector('.option-btn[data-answer="false"]');
-                if (trueBtn) { trueBtn.classList.remove('selected-true', 'selected-false'); if (answer === true) trueBtn.classList.add('selected-true'); }
-                if (falseBtn) { falseBtn.classList.remove('selected-true', 'selected-false'); if (answer === false) falseBtn.classList.add('selected-false'); }
-            }
-            showFeedbackUI(qidx, answer, question.correct);
-            updateProgressUI();
-        }
-
-        function showFeedbackUI(qidx, userAnswer, correctAnswer) {
-            const fbDiv = document.getElementById(`feedback-${qidx}`);
-            if (!fbDiv) return;
-            const isCorrect = (userAnswer === correctAnswer);
-            const correctText = correctAnswer ? "Đúng" : "Sai";
-            const explanation = isCorrect ? `✅ Chính xác! Đáp án là ${correctText}.` : `❌ Chưa đúng. Đáp án đúng là ${correctText}. Hãy ghi nhớ để chăm sóc sức khỏe tốt hơn nhé!`;
-            fbDiv.querySelector('.feedback-text').innerHTML = explanation;
-            fbDiv.classList.add('show');
-            fbDiv.classList.remove('correct', 'incorrect');
-            fbDiv.classList.add(isCorrect ? 'correct' : 'incorrect');
-        }
-
-        function updateProgressUI() {
-            const answered = currentQuestions.filter(q => q.userAnswer !== null).length;
-            const total = currentQuestions.length;
-            quizProgressSpan.innerHTML = `${answered}/${total} câu đã trả lời`;
-        }
-
-        function submitQuizAndShowResult() {
-            if (quizSubmittedFlag) return;
-            const unanswered = currentQuestions.filter(q => q.userAnswer === null);
-            if (unanswered.length > 0) {
-                alert(`⚠️ Bạn còn ${unanswered.length} câu chưa trả lời. Hãy hoàn thành tất cả câu hỏi trước khi nộp bài!`);
-                return;
-            }
-            quizSubmittedFlag = true;
-            let correctCount = 0;
-            currentQuestions.forEach(q => { if (q.userAnswer === q.correct) correctCount++; });
-            const total = currentQuestions.length;
-            const percentage = Math.round((correctCount / total) * 100);
-            let message = "";
-            if (percentage >= 90) message = "🏆 Xuất sắc! Bạn là chuyên gia sức khỏe học đường đấy!";
-            else if (percentage >= 75) message = "🎉 Rất tốt! Bạn có kiến thức vững vàng về chăm sóc sức khỏe.";
-            else if (percentage >= 60) message = "👍 Khá ổn! Hãy xem lại những câu sai để nâng cao kiến thức nhé.";
-            else if (percentage >= 40) message = "📚 Cố gắng hơn nữa! Đọc lại các câu hỏi và ghi nhớ đáp án đúng.";
-            else message = "💪 Đừng nản! Hãy học thêm về chủ đề này để bảo vệ sức khỏe bản thân tốt hơn.";
-
-            // Disable all option buttons
-            document.querySelectorAll('.option-btn').forEach(btn => { btn.disabled = true; btn.classList.add('disabled'); });
-            
-            const sectionName = SECTIONS[currentSectionKey].name;
-            resultAreaDiv.innerHTML = `
-                <div class="result-summary">
-                    <div class="score-circle">${correctCount}/${total}</div>
-                    <div class="score-text">${percentage}%</div>
-                    <div class="score-message">${message}</div>
-                    <div class="action-buttons">
-                        <button class="btn btn-outline" id="reviewWrongResultBtn"><i class="fas fa-search"></i> Xem lại câu sai</button>
-                    </div>
-                </div>
-            `;
-            showStep('result');
-            document.getElementById('reviewWrongResultBtn')?.addEventListener('click', () => {
-                showStep('quiz');
-                setTimeout(() => {
-                    const wrongs = document.querySelectorAll('.question-item.answered-wrong');
-                    if (wrongs.length) wrongs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    else alert('🎉 Chúc mừng! Bạn đã trả lời đúng tất cả!');
-                }, 100);
-            });
-        }
-
-        function resetAndRetrySame() {
-            if (currentSectionKey) startQuiz(currentSectionKey);
-        }
-
-        function goToSelection() {
-            showStep('selection');
-        }
-
-        // Event binding & init
-        document.getElementById('submitQuizBtn').addEventListener('click', submitQuizAndShowResult);
-        document.getElementById('backToSectionsBtn').addEventListener('click', goToSelection);
-        document.getElementById('newQuizFromResultBtn').addEventListener('click', goToSelection);
-        document.getElementById('retrySameFromResultBtn').addEventListener('click', () => { resetAndRetrySame(); });
         
-        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (!gameActive || waitingForQuiz) return;
+            switch(e.key) {
+                case 'ArrowUp': moveHero(0, -1); break;
+                case 'ArrowDown': moveHero(0, 1); break;
+                case 'ArrowLeft': moveHero(-1, 0); break;
+                case 'ArrowRight': moveHero(1, 0); break;
+                default: return;
+            }
+            e.preventDefault();
+        });
         
-        renderSections();
-        showStep('selection');
-
+        document.getElementById('gameBackBtn')?.addEventListener('click', () => {
+            if (window.demonInterval) clearInterval(window.demonInterval);
+            document.getElementById('stepGame').style.display = 'none';
+            document.getElementById('stepSelection').style.display = 'flex';
+            gameActive = false;
+            waitingForQuiz = false;
+        });
+        
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggleBtn');
+        const mobilePanel = document.getElementById('mobileMenuPanel');
+        if(menuToggle) {
+            menuToggle.addEventListener('click', () => { 
+                mobilePanel.classList.toggle('open'); 
+                const icon = menuToggle.querySelector('i'); 
+                if(mobilePanel.classList.contains('open')){ 
+                    icon.classList.remove('fa-bars'); 
+                    icon.classList.add('fa-times'); 
+                } else { 
+                    icon.classList.remove('fa-times'); 
+                    icon.classList.add('fa-bars'); 
+                } 
+            });
+        }
+        
         // Theme
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
@@ -930,9 +1091,10 @@
         if (saved === 'dark') setTheme('dark'); else setTheme('light');
         themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
         
-        const menuToggle = document.getElementById('menuToggleBtn');
-        const mobilePanel = document.getElementById('mobileMenuPanel');
-        if(menuToggle) menuToggle.addEventListener('click', () => { mobilePanel.classList.toggle('open'); const icon = menuToggle.querySelector('i'); if(mobilePanel.classList.contains('open')){ icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); } else { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } });
+        renderSections();
+        
+        // Hiển thị popup hướng dẫn khi vào trang
+        showGuidePopup();
     </script>
 </body>
 </html>
