@@ -1215,6 +1215,52 @@ footer {
   margin: 24px 0;
 }
 
+.article-content .handbook-defense-box,
+.handbook-defense-box {
+  border: 2px solid #0f766e;
+  border-radius: 18px;
+  padding: 20px 22px 18px;
+  background: rgba(15,118,110,0.08);
+  margin: -24px 28px;
+}
+
+.article-content .handbook-defense-header,
+.article-content .handbook-danger-header,
+.handbook-defense-header,
+.handbook-danger-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.article-content .handbook-defense-icon,
+.handbook-defense-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #0f766e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.article-content .handbook-defense-title,
+.handbook-defense-title {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #0f766e;
+}
+
+.article-content .handbook-danger-box {
+  border: 2px solid #ef4444;
+  border-radius: 18px;
+  padding: 20px 22px 18px;
+  background: rgba(239,68,68,0.07);
+  margin: 24px 0;
+}
+
 .article-content .handbook-danger-header {
   display: flex;
   align-items: center;
@@ -1471,7 +1517,7 @@ footer {
       <div class="quiz-hero-card">
         <div class="quiz-hero-content">
           <div class="quiz-hero-text">
-            <h4><i class="fas fa-brain"></i> Minigame sức khỏe học đường</h4>
+            <h4><i class="fas fa-brain"></i> Trắc nghiệm sức khỏe học đường</h4>
             <p>Kiểm tra kiến thức của bạn về chăm sóc sức khỏe, phòng bệnh và dinh dưỡng với bộ câu hỏi đúng/sai thú vị.</p>
           </div>
           <a href="minigame.html" class="quiz-hero-btn">
@@ -1579,7 +1625,7 @@ footer {
         dangerHtml = `<div class="handbook-danger-box">
           <div class="handbook-danger-header">
             <div class="handbook-danger-icon">⚠️</div>
-            <div class="handbook-danger-title">Dấu hiệu nguy hiểm – Cần đi khám ngay</div>
+            <div class="handbook-danger-title">SOS - Khi nào cần gặp bác sĩ?</div>
           </div>
           <ul class="handbook-danger-list">
             ${dangerList.map(d => `<li><span>⚠️</span> ${escapeHtml(d.trim())}</li>`).join('')}
@@ -1589,7 +1635,7 @@ footer {
         dangerHtml = `<div class="handbook-danger-box">
           <div class="handbook-danger-header">
             <div class="handbook-danger-icon">⚠️</div>
-            <div class="handbook-danger-title">Dấu hiệu nguy hiểm – Cần đi khám ngay</div>
+            <div class="handbook-danger-title">SOS - Khi nào cần gặp bác sĩ?</div>
           </div>
           <p style="color: #b91c1c; font-weight: 600;">${escapeHtml(data.dangerSigns)}</p>
         </div>`;
@@ -1612,6 +1658,17 @@ footer {
           <div class="handbook-step-text">${escapeHtml(s.text)}</div>
         </div>`).join('')}
       </div>`;
+    }
+
+    let defenseHtml = '';
+    if (data.defenseTips && data.defenseTips.trim()) {
+      defenseHtml = `<div class="handbook-defense-box">
+          <div class="handbook-defense-header">
+            <div class="handbook-defense-icon">🛡️</div>
+            <div class="handbook-defense-title">Tips phòng thủ</div>
+          </div>
+          <div class="handbook-info-text">${escapeHtml(data.defenseTips)}</div>
+        </div>`;
     }
 
     // Xử lý ảnh grid
@@ -1647,21 +1704,21 @@ footer {
             <div class="handbook-info-row">
               <div class="handbook-info-icon" style="background: #ede9fe;">💜</div>
               <div>
-                <div class="handbook-info-label" style="color: #7c3aed;">Tên khoa học:</div>
+                <div class="handbook-info-label" style="color: #7c3aed;">Cái tên "sang chảnh"</div>
                 <div class="handbook-info-text">${escapeHtml(data.scientificName || '')}</div>
               </div>
             </div>
             <div class="handbook-info-row">
               <div class="handbook-info-icon" style="background: #fce7f3;">🧬</div>
               <div>
-                <div class="handbook-info-label" style="color: #db2777;">Mô tả ngắn:</div>
+                <div class="handbook-info-label" style="color: #db2777;">Nó là gì thế?</div>
                 <div class="handbook-info-text">${escapeHtml(data.shortDesc || '')}</div>
               </div>
             </div>
             <div class="handbook-info-row">
               <div class="handbook-info-icon" style="background: #fff3e0;">🎭</div>
               <div>
-                <div class="handbook-info-label" style="color: #ea580c;">Tình huống thường gặp:</div>
+                <div class="handbook-info-label" style="color: #ea580c;">"Drama" dễ gặp tại trường</div>
                 <div class="handbook-info-text">${escapeHtml(data.situation || '')}</div>
               </div>
             </div>
@@ -1678,7 +1735,7 @@ footer {
             <div class="handbook-info-card">
               <div class="handbook-info-card-header">
                 <div class="handbook-info-card-icon" style="background: #ef4444; color: white;">♥</div>
-                <div class="handbook-info-card-title" style="color: #ef4444;">Triệu chứng</div>
+                <div class="handbook-info-card-title" style="color: #ef4444;">Check-list dấu hiệu</div>
               </div>
               ${symptomsHtml || `<div class="handbook-info-text">${escapeHtml(data.symptoms || '')}</div>`}
             </div>
@@ -1691,6 +1748,8 @@ footer {
             </div>
             ${stepsHtml}
           </div>
+
+          ${defenseHtml}
 
           ${dangerHtml}
         </div>
@@ -1800,6 +1859,15 @@ footer {
     let contentHtml = '';
     if (post.fullContent) {
       contentHtml = post.fullContent;
+      if (post.defenseTips && post.defenseTips.trim() && !contentHtml.includes('Tips phòng thủ')) {
+        contentHtml += `<div class="handbook-defense-box">
+          <div class="handbook-defense-header">
+            <div class="handbook-defense-icon">🛡️</div>
+            <div class="handbook-defense-title">Tips phòng thủ</div>
+          </div>
+          <div class="handbook-info-text">${escapeHtml(post.defenseTips)}</div>
+        </div>`;
+      }
     } else {
       contentHtml = buildHandbookHTML(post);
     }
