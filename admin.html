@@ -266,6 +266,11 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
         .btn-primary {
             background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
             border: none;
@@ -492,24 +497,6 @@
             gap: 12px;
         }
         .toast.error { background: var(--danger); }
-
-        .editor-container {
-            border: 1px solid var(--border-light);
-            border-radius: 20px;
-            overflow: hidden;
-            background: var(--input-bg);
-        }
-
-        #handbookEditor, #newsEditor {
-            height: 300px;
-            background: var(--input-bg);
-            color: var(--text-dark);
-        }
-
-        .ql-toolbar {
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border-light);
-        }
 
         .knowledge-section {
             background: var(--bg-surface);
@@ -1223,36 +1210,6 @@
             opacity: 0.5;
         }
 
-        .category-select {
-            margin-bottom: 20px;
-        }
-        .category-select label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-            color: var(--text-mid);
-        }
-        .category-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .cat-btn {
-            padding: 8px 20px;
-            border-radius: 30px;
-            border: 1px solid var(--border-light);
-            background: transparent;
-            color: var(--text-mid);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 13px;
-        }
-        .cat-btn:hover, .cat-btn.active {
-            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
-            color: white;
-            border-color: transparent;
-        }
-
         .image-modal {
             display: none;
             position: fixed;
@@ -1308,6 +1265,145 @@
             margin-top: 10px;
         }
 
+        /* Handbook form specific styles - UI giống thuy-dau.html */
+        .handbook-preview-card {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border-light);
+        }
+        .handbook-preview-title {
+            font-family: 'Fraunces', serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--blue-primary);
+        }
+        .info-rows-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .info-row-preview {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-light);
+        }
+        .info-icon-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .info-label-preview {
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+        .info-text-preview {
+            font-size: 0.9rem;
+            color: var(--text-mid);
+            line-height: 1.5;
+        }
+        .two-col-preview {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .info-card-preview {
+            border-radius: 18px;
+            padding: 16px;
+            border: 1.5px solid var(--border-light);
+            background: var(--card-bg);
+        }
+        .info-card-header-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .info-card-icon-preview {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .info-card-title-preview {
+            font-size: 1rem;
+            font-weight: 800;
+        }
+        .steps-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .step-preview {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-light);
+        }
+        .step-num-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .danger-box-preview {
+            border: 2px solid #ef4444;
+            border-radius: 18px;
+            padding: 16px;
+            background: rgba(239, 68, 68, 0.07);
+        }
+        .danger-header-preview {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .danger-list-preview {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .danger-list-preview li {
+            font-size: 0.85rem;
+            color: #b91c1c;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -1329,10 +1425,7 @@
             .modal-content-text { font-size: 15px; }
             .modal-content-text h1 { font-size: 1.5em; }
             .modal-content-text h2 { font-size: 1.3em; }
-            .modal-content-text ul, 
-            .modal-content-text ol {
-                margin-left: 1.2em;
-            }
+            .two-col-preview { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 480px) {
@@ -1598,7 +1691,7 @@
             </div>
         </div>
 
-        <!-- Tab: Cẩm nang y tế -->
+        <!-- Tab: Cẩm nang y tế - Phiên bản mới với UI giống thuy-dau.html -->
         <div id="tab-handbook" class="tab-content" style="display: none;">
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-number" id="totalHandbook">0</div><div class="text-muted">📚 Tổng bài viết</div></div>
@@ -1609,46 +1702,161 @@
                 <div class="card-title">
                     <span><i class="fas fa-plus-circle"></i> Đăng bài viết cẩm nang</span>
                 </div>
+                
                 <form id="handbookForm">
-                    <div style="margin-bottom: 20px;">
-                        <label class="form-label">📌 Tiêu đề bài viết</label>
-                        <input type="text" class="form-control" id="handbookTitle" required>
+                    <!-- Tiêu đề và chuyên mục -->
+                    <div class="row">
+                        <div class="col-full">
+                            <label class="form-label">📌 Tiêu đề bài viết</label>
+                            <input type="text" class="form-control" id="handbookTitle" required placeholder="VD: Nốt nước lắm drama – Thủy đậu">
+                        </div>
+                        <div>
+                            <label class="form-label">📂 Chuyên mục</label>
+                            <select class="form-select" id="handbookCategory" required>
+                                <option value="">-- Chọn chuyên mục --</option>
+                                <option value="da_lieu">I. Da liễu học đường</option>
+                                <option value="truyen_nhiem">II. Bệnh truyền nhiễm thường gặp</option>
+                                <option value="mat">III. Sức khỏe mắt và thị lực</option>
+                                <option value="tinh_than">IV. Sức khỏe tinh thần và giấc ngủ</option>
+                                <option value="tuoi_day_thi">V. Sức khỏe tuổi dậy thì</option>
+                                <option value="tieu_hoa">VI. Tiêu hóa - Dinh dưỡng - Thể chất</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="form-label">😊 Icon cảm xúc (emoji)</label>
+                            <input type="text" class="form-control" id="handbookEmoji" placeholder="VD: 😟, 🤒, 👁️" value="😟">
+                        </div>
                     </div>
-                    <div style="margin-bottom: 20px;">
-                        <label class="form-label">📂 Chuyên mục</label>
-                        <select class="form-select" id="handbookCategory" required>
-                            <option value="">-- Chọn chuyên mục --</option>
-                            <option value="da_lieu">I. Da liễu học đường</option>
-                            <option value="truyen_nhiem">II. Bệnh truyền nhiễm thường gặp</option>
-                            <option value="mat">III. Sức khỏe mắt và thị lực</option>
-                            <option value="tinh_than">IV. Sức khỏe tinh thần và giấc ngủ</option>
-                            <option value="tuoi_day_thi">V. Sức khỏe tuổi dậy thì</option>
-                            <option value="tieu_hoa">VI. Tiêu hóa - Dinh dưỡng - Thể chất</option>
-                        </select>
-                    </div>
+
+                    <!-- Ảnh bìa -->
                     <div style="margin-bottom: 20px;">
                         <label class="form-label">🖼️ Ảnh bìa</label>
                         <div class="upload-area" id="handbookCoverUpload" onclick="document.getElementById('handbookCoverFile').click()">
                             <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Nhấp để tải ảnh lên hoặc kéo thả ảnh vào đây</p>
+                            <p>Nhấp để tải ảnh lên hoặc kéo thả ảnh vào đây (hoặc nhập link ảnh bên dưới)</p>
                         </div>
                         <input type="file" id="handbookCoverFile" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'handbookCoverPreview', 'handbookCoverData')">
                         <input type="hidden" id="handbookCoverData" value="">
+                        <div style="margin-top: 12px;">
+                            <input type="text" class="form-control" id="handbookCoverUrl" placeholder="Hoặc nhập URL ảnh bìa">
+                        </div>
                         <img id="handbookCoverPreview" class="image-preview" style="display: none;">
                     </div>
+
+                    <!-- Ảnh minh họa 1 -->
                     <div style="margin-bottom: 20px;">
-                        <label class="form-label">📝 Nội dung bài viết</label>
-                        <div class="editor-container">
-                            <div id="handbookEditor"></div>
+                        <label class="form-label">🖼️ Ảnh minh họa 1 (mụn nước)</label>
+                        <div class="upload-area" id="handbookImage1Upload" onclick="document.getElementById('handbookImage1File').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Nhấp để tải ảnh lên hoặc nhập link ảnh</p>
                         </div>
-                        <div class="knowledge-actions" style="margin-top: 12px;">
-                            <label class="btn-outline" style="cursor: pointer;">
-                                <i class="fas fa-file-word"></i> Import từ Word (giữ nguyên định dạng)
-                                <input type="file" id="importHandbookWord" accept=".docx" style="display: none;" onchange="importWordToEditor('handbookEditor', this)">
-                            </label>
+                        <input type="file" id="handbookImage1File" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'handbookImage1Preview', 'handbookImage1Data')">
+                        <input type="hidden" id="handbookImage1Data" value="">
+                        <div style="margin-top: 12px;">
+                            <input type="text" class="form-control" id="handbookImage1Url" placeholder="URL ảnh minh họa 1">
+                            <input type="text" class="form-control" id="handbookImage1Caption" style="margin-top: 8px;" placeholder="Chú thích ảnh 1">
+                        </div>
+                        <img id="handbookImage1Preview" class="image-preview" style="display: none;">
+                    </div>
+
+                    <!-- Ảnh minh họa 2 -->
+                    <div style="margin-bottom: 20px;">
+                        <label class="form-label">🖼️ Ảnh minh họa 2 (tổng thể)</label>
+                        <div class="upload-area" id="handbookImage2Upload" onclick="document.getElementById('handbookImage2File').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Nhấp để tải ảnh lên hoặc nhập link ảnh</p>
+                        </div>
+                        <input type="file" id="handbookImage2File" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'handbookImage2Preview', 'handbookImage2Data')">
+                        <input type="hidden" id="handbookImage2Data" value="">
+                        <div style="margin-top: 12px;">
+                            <input type="text" class="form-control" id="handbookImage2Url" placeholder="URL ảnh minh họa 2">
+                            <input type="text" class="form-control" id="handbookImage2Caption" style="margin-top: 8px;" placeholder="Chú thích ảnh 2">
+                        </div>
+                        <img id="handbookImage2Preview" class="image-preview" style="display: none;">
+                    </div>
+
+                    <!-- Info rows - 3 dòng thông tin -->
+                    <div class="handbook-preview-card">
+                        <div class="handbook-preview-title"><i class="fas fa-info-circle"></i> Thông tin cơ bản (3 mục)</div>
+                        <div class="info-rows-preview">
+                            <div class="info-row-preview">
+                                <div class="info-icon-preview" style="background: #ede9fe;">💜</div>
+                                <div style="flex:1">
+                                    <div class="info-label-preview" style="color: #7c3aed;">Tên khoa học:</div>
+                                    <input type="text" class="form-control" id="handbookScientificName" placeholder="VD: Varicella (Chickenpox)">
+                                </div>
+                            </div>
+                            <div class="info-row-preview">
+                                <div class="info-icon-preview" style="background: #fce7f3;">🧬</div>
+                                <div style="flex:1">
+                                    <div class="info-label-preview" style="color: #db2777;">Mô tả ngắn:</div>
+                                    <textarea class="form-control" id="handbookShortDesc" rows="2" placeholder="VD: Là bệnh do virus gây sốt, mệt và ban ngứa..."></textarea>
+                                </div>
+                            </div>
+                            <div class="info-row-preview">
+                                <div class="info-icon-preview" style="background: #fff3e0;">🎭</div>
+                                <div style="flex:1">
+                                    <div class="info-label-preview" style="color: #ea580c;">Tình huống thường gặp:</div>
+                                    <textarea class="form-control" id="handbookSituation" rows="2" placeholder="VD: Cùng lớp có người mắc nhưng vẫn đi học..."></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary">
+
+                    <!-- Two col: Nguyên nhân & Triệu chứng -->
+                    <div class="two-col-preview">
+                        <div class="info-card-preview">
+                            <div class="info-card-header-preview">
+                                <div class="info-card-icon-preview" style="background: #3b5ef6; color: white;">⚠</div>
+                                <div class="info-card-title-preview" style="color: #3b5ef6;">Nguyên nhân</div>
+                            </div>
+                            <textarea class="form-control" id="handbookCause" rows="3" placeholder="VD: Virus Varicella-Zoster lây qua giọt bắn và tiếp xúc dịch mụn nước..."></textarea>
+                        </div>
+                        <div class="info-card-preview">
+                            <div class="info-card-header-preview">
+                                <div class="info-card-icon-preview" style="background: #ef4444; color: white;">♥</div>
+                                <div class="info-card-title-preview" style="color: #ef4444;">Triệu chứng</div>
+                            </div>
+                            <textarea class="form-control" id="handbookSymptoms" rows="3" placeholder="Mỗi triệu chứng trên một dòng&#10;VD: Sốt, đau đầu, chán ăn&#10;Ban ngứa rồi nổi mụn nước&#10;Nốt thường bắt đầu ở thân mình rồi lan"></textarea>
+                            <small class="text-muted" style="display: block; margin-top: 8px;">* Mỗi dòng là một triệu chứng</small>
+                        </div>
+                    </div>
+
+                    <!-- Bí kíp xử lý (4 bước) -->
+                    <div class="handbook-preview-card">
+                        <div class="handbook-preview-title"><i class="fas fa-lightbulb"></i> Bí kíp xử lý tại chỗ</div>
+                        <div class="steps-preview">
+                            <div class="step-preview">
+                                <div class="step-num-preview" style="background: #f97316;">1</div>
+                                <input type="text" class="form-control" id="handbookStep1" placeholder="VD: NGỪNG: Ngừng đi học, đi chơi khi đang sốt hoặc còn nổi nốt mới">
+                            </div>
+                            <div class="step-preview">
+                                <div class="step-num-preview" style="background: #3b82f6;">2</div>
+                                <input type="text" class="form-control" id="handbookStep2" placeholder="VD: RỬA: Giữ da sạch, rửa tay sau khi chạm vào nốt">
+                            </div>
+                            <div class="step-preview">
+                                <div class="step-num-preview" style="background: #f59e0b;">3</div>
+                                <input type="text" class="form-control" id="handbookStep3" placeholder="VD: DỊU: Cắt móng tay ngắn, chườm mát, nghỉ ngơi">
+                            </div>
+                            <div class="step-preview">
+                                <div class="step-num-preview" style="background: #22c55e;">4</div>
+                                <input type="text" class="form-control" id="handbookStep4" placeholder="VD: KHÁM: Tuổi teen bị thủy đậu nên được theo dõi kỹ hơn, cần đi khám khi nặng">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dấu hiệu nguy hiểm -->
+                    <div class="danger-box-preview">
+                        <div class="danger-header-preview">
+                            <div class="danger-icon-wrap" style="width: 38px; height: 38px; border-radius: 12px; background: #7f1d1d; display: flex; align-items: center; justify-content: center;">⚠️</div>
+                            <div class="danger-title" style="font-size: 1rem; font-weight: 900; color: #ef4444;">Dấu hiệu nguy hiểm – Cần đi khám ngay</div>
+                        </div>
+                        <textarea class="form-control" id="handbookDangerSigns" rows="3" placeholder="Mỗi dấu hiệu trên một dòng&#10;VD: Sốt cao kéo dài&#10;Nốt đỏ nóng đau, rỉ mủ&#10;Khó thở, nôn nhiều hoặc lơ mơ"></textarea>
+                        <small class="text-muted" style="display: block; margin-top: 8px;">* Mỗi dòng là một dấu hiệu nguy hiểm</small>
+                    </div>
+
+                    <input type="hidden" id="editHandbookId" value="">
+                    <button type="submit" class="btn-primary" style="margin-top: 24px;">
                         <i class="fas fa-paper-plane"></i> Đăng bài
                     </button>
                 </form>
@@ -1689,6 +1897,9 @@
                         </div>
                         <input type="file" id="newsCoverFile" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'newsCoverPreview', 'newsCoverData')">
                         <input type="hidden" id="newsCoverData" value="">
+                        <div style="margin-top: 12px;">
+                            <input type="text" class="form-control" id="newsCoverUrl" placeholder="Hoặc nhập URL ảnh bìa">
+                        </div>
                         <img id="newsCoverPreview" class="image-preview" style="display: none;">
                     </div>
                     <div style="margin-bottom: 20px;">
@@ -1765,7 +1976,6 @@
         let approvedPosts = [];
         let handbookPosts = [];
         let newsPosts = [];
-        let handbookQuill = null;
         let newsQuill = null;
         
         let locationMap = null;
@@ -1826,8 +2036,10 @@
                 const base64 = await resizeImageToBase64(file, 720);
                 
                 const preview = document.getElementById(previewId);
-                preview.src = base64;
-                preview.style.display = 'block';
+                if (preview) {
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                }
                 
                 document.getElementById(dataId).value = base64;
                 
@@ -1836,6 +2048,15 @@
                 console.error('Lỗi xử lý ảnh:', error);
                 showToast('Lỗi xử lý ảnh!', true);
             }
+        }
+
+        // ========== LẤY URL ẢNH TỪ INPUT (ưu tiên file base64 hơn URL) ==========
+        function getImageUrl(imageDataId, imageUrlId) {
+            const base64 = document.getElementById(imageDataId).value;
+            if (base64) return base64;
+            const url = document.getElementById(imageUrlId).value;
+            if (url && url.trim()) return url.trim();
+            return '';
         }
 
         // ========== IMPORT WORD VÀO EDITOR ==========
@@ -1864,7 +2085,7 @@
                 html = html.replace(/<ul>/g, '<ul class="ql-indent-1">');
                 html = html.replace(/<ol>/g, '<ol class="ql-indent-1">');
                 
-                const quill = editorId === 'handbookEditor' ? handbookQuill : newsQuill;
+                const quill = newsQuill;
                 if (quill) {
                     quill.root.innerHTML = html;
                     showToast('Đã import thành công!');
@@ -2012,14 +2233,24 @@
             return formatted;
         }
 
-        function formatMarkdownToPlainText(text) {
+        function formatMarkdownForPDF(text) {
             if (!text) return '';
             let formatted = text;
             formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             formatted = formatted.replace(/__(.*?)__/g, '<strong>$1</strong>');
             formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
             formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
+            formatted = formatted.replace(/^### (.*?)$/gm, '<h4>$1</h4>');
+            formatted = formatted.replace(/^## (.*?)$/gm, '<h3>$1</h3>');
+            formatted = formatted.replace(/^# (.*?)$/gm, '<h2>$1</h2>');
+            formatted = formatted.replace(/^- (.*?)$/gm, '<li>$1</li>');
+            formatted = formatted.replace(/(<li>.*?<\/li>\n?)+/g, '<ul>$&</ul>');
+            formatted = formatted.replace(/^\d+\. (.*?)$/gm, '<li>$1</li>');
+            formatted = formatted.replace(/\n\n/g, '</p><p>');
             formatted = formatted.replace(/\n/g, '<br>');
+            formatted = '<p>' + formatted + '</p>';
+            formatted = formatted.replace(/<p><\/p>/g, '');
+            formatted = formatted.replace(/<p><br><\/p>/g, '');
             return formatted;
         }
 
@@ -2264,7 +2495,6 @@
             }, 100);
         }
         
-        // ========== TẠO PDF TỪ CUỘC TRÒ CHUYỆN ==========
         async function exportChatToPDF() {
             if (!currentChatId || !currentChatData) {
                 showToast('Chưa chọn cuộc trò chuyện!', true);
@@ -2288,11 +2518,16 @@
                     const msg = doc.data();
                     const senderName = msg.senderName || (msg.senderId === 'admin_support' ? 'Cộng tác viên y tế' : (msg.senderId === 'ai' ? 'EduHealth AI' : 'Học sinh'));
                     const time = msg.timestamp ? msg.timestamp.toDate().toLocaleString('vi-VN') : '';
+                    
+                    let messageText = msg.text || '';
+                    messageText = formatMarkdownForPDF(messageText);
+                    
                     messagesHtml += `
-                        <div style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #e0e0e0;">
-                            <div style="font-weight: bold; color: #3b82f6;">${escapeHtml(senderName)}</div>
-                            <div style="margin: 5px 0;">${formatMarkdownToPlainText(msg.text || '')}</div>
-                            <div style="font-size: 10px; color: #999;">${time}</div>
+                        <div style="margin-bottom: 20px; padding: 12px; border-bottom: 1px solid #e0e0e0;">
+                            <div style="font-weight: bold; color: #3b82f6; margin-bottom: 6px;">${escapeHtml(senderName)}</div>
+                            <div style="margin: 5px 0; line-height: 1.6;">${messageText}</div>
+                            ${msg.imageData ? `<img src="${msg.imageData}" style="max-width: 200px; border-radius: 12px; margin-top: 8px;">` : ''}
+                            <div style="font-size: 10px; color: #999; margin-top: 6px;">${time}</div>
                         </div>
                     `;
                 });
@@ -2303,11 +2538,19 @@
                     <html>
                     <head><meta charset="UTF-8"><title>Lịch sử trò chuyện</title>
                     <style>
-                        body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; }
+                        body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; line-height: 1.6; }
                         .header { text-align: center; border-bottom: 2px solid #f472b6; padding-bottom: 15px; margin-bottom: 20px; }
                         .info { background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
                         .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #718096; }
                         .message-container { margin-top: 20px; }
+                        strong { font-weight: 700; color: #1e293b; }
+                        em { font-style: italic; }
+                        h2 { font-size: 1.3em; margin: 1em 0 0.5em; color: #3b82f6; }
+                        h3 { font-size: 1.2em; margin: 0.8em 0 0.4em; color: #f472b6; }
+                        h4 { font-size: 1.1em; margin: 0.6em 0 0.3em; }
+                        ul, ol { margin: 0.5em 0 0.5em 1.5em; }
+                        li { margin: 0.2em 0; }
+                        p { margin: 0.5em 0; }
                     </style>
                     </head>
                     <body>
@@ -2321,7 +2564,7 @@
                             <div><strong>📅 Ngày tạo:</strong> ${currentChatData.createdAt ? currentChatData.createdAt.toDate().toLocaleString('vi-VN') : 'N/A'}</div>
                         </div>
                         <div class="message-container">
-                            <h3>💬 Nội dung trò chuyện</h3>
+                            <h2>💬 Nội dung trò chuyện</h2>
                             ${messagesHtml || '<p>Chưa có tin nhắn nào.</p>'}
                         </div>
                         <div class="footer">© 2026 EduHealth AI</div>
@@ -2337,6 +2580,8 @@
                 tempDiv.style.width = '800px';
                 tempDiv.style.background = 'white';
                 document.body.appendChild(tempDiv);
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
                 
                 const canvas = await html2canvas(tempDiv, { scale: 2.5, backgroundColor: '#ffffff' });
                 const imgData = canvas.toDataURL('image/jpeg', 0.98);
@@ -2398,15 +2643,15 @@
                 return;
             }
 
-            // Lưu thông tin chat hiện tại vào localStorage để trang qlpdf.html có thể đọc
+    
             const chatInfo = {
                 chatId: currentChatId,
                 userName: currentChatData.userName || currentChatData.name || 'Khách hàng',
                 createdAt: currentChatData.createdAt ? currentChatData.createdAt.toDate().toISOString() : new Date().toISOString()
             };
             localStorage.setItem('selectedChatForPDF', JSON.stringify(chatInfo));
-
-            // Chuyển sang trang qlpdf.html
+    
+    
             window.location.href = 'qlpdf.html';
         });
         
@@ -2748,26 +2993,7 @@
             modal.classList.add('active');
         }
 
-        async function viewHandbookPost(postId) {
-            const post = handbookPosts.find(p => p.id === postId);
-            if (!post) return;
-
-            const modal = document.getElementById('postModal');
-            const modalBody = document.getElementById('modalBody');
-
-            modalBody.innerHTML = `
-                <div class="modal-content-text">${post.content || ''}</div>
-                <div class="handbook-stats">
-                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
-                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
-                    <span><i class="fas fa-folder"></i> ${getCategoryName(post.category)}</span>
-                </div>
-            `;
-            
-            document.getElementById('modalTitle').innerText = post.title || 'Bài viết cẩm nang';
-            modal.classList.add('active');
-        }
-
+        // ========== HANDBOOK FUNCTIONS - Phiên bản mới ==========
         function getCategoryName(category) {
             const categories = {
                 'da_lieu': 'I. Da liễu học đường',
@@ -2780,89 +3006,136 @@
             return categories[category] || 'Chưa phân loại';
         }
 
-        async function viewNewsPost(postId) {
-            const post = newsPosts.find(p => p.id === postId);
-            if (!post) return;
+        // Hàm chuyển đổi mảng triệu chứng/dấu hiệu thành HTML list
+        function arrayToHtmlList(items, isUl = true) {
+            if (!items) return '';
+            if (typeof items === 'string') items = items.split('\n').filter(l => l.trim());
+            if (!items.length) return '';
+            const tag = isUl ? 'ul' : 'ul';
+            const listItems = items.map(item => `<li>${escapeHtml(item.trim())}</li>`).join('');
+            return `<${tag} style="margin: 0.8em 0 0.8em 1.8em;">${listItems}</${tag}>`;
+        }
 
-            const modal = document.getElementById('postModal');
-            const modalBody = document.getElementById('modalBody');
+        // Hàm tạo HTML nội dung bài viết từ các trường dữ liệu
+        function buildHandbookHTML(data) {
+            // Xử lý triệu chứng
+            let symptomsHtml = '';
+            if (data.symptoms) {
+                const symptomsList = typeof data.symptoms === 'string' ? data.symptoms.split('\n').filter(l => l.trim()) : data.symptoms;
+                if (symptomsList.length) {
+                    symptomsHtml = `<ul style="margin: 0.8em 0 0.8em 1.8em;">${symptomsList.map(s => `<li>${escapeHtml(s.trim())}</li>`).join('')}</ul>`;
+                }
+            }
 
-            modalBody.innerHTML = `
-                <div class="modal-content-text">${post.content || ''}</div>
-                <div class="handbook-stats">
-                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
-                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+            // Xử lý dấu hiệu nguy hiểm
+            let dangerHtml = '';
+            if (data.dangerSigns) {
+                const dangerList = typeof data.dangerSigns === 'string' ? data.dangerSigns.split('\n').filter(l => l.trim()) : data.dangerSigns;
+                if (dangerList.length) {
+                    dangerHtml = `<div class="danger-box" style="border: 2px solid #ef4444; border-radius: 18px; padding: 20px 22px 18px; background: rgba(239,68,68,0.07); margin: 24px 0;">
+                        <div class="danger-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                            <div style="width: 38px; height: 38px; border-radius: 12px; background: #7f1d1d; display: flex; align-items: center; justify-content: center;">⚠️</div>
+                            <div style="font-size: 1rem; font-weight: 900; color: #ef4444;">Dấu hiệu nguy hiểm – Cần đi khám ngay</div>
+                        </div>
+                        <ul class="danger-list" style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                            ${dangerList.map(d => `<li style="font-size: 0.9rem; color: #b91c1c; font-weight: 700; display: flex; align-items: center; gap: 8px;"><span>⚠️</span> ${escapeHtml(d.trim())}</li>`).join('')}
+                        </ul>
+                    </div>`;
+                }
+            }
+
+            // Xử lý 4 bước
+            let stepsHtml = '';
+            if (data.step1 || data.step2 || data.step3 || data.step4) {
+                const steps = [
+                    { num: 1, text: data.step1, color: '#f97316' },
+                    { num: 2, text: data.step2, color: '#3b82f6' },
+                    { num: 3, text: data.step3, color: '#f59e0b' },
+                    { num: 4, text: data.step4, color: '#22c55e' }
+                ].filter(s => s.text);
+                stepsHtml = `<div class="steps" style="display: flex; flex-direction: column; gap: 12px; margin: 24px 0;">
+                    ${steps.map(s => `<div class="step" style="display: flex; align-items: center; gap: 16px; background: #fafafa; border-radius: 16px; padding: 16px 20px; border: 1.5px solid #f0f0f0;">
+                        <div class="step-num" style="width: 38px; height: 38px; border-radius: 50%; background: ${s.color}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem; font-weight: 900;">${s.num}</div>
+                        <div class="step-text" style="font-size: 0.92rem; color: #333; font-weight: 600; line-height: 1.4;">${escapeHtml(s.text)}</div>
+                    </div>`).join('')}
+                </div>`;
+            }
+
+            // Xây dựng HTML hoàn chỉnh
+            return `
+                <div style="font-family: 'Nunito', 'DM Sans', sans-serif;">
+                    <!-- Header -->
+                    <div style="background: linear-gradient(120deg, #f7567c 0%, #ff9a3c 100%); padding: 28px 32px 24px; border-radius: 24px 24px 0 0;">
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px;">
+                            <div style="width: 64px; height: 64px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);">${data.emoji || '😟'}</div>
+                            <div>
+                                <h1 style="font-size: 1.7rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; line-height: 1.2; margin: 0;">${escapeHtml(data.title)}</h1>
+                                <div style="color: rgba(255,255,255,0.85); font-size: 0.95rem; font-weight: 600; margin-top: 2px;">${escapeHtml(data.scientificName || '')}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; border: 2px solid rgba(255,255,255,0.7); color: #fff; background: rgba(255,255,255,0.18);">⚠️ Cần biết</span>
+                            <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; border: 2px solid rgba(255,255,255,0.7); color: #fff; background: rgba(255,255,255,0.18);"><span style="width: 7px; height: 7px; border-radius: 50%; background: #fff; display: inline-block;"></span> Nguy hiểm</span>
+                        </div>
+                    </div>
+
+                    <!-- Image Grid -->
+                    ${data.image1 || data.image2 ? `
+                    <div style="display: grid; grid-template-columns: ${data.image1 && data.image2 ? '2fr 1fr' : '1fr'}; gap: 0; background: #222; max-height: 320px; overflow: hidden;">
+                        ${data.image1 ? `<div style="position: relative; overflow: hidden;"><img src="${data.image1}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.background='#ddd'"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.72rem; padding: 6px 10px; font-weight: 600;">${escapeHtml(data.image1Caption || '')}</div></div>` : ''}
+                        ${data.image2 ? `<div style="position: relative; overflow: hidden;"><img src="${data.image2}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.background='#ddd'"><div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.55); color: #fff; font-size: 0.72rem; padding: 6px 10px; font-weight: 600;">${escapeHtml(data.image2Caption || '')}</div></div>` : ''}
+                    </div>
+                    ` : ''}
+
+                    <!-- Body -->
+                    <div style="padding: 28px 32px;">
+                        <!-- Info rows -->
+                        <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px;">
+                            <div style="display: flex; align-items: flex-start; gap: 14px; background: #fafafa; border-radius: 14px; padding: 14px 16px;">
+                                <div style="width: 40px; height: 40px; border-radius: 12px; background: #ede9fe; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">💜</div>
+                                <div><div style="font-size: 0.82rem; font-weight: 800; color: #7c3aed; margin-bottom: 2px;">Tên khoa học:</div><div style="font-size: 0.9rem; color: #444; line-height: 1.5;">${escapeHtml(data.scientificName || '')}</div></div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 14px; background: #fafafa; border-radius: 14px; padding: 14px 16px;">
+                                <div style="width: 40px; height: 40px; border-radius: 12px; background: #fce7f3; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🧬</div>
+                                <div><div style="font-size: 0.82rem; font-weight: 800; color: #db2777; margin-bottom: 2px;">Mô tả ngắn:</div><div style="font-size: 0.9rem; color: #444; line-height: 1.5;">${escapeHtml(data.shortDesc || '')}</div></div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 14px; background: #fafafa; border-radius: 14px; padding: 14px 16px;">
+                                <div style="width: 40px; height: 40px; border-radius: 12px; background: #fff3e0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">🎭</div>
+                                <div><div style="font-size: 0.82rem; font-weight: 800; color: #ea580c; margin-bottom: 2px;">Tình huống thường gặp:</div><div style="font-size: 0.9rem; color: #444; line-height: 1.5;">${escapeHtml(data.situation || '')}</div></div>
+                            </div>
+                        </div>
+
+                        <!-- Two col: Nguyên nhân & Triệu chứng -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px;">
+                            <div style="border-radius: 18px; padding: 20px 20px 18px; border: 1.5px solid #f0f0f0; background: #fff;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                                    <div style="width: 38px; height: 38px; border-radius: 12px; background: #3b5ef6; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem;">⚠</div>
+                                    <div style="font-size: 1rem; font-weight: 800; color: #3b5ef6;">Nguyên nhân</div>
+                                </div>
+                                <div style="font-size: 0.88rem; color: #444; line-height: 1.6;">${escapeHtml(data.cause || '')}</div>
+                            </div>
+                            <div style="border-radius: 18px; padding: 20px 20px 18px; border: 1.5px solid #f0f0f0; background: #fff;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+                                    <div style="width: 38px; height: 38px; border-radius: 12px; background: #ef4444; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.1rem;">♥</div>
+                                    <div style="font-size: 1rem; font-weight: 800; color: #ef4444;">Triệu chứng</div>
+                                </div>
+                                ${symptomsHtml || `<div style="font-size: 0.88rem; color: #444; line-height: 1.6;">${escapeHtml(data.symptoms || '')}</div>`}
+                            </div>
+                        </div>
+
+                        <!-- Bí kíp xử lý -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
+                                <div style="width: 34px; height: 34px; border-radius: 50%; background: #4ade80; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem;">C</div>
+                                <div style="font-size: 1.05rem; font-weight: 800; color: #16a34a;">Bí kíp xử lý tại chỗ</div>
+                            </div>
+                            ${stepsHtml}
+                        </div>
+
+                        ${dangerHtml}
+                    </div>
                 </div>
             `;
-            
-            document.getElementById('modalTitle').innerText = post.title || 'Bản tin y tế';
-            modal.classList.add('active');
-        }
-
-        async function approvePost(id) {
-            await db.collection('posts').doc(id).update({ status: 'approved', approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            showToast('✅ Đã duyệt bài đăng!');
-            loadPostsForApproval();
-        }
-
-        async function rejectPost(id) {
-            if (confirm('Xóa bài đăng này?')) {
-                await db.collection('posts').doc(id).delete();
-                showToast('Đã từ chối bài đăng');
-                loadPostsForApproval();
-            }
-        }
-
-        async function deletePost(id) {
-            if (confirm('Xóa bài đăng này?')) {
-                await db.collection('posts').doc(id).delete();
-                showToast('Đã xóa bài đăng');
-                loadPostsForApproval();
-            }
-        }
-
-        function initHandbookEditor() {
-            if (handbookQuill) return;
-            handbookQuill = new Quill('#handbookEditor', {
-                theme: 'snow',
-                placeholder: '✍️ Viết nội dung bài viết cẩm nang...',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'align': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['blockquote', 'code-block'],
-                        ['link', 'image'],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        ['clean']
-                    ]
-                }
-            });
-        }
-
-        function initNewsEditor() {
-            if (newsQuill) return;
-            newsQuill = new Quill('#newsEditor', {
-                theme: 'snow',
-                placeholder: '✍️ Viết nội dung bản tin y tế...',
-                modules: {
-                    toolbar: [
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{ 'align': [] }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        ['blockquote', 'code-block'],
-                        ['link', 'image'],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        ['clean']
-                    ]
-                }
-            });
         }
 
         async function loadHandbook() {
@@ -2906,7 +3179,7 @@
                                         <i class="far fa-clock"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'} |
                                         <i class="far fa-eye"></i> ${post.views || 0} lượt xem
                                     </div>
-                                    <div class="small mt-1 text-muted">${truncateHtml(post.content || '', 100)}</div>
+                                    <div class="small mt-1 text-muted">${escapeHtml(post.shortDesc || '').substring(0, 100)}...</div>
                                 </div>
                             </div>
                         </div>
@@ -2923,6 +3196,27 @@
             `).join('');
         }
 
+        async function viewHandbookPost(postId) {
+            const post = handbookPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+
+            // Sử dụng nội dung HTML đã được xây dựng sẵn khi lưu
+            modalBody.innerHTML = `
+                <div class="modal-content-text">${post.fullContent || buildHandbookHTML(post)}</div>
+                <div class="handbook-stats">
+                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
+                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+                    <span><i class="fas fa-folder"></i> ${getCategoryName(post.category)}</span>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').innerText = post.title || 'Bài viết cẩm nang';
+            modal.classList.add('active');
+        }
+
         async function deleteHandbookPost(id) {
             if (confirm('Xóa bài viết cẩm nang này?')) {
                 await db.collection('handbook').doc(id).delete();
@@ -2933,12 +3227,28 @@
 
         document.getElementById('handbookForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
-            initHandbookEditor();
             
+            // Lấy dữ liệu từ form
             const title = document.getElementById('handbookTitle').value.trim();
             const category = document.getElementById('handbookCategory').value;
-            const coverImage = document.getElementById('handbookCoverData').value;
-            const content = handbookQuill.root.innerHTML;
+            const emoji = document.getElementById('handbookEmoji').value.trim() || '😟';
+            const scientificName = document.getElementById('handbookScientificName').value.trim();
+            const shortDesc = document.getElementById('handbookShortDesc').value.trim();
+            const situation = document.getElementById('handbookSituation').value.trim();
+            const cause = document.getElementById('handbookCause').value.trim();
+            const symptoms = document.getElementById('handbookSymptoms').value.trim();
+            const step1 = document.getElementById('handbookStep1').value.trim();
+            const step2 = document.getElementById('handbookStep2').value.trim();
+            const step3 = document.getElementById('handbookStep3').value.trim();
+            const step4 = document.getElementById('handbookStep4').value.trim();
+            const dangerSigns = document.getElementById('handbookDangerSigns').value.trim();
+            
+            // Lấy ảnh
+            let coverImage = getImageUrl('handbookCoverData', 'handbookCoverUrl');
+            let image1 = getImageUrl('handbookImage1Data', 'handbookImage1Url');
+            let image2 = getImageUrl('handbookImage2Data', 'handbookImage2Url');
+            const image1Caption = document.getElementById('handbookImage1Caption').value.trim();
+            const image2Caption = document.getElementById('handbookImage2Caption').value.trim();
             
             if (!title) {
                 showToast('Vui lòng nhập tiêu đề!', true);
@@ -2949,19 +3259,30 @@
                 return;
             }
             if (!coverImage) {
-                showToast('Vui lòng tải ảnh bìa lên!', true);
-                return;
-            }
-            if (!content || content === '<p><br></p>') {
-                showToast('Vui lòng nhập nội dung!', true);
+                showToast('Vui lòng tải ảnh bìa lên hoặc nhập URL ảnh!', true);
                 return;
             }
             
+            // Xây dựng object dữ liệu
             const handbookData = {
                 title: title,
                 category: category,
+                emoji: emoji,
+                scientificName: scientificName,
+                shortDesc: shortDesc,
+                situation: situation,
+                cause: cause,
+                symptoms: symptoms,
+                step1: step1,
+                step2: step2,
+                step3: step3,
+                step4: step4,
+                dangerSigns: dangerSigns,
                 coverImage: coverImage,
-                content: content,
+                image1: image1,
+                image2: image2,
+                image1Caption: image1Caption,
+                image2Caption: image2Caption,
                 author: 'Quản trị viên',
                 type: 'handbook',
                 status: 'approved',
@@ -2969,19 +3290,33 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             
+            // Tạo HTML đầy đủ để hiển thị
+            handbookData.fullContent = buildHandbookHTML(handbookData);
+            
             try {
                 await db.collection('handbook').add(handbookData);
                 showToast('✅ Đã đăng bài viết cẩm nang!');
+                
+                // Reset form
                 document.getElementById('handbookForm').reset();
                 document.getElementById('handbookCoverPreview').style.display = 'none';
+                document.getElementById('handbookImage1Preview').style.display = 'none';
+                document.getElementById('handbookImage2Preview').style.display = 'none';
                 document.getElementById('handbookCoverData').value = '';
-                if (handbookQuill) handbookQuill.root.innerHTML = '';
+                document.getElementById('handbookImage1Data').value = '';
+                document.getElementById('handbookImage2Data').value = '';
+                document.getElementById('handbookCoverUrl').value = '';
+                document.getElementById('handbookImage1Url').value = '';
+                document.getElementById('handbookImage2Url').value = '';
+                document.getElementById('handbookEmoji').value = '😟';
+                
                 loadHandbook();
             } catch (error) {
                 showToast('Lỗi: ' + error.message, true);
             }
         });
 
+        // ========== NEWS FUNCTIONS ==========
         async function loadNews() {
             try {
                 const querySnapshot = await db.collection('news').orderBy('createdAt', 'desc').get();
@@ -3039,6 +3374,25 @@
             `).join('');
         }
 
+        async function viewNewsPost(postId) {
+            const post = newsPosts.find(p => p.id === postId);
+            if (!post) return;
+
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+
+            modalBody.innerHTML = `
+                <div class="modal-content-text">${post.content || ''}</div>
+                <div class="handbook-stats">
+                    <span><i class="far fa-eye"></i> ${post.views || 0} lượt xem</span>
+                    <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+                </div>
+            `;
+            
+            document.getElementById('modalTitle').innerText = post.title || 'Bản tin y tế';
+            modal.classList.add('active');
+        }
+
         async function deleteNewsPost(id) {
             if (confirm('Xóa bản tin y tế này?')) {
                 await db.collection('news').doc(id).delete();
@@ -3047,12 +3401,34 @@
             }
         }
 
+        function initNewsEditor() {
+            if (newsQuill) return;
+            newsQuill = new Quill('#newsEditor', {
+                theme: 'snow',
+                placeholder: '✍️ Viết nội dung bản tin y tế...',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'align': [] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        ['blockquote', 'code-block'],
+                        ['link', 'image'],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['clean']
+                    ]
+                }
+            });
+        }
+
         document.getElementById('newsForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             initNewsEditor();
             
             const title = document.getElementById('newsTitle').value.trim();
-            const coverImage = document.getElementById('newsCoverData').value;
+            let coverImage = getImageUrl('newsCoverData', 'newsCoverUrl');
             const content = newsQuill.root.innerHTML;
             
             if (!title) {
@@ -3060,7 +3436,7 @@
                 return;
             }
             if (!coverImage) {
-                showToast('Vui lòng tải ảnh bìa lên!', true);
+                showToast('Vui lòng tải ảnh bìa lên hoặc nhập URL ảnh!', true);
                 return;
             }
             if (!content || content === '<p><br></p>') {
@@ -3085,12 +3461,35 @@
                 document.getElementById('newsForm').reset();
                 document.getElementById('newsCoverPreview').style.display = 'none';
                 document.getElementById('newsCoverData').value = '';
+                document.getElementById('newsCoverUrl').value = '';
                 if (newsQuill) newsQuill.root.innerHTML = '';
                 loadNews();
             } catch (error) {
                 showToast('Lỗi: ' + error.message, true);
             }
         });
+
+        async function approvePost(id) {
+            await db.collection('posts').doc(id).update({ status: 'approved', approvedAt: firebase.firestore.FieldValue.serverTimestamp() });
+            showToast('✅ Đã duyệt bài đăng!');
+            loadPostsForApproval();
+        }
+
+        async function rejectPost(id) {
+            if (confirm('Xóa bài đăng này?')) {
+                await db.collection('posts').doc(id).delete();
+                showToast('Đã từ chối bài đăng');
+                loadPostsForApproval();
+            }
+        }
+
+        async function deletePost(id) {
+            if (confirm('Xóa bài đăng này?')) {
+                await db.collection('posts').doc(id).delete();
+                showToast('Đã xóa bài đăng');
+                loadPostsForApproval();
+            }
+        }
 
         function escapeHtml(str) {
             if (!str) return '';
@@ -3107,6 +3506,14 @@
             if (diff < 3600000) return `${Math.floor(diff / 60000)} phút trước`;
             if (diff < 86400000) return `${Math.floor(diff / 3600000)} giờ trước`;
             return date.toLocaleDateString('vi-VN');
+        }
+
+        function getImageUrl(dataId, urlId) {
+            const base64 = document.getElementById(dataId).value;
+            if (base64) return base64;
+            const url = document.getElementById(urlId).value;
+            if (url && url.trim()) return url.trim();
+            return '';
         }
 
         window.selectQuizAnswer = (qIdx, optIdx, correctIdx) => {
@@ -3149,12 +3556,12 @@
         window.importWordToKnowledge = importWordToKnowledge;
         window.uploadImageToBase64 = uploadImageToBase64;
 
+        // Khởi tạo
         loadLocations();
         loadPostsForApproval();
         loadHandbook();
         loadNews();
         loadKnowledge();
-        initHandbookEditor();
         initNewsEditor();
         initLocationMap();
 
@@ -3162,6 +3569,7 @@
             if (e.target === document.getElementById('postModal')) closeModal();
         });
 
+        // Setup drag drop cho các upload area
         const setupDragDrop = (uploadAreaId, fileInputId, previewId, dataId) => {
             const area = document.getElementById(uploadAreaId);
             if (!area) return;
@@ -3192,8 +3600,11 @@
         };
         
         setupDragDrop('handbookCoverUpload', 'handbookCoverFile', 'handbookCoverPreview', 'handbookCoverData');
+        setupDragDrop('handbookImage1Upload', 'handbookImage1File', 'handbookImage1Preview', 'handbookImage1Data');
+        setupDragDrop('handbookImage2Upload', 'handbookImage2File', 'handbookImage2Preview', 'handbookImage2Data');
         setupDragDrop('newsCoverUpload', 'newsCoverFile', 'newsCoverPreview', 'newsCoverData');
 
+        // Theme
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
         function setTheme(theme) {
