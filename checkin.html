@@ -800,13 +800,14 @@
     <!-- PDF Container ẩn -->
     <div id="pdfPrintContainer" class="pdf-print-container"></div>
     
-    <!-- Modal từ chối ảnh -->
+    <!-- Modal từ chối -->
     <div id="rejectModal" class="modal-overlay">
         <div class="modal-content">
             <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
-            <h3>🔧 Tính năng đang được nâng cấp</h3>
-            <p>Hiện tại, tính năng phân tích ảnh này đang trong quá trình nâng cấp để phục vụ bạn tốt hơn.</p>
-            <p>Bạn vui lòng quay lại <strong>Thư viện Cẩm nang sức khỏe</strong> để tìm hiểu thêm,<br>
+            <h3>⚠️ Không hỗ trợ vấn đề này</h3>
+            <p>EduHealth AI hiện tại chỉ hỗ trợ nhận biết <strong>các vấn đề về da liễu</strong> (mụn, phát ban, mẩn đỏ, vết thương, tổn thương da).</p>
+            <p>Thông tin bạn cung cấp (cả ảnh và mô tả) không liên quan đến da liễu.</p>
+            <p>Vui lòng quay lại <strong>Thư viện Cẩm nang sức khỏe</strong> để tìm hiểu thêm,<br>
             và liên hệ với <strong>Cán bộ y tế nhà trường</strong> để được hỗ trợ kịp thời.</p>
             <div class="modal-buttons">
                 <a href="index.html" class="btn btn-primary" style="text-decoration: none;"><i class="fas fa-book-open"></i> Đến Thư viện sức khỏe</a>
@@ -850,6 +851,7 @@
         let userChats = [];
         let highlightedImageBase64 = null;
         let diseaseAreas = [];
+        let cachedChecklistQuestions = []; // Lưu cache câu hỏi từ Firestore để tham khảo
 
         // DOM elements
         const step1Container = document.getElementById('step1Container');
@@ -990,33 +992,221 @@
             if (e.target === rejectModal) rejectModal.classList.remove('active');
         };
 
-        // ========== CHECKLIST MẶC ĐỊNH (nhiều câu) ==========
-        function getDefaultChecklist() {
-            return [
-                { id: 1, category: "🩺 Triệu chứng cơ bản", text: "Đau đầu", checked: false },
-                { id: 2, category: "🩺 Triệu chứng cơ bản", text: "Mệt mỏi, uể oải", checked: false },
-                { id: 3, category: "🩺 Triệu chứng cơ bản", text: "Sốt (trên 38°C)", checked: false },
-                { id: 4, category: "🩺 Triệu chứng cơ bản", text: "Ho khan hoặc có đờm", checked: false },
-                { id: 5, category: "🩺 Triệu chứng cơ bản", text: "Đau họng, khó nuốt", checked: false },
-                { id: 6, category: "🩺 Triệu chứng cơ bản", text: "Nghẹt mũi, chảy nước mũi", checked: false },
-                { id: 7, category: "🩺 Triệu chứng cơ bản", text: "Khó thở, tức ngực", checked: false },
-                { id: 8, category: "🩺 Triệu chứng cơ bản", text: "Đau nhức cơ thể", checked: false },
-                { id: 9, category: "🩺 Triệu chứng cơ bản", text: "Đau bụng", checked: false },
-                { id: 10, category: "🩺 Triệu chứng cơ bản", text: "Buồn nôn, nôn", checked: false },
-                { id: 11, category: "🍽️ Ăn uống & sinh hoạt", text: "Chán ăn, ăn không ngon", checked: false },
-                { id: 12, category: "🍽️ Ăn uống & sinh hoạt", text: "Khó ngủ, ngủ không sâu giấc", checked: false },
-                { id: 13, category: "🍽️ Ăn uống & sinh hoạt", text: "Uống ít nước hơn bình thường", checked: false },
-                { id: 14, category: "🍽️ Ăn uống & sinh hoạt", text: "Mất vị giác hoặc khứu giác", checked: false },
-                { id: 15, category: "🧠 Tinh thần", text: "Căng thẳng, lo âu", checked: false },
-                { id: 16, category: "🧠 Tinh thần", text: "Mất tập trung, khó học bài", checked: false },
-                { id: 17, category: "🧠 Tinh thần", text: "Cảm thấy buồn bã, chán nản", checked: false },
-                { id: 18, category: "🏃 Vận động", text: "Ít vận động, ngồi nhiều", checked: false },
-                { id: 19, category: "🏃 Vận động", text: "Đau nhức cơ thể sau vận động", checked: false },
-                { id: 20, category: "🌡️ Dấu hiệu khác", text: "Chóng mặt, hoa mắt", checked: false },
-                { id: 21, category: "🌡️ Dấu hiệu khác", text: "Phát ban, nổi mẩn đỏ", checked: false },
-                { id: 22, category: "🌡️ Dấu hiệu khác", text: "Sưng hạch bạch huyết", checked: false },
-                { id: 23, category: "🌡️ Dấu hiệu khác", text: "Đi ngoài phân lỏng", checked: false }
+        // ========== LẤY CÂU HỎI CHECKLIST TỪ FIRESTORE (ĐỂ THAM KHẢO) ==========
+        async function loadChecklistQuestionsFromFirestore() {
+            if (cachedChecklistQuestions.length > 0) {
+                return cachedChecklistQuestions;
+            }
+            
+            try {
+                const snapshot = await db.collection('knowledge_base').where('type', '==', 'checklist').get();
+                let allQuestions = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.questions && Array.isArray(data.questions)) {
+                        allQuestions.push(...data.questions);
+                    } else if (data.answer && typeof data.answer === 'string') {
+                        const lines = data.answer.split('\n');
+                        lines.forEach(line => {
+                            const trimmed = line.trim();
+                            if (trimmed && (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.match(/^\d+\./))) {
+                                let cleanQuestion = trimmed.replace(/^[-•\d\.\s]+/, '').trim();
+                                if (cleanQuestion) {
+                                    allQuestions.push(cleanQuestion);
+                                }
+                            } else if (trimmed && trimmed.length > 5) {
+                                allQuestions.push(trimmed);
+                            }
+                        });
+                    }
+                });
+                
+                allQuestions = [...new Set(allQuestions)].filter(q => q && q.length > 3);
+                
+                if (allQuestions.length === 0) {
+                    allQuestions = [
+                        "Bạn có bị đau đầu không?",
+                        "Bạn có cảm thấy mệt mỏi, uể oải không?",
+                        "Bạn có bị sốt (trên 38°C) không?",
+                        "Bạn có bị ho khan hoặc có đờm không?",
+                        "Bạn có bị đau họng, khó nuốt không?",
+                        "Bạn có bị nghẹt mũi, chảy nước mũi không?",
+                        "Bạn có bị khó thở, tức ngực không?",
+                        "Bạn có bị đau nhức cơ thể không?",
+                        "Bạn có bị đau bụng không?",
+                        "Bạn có bị buồn nôn, nôn không?",
+                        "Bạn có bị chán ăn, ăn không ngon không?",
+                        "Bạn có bị khó ngủ, ngủ không sâu giấc không?",
+                        "Bạn có uống ít nước hơn bình thường không?",
+                        "Bạn có bị mất vị giác hoặc khứu giác không?",
+                        "Bạn có cảm thấy căng thẳng, lo âu không?",
+                        "Bạn có bị mất tập trung, khó học bài không?",
+                        "Bạn có cảm thấy buồn bã, chán nản không?",
+                        "Bạn có ít vận động, ngồi nhiều không?",
+                        "Bạn có bị đau nhức cơ thể sau vận động không?",
+                        "Bạn có bị chóng mặt, hoa mắt không?",
+                        "Bạn có bị phát ban, nổi mẩn đỏ không?",
+                        "Bạn có bị sưng hạch bạch huyết không?",
+                        "Bạn có bị đi ngoài phân lỏng không?",
+                        "Bạn có bị ngứa da không?",
+                        "Bạn có bị nổi mụn trên da không?"
+                    ];
+                }
+                
+                cachedChecklistQuestions = allQuestions;
+                return allQuestions;
+            } catch (error) {
+                console.error('Lỗi load checklist từ Firestore:', error);
+                const fallback = [
+                    "Bạn có bị đau đầu không?",
+                    "Bạn có bị mệt mỏi không?",
+                    "Bạn có bị sốt không?",
+                    "Bạn có bị ho không?",
+                    "Bạn có bị đau họng không?"
+                ];
+                cachedChecklistQuestions = fallback;
+                return fallback;
+            }
+        }
+
+        // ========== KIỂM TRA TỪ CHỐI SONG SONG (ẢNH + MÔ TẢ) ==========
+        async function checkImageRelevance(imageBase64, userSymptom) {
+            const prompt = `Bạn là chuyên gia y tế. Hãy xác định xem ảnh này có liên quan đến vấn đề về da như mụn, phát ban, mẩn đỏ, vết thương, tổn thương da, hoặc các dấu hiệu bệnh ngoài da không.
+            
+Trả về JSON: {"is_relevant": true/false, "reason": "lý do"}`;
+
+            const messages = [
+                { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                { role: "user", content: [
+                    { type: "text", text: prompt },
+                    { type: "image_url", image_url: { url: imageBase64 } }
+                ]}
             ];
+            
+            const rawResponse = await callAI(messages, 0.3);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            return JSON.parse(clean);
+        }
+        
+        async function checkDescriptionRelevance(userSymptom) {
+            const prompt = `Bạn là chuyên gia y tế. Dựa vào mô tả triệu chứng sau đây, hãy xác định xem người dùng đang gặp vấn đề về da liễu (mụn, phát ban, mẩn đỏ, ngứa, vết thương, tổn thương da, nấm da, dị ứng da) hay không.
+
+Mô tả triệu chứng: "${userSymptom}"
+
+Trả về JSON: {"is_relevant": true/false, "reason": "lý do ngắn gọn"}
+
+Quy tắc:
+- is_relevant = true nếu mô tả liên quan đến da liễu (kể cả có kèm triệu chứng khác)
+- is_relevant = false nếu mô tả KHÔNG liên quan đến da liễu (ví dụ: chỉ đau bụng, đau đầu, sốt, ho, đau họng, mệt mỏi, khó thở, rối loạn tiêu hóa, đau cơ không kèm biểu hiện da)`;
+
+            const messages = [
+                { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                { role: "user", content: prompt }
+            ];
+            
+            const rawResponse = await callAI(messages, 0.3);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            return JSON.parse(clean);
+        }
+        
+        async function checkDermatologyRelevanceParallel(imageBase64, userSymptom) {
+            const promises = [];
+            
+            if (imageBase64) {
+                promises.push(checkImageRelevance(imageBase64, userSymptom));
+            } else {
+                promises.push(Promise.resolve({ is_relevant: true, reason: "Không có ảnh" }));
+            }
+            
+            promises.push(checkDescriptionRelevance(userSymptom));
+            
+            const results = await Promise.all(promises);
+            const imageResult = results[0];
+            const descriptionResult = results[1];
+            
+            if (imageBase64 && !imageResult.is_relevant) {
+                return { 
+                    is_relevant: false, 
+                    reason: `Ảnh không liên quan đến da liễu: ${imageResult.reason}` 
+                };
+            }
+            
+            if (!descriptionResult.is_relevant) {
+                return { 
+                    is_relevant: false, 
+                    reason: `Mô tả không liên quan đến da liễu: ${descriptionResult.reason}` 
+                };
+            }
+            
+            return { is_relevant: true, reason: "Cả ảnh và mô tả đều liên quan đến da liễu" };
+        }
+
+        // ========== TẠO CHECKLIST (AI TỰ DO TẠO, NHƯNG CÓ THAM KHẢO DATABASE) ==========
+        async function createChecklistFromAI(userSymptom, userDuration, hasImage) {
+            // Lấy câu hỏi từ Firestore để tham khảo
+            const referenceQuestions = await loadChecklistQuestionsFromFirestore();
+            const referenceText = referenceQuestions.map((q, idx) => `${idx + 1}. ${q}`).join('\n');
+            
+            const prompt = `Bạn là trợ lý y tế của EduHealth AI. Hãy tạo một CHECKLIST các triệu chứng để hỏi người dùng dựa trên thông tin sau:
+
+THÔNG TIN NGƯỜI DÙNG:
+- Mô tả triệu chứng: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+- ${hasImage ? "Người dùng có cung cấp ảnh (có thể liên quan đến da liễu)" : "Người dùng không cung cấp ảnh"}
+
+=== DANH SÁCH CÂU HỎI THAM KHẢO (CÓ SẴN TRONG DATABASE) ===
+${referenceText}
+
+YÊU CẦU:
+1. Hãy tạo một checklist gồm các câu hỏi về triệu chứng (khoảng 15-25 câu)
+2. Bạn có thể THAM KHẢO các câu hỏi từ danh sách trên, nhưng cũng có thể TẠO CÂU HỎI MỚI nếu cần thiết
+3. Mỗi câu hỏi nên rõ ràng, dễ hiểu, tập trung vào các triệu chứng liên quan
+4. Phân loại câu hỏi thành các nhóm (category) phù hợp (ví dụ: Triệu chứng hô hấp, Tiêu hóa, Da liễu, Thần kinh, Sinh hoạt...)
+
+Trả về JSON theo format:
+{
+    "checklist": [
+        {"id": 1, "category": "Tên nhóm", "text": "Câu hỏi triệu chứng?"},
+        {"id": 2, "category": "Tên nhóm", "text": "Câu hỏi triệu chứng?"}
+    ]
+}
+
+Trả về JSON thuần túy, không có markdown.`;
+
+            const messages = [
+                { role: "system", content: "Bạn là trợ lý y tế chuyên nghiệp. Hãy tạo checklist câu hỏi chi tiết, hữu ích. Trả về JSON." },
+                { role: "user", content: prompt }
+            ];
+            
+            const rawResponse = await callAI(messages, 0.6);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            
+            const result = JSON.parse(clean);
+            let checklist = result.checklist || [];
+            
+            // Đảm bảo mỗi item có đủ trường
+            checklist = checklist.map((item, idx) => ({
+                id: item.id || idx + 1,
+                category: item.category || "📋 Triệu chứng cần đánh giá",
+                text: item.text,
+                checked: false
+            }));
+            
+            if (checklist.length === 0) {
+                throw new Error("AI không tạo được checklist");
+            }
+            
+            return checklist;
         }
 
         function escapeHtml(str) {
@@ -1095,34 +1285,6 @@
             } catch (e) {
                 console.warn('Lỗi lấy knowledge từ Firestore:', e);
                 return '';
-            }
-        }
-
-        // ========== KIỂM TRA ẢNH LIÊN QUAN ==========
-        async function checkImageRelevance(imageBase64, userSymptom) {
-            try {
-                const prompt = `Bạn là chuyên gia y tế. Hãy xác định xem ảnh này có liên quan đến vấn đề về da như mụn, phát ban, mẩn đỏ, vết thương, tổn thương da, hoặc các dấu hiệu bệnh ngoài da không.
-                
-Thông tin thêm: "${userSymptom.substring(0, 300)}"
-
-Trả về JSON: {"is_relevant": true/false, "reason": "lý do"}`;
-
-                const messages = [
-                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
-                    { role: "user", content: [
-                        { type: "text", text: prompt },
-                        { type: "image_url", image_url: { url: imageBase64 } }
-                    ]}
-                ];
-                
-                const rawResponse = await callAI(messages, 0.3);
-                let clean = rawResponse.trim();
-                if (clean.startsWith("```json")) clean = clean.slice(7);
-                if (clean.startsWith("```")) clean = clean.slice(3);
-                if (clean.endsWith("```")) clean = clean.slice(0, -3);
-                return JSON.parse(clean);
-            } catch (error) {
-                return { is_relevant: true, reason: "Không thể xác định" };
             }
         }
 
@@ -1312,7 +1474,7 @@ Trả về JSON thuần túy.`;
             return result;
         }
 
-        // ========== BƯỚC 1: TẠO CHECKLIST ==========
+        // ========== BƯỚC 1: KIỂM TRA DA LIỄU SONG SONG + TẠO CHECKLIST ==========
         async function step1CreateChecklist() {
             const userSymptom = symptomTextarea.value.trim();
             const userDuration = durationInput.value.trim();
@@ -1328,62 +1490,26 @@ Trả về JSON thuần túy.`;
             step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
             
             try {
-                if (currentImageBase64) {
-                    const relevance = await checkImageRelevance(currentImageBase64, userSymptom);
-                    if (!relevance.is_relevant) {
-                        step1Container.style.display = "none";
-                        step2Container.style.display = "none";
-                        step3Container.style.display = "block";
-                        showRejectModal();
-                        isProcessing = false;
-                        step1Btn.disabled = false;
-                        step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
-                        return;
-                    }
+                // KIỂM TRA SONG SONG: ẢNH + MÔ TẢ có liên quan đến da liễu không
+                const relevanceResult = await checkDermatologyRelevanceParallel(currentImageBase64, userSymptom);
+                
+                if (!relevanceResult.is_relevant) {
+                    step1Container.style.display = "none";
+                    step2Container.style.display = "none";
+                    step3Container.style.display = "block";
+                    showRejectModal();
+                    isProcessing = false;
+                    step1Btn.disabled = false;
+                    step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+                    return;
                 }
                 
-                let checklistKnowledge = await getKnowledgeByType('checklist');
-                let checklist = null;
-                try {
-                    let contentParts;
-                    const promptText = `Tạo checklist triệu chứng cho học sinh dựa trên:
-- Triệu chứng mô tả: "${userSymptom}"
-- Thời gian mắc: ${userDuration || "không rõ"}
-${checklistKnowledge ? `\n=== KIẾN THỨC THAM KHẢO (HÃY DỰA VÀO ĐÂY ĐỂ TẠO CHECKLIST PHÙ HỢP NHẤT) ===\n${checklistKnowledge}\n` : ''}
-
-Yêu cầu: Tạo danh sách các triệu chứng liên quan dưới dạng checklist. Mỗi mục có id, category và text. Hãy tạo NHIỀU câu hỏi (khoảng 15-25 câu) để khai thác đầy đủ thông tin.
-Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu chứng cụ thể"}]}`;
-                    
-                    if (currentImageBase64) {
-                        contentParts = [
-                            { type: "text", text: promptText },
-                            { type: "image_url", image_url: { url: currentImageBase64 } }
-                        ];
-                    } else {
-                        contentParts = { type: "text", text: promptText };
-                    }
-                    
-                    const messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }, { role: "user", content: contentParts }];
-                    const rawJSON = await callAI(messages, 0.5);
-                    let clean = rawJSON.trim();
-                    if (clean.startsWith("```json")) clean = clean.slice(7);
-                    if (clean.startsWith("```")) clean = clean.slice(3);
-                    if (clean.endsWith("```")) clean = clean.slice(0, -3);
-                    const parsed = JSON.parse(clean);
-                    
-                    if (parsed.checklist && Array.isArray(parsed.checklist) && parsed.checklist.length > 0) {
-                        checklist = parsed.checklist;
-                    } else {
-                        throw new Error("Checklist không hợp lệ");
-                    }
-                } catch (aiError) {
-                    console.warn("Dùng checklist mặc định:", aiError);
-                    checklist = getDefaultChecklist();
-                }
+                // TẠO CHECKLIST BẰNG AI (có tham khảo câu hỏi từ database)
+                const checklist = await createChecklistFromAI(userSymptom, userDuration, !!currentImageBase64);
                 
                 currentChecklistItems = checklist.map(item => ({ 
-                    id: item.id || Math.random(), 
-                    category: item.category || "Khác", 
+                    id: item.id, 
+                    category: item.category, 
                     text: item.text, 
                     checked: false 
                 }));
@@ -1395,7 +1521,16 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
                 
             } catch (error) {
                 console.error(error);
-                currentChecklistItems = getDefaultChecklist();
+                showToast("Có lỗi xảy ra: " + error.message, true);
+                // Fallback: dùng câu hỏi mặc định từ database
+                const fallbackQuestions = await loadChecklistQuestionsFromFirestore();
+                const fallbackChecklist = fallbackQuestions.slice(0, 15).map((q, idx) => ({
+                    id: idx + 1,
+                    category: "📋 Triệu chứng cần đánh giá",
+                    text: q,
+                    checked: false
+                }));
+                currentChecklistItems = fallbackChecklist;
                 renderChecklistUI();
                 step1Container.style.display = "none";
                 step2Container.style.display = "block";
@@ -1480,7 +1615,6 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
                 lastAnalysisResult = JSON.stringify(analysisData);
                 analysisResultDiv.innerHTML = formatSimpleResult(analysisData);
                 
-                // Lấy thông tin học sinh từ user data
                 const studentName = currentUserData?.fullName || (auth.currentUser?.email?.split('@')[0]) || 'Học sinh';
                 const studentPhone = currentUserData?.phone || localStorage.getItem('healthUserPhone') || '';
                 const studentDob = currentUserData?.dob || localStorage.getItem('healthUserDob') || '';
@@ -1505,7 +1639,6 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
                     formattedResult: analysisData
                 };
                 
-                // LƯU VÀO CHECKIN_RECORDS TRONG FIRESTORE
                 await db.collection('checkin_records').add({
                     ...lastCheckinData,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1781,6 +1914,74 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
             }
         }
 
+        // ========== KHỞI TẠO DỮ LIỆU MẪU CHO KNOWLEDGE_BASE ==========
+        async function initKnowledgeBase() {
+            try {
+                const checklistSnapshot = await db.collection('knowledge_base').where('type', '==', 'checklist').limit(1).get();
+                
+                if (checklistSnapshot.empty) {
+                    const sampleChecklistQuestions = [
+                        "Bạn có bị đau đầu không?",
+                        "Bạn có cảm thấy mệt mỏi, uể oải không?",
+                        "Bạn có bị sốt (trên 38°C) không?",
+                        "Bạn có bị ho khan hoặc có đờm không?",
+                        "Bạn có bị đau họng, khó nuốt không?",
+                        "Bạn có bị nghẹt mũi, chảy nước mũi không?",
+                        "Bạn có bị khó thở, tức ngực không?",
+                        "Bạn có bị đau nhức cơ thể không?",
+                        "Bạn có bị đau bụng không?",
+                        "Bạn có bị buồn nôn, nôn không?",
+                        "Bạn có bị chán ăn, ăn không ngon không?",
+                        "Bạn có bị khó ngủ, ngủ không sâu giấc không?",
+                        "Bạn có uống ít nước hơn bình thường không?",
+                        "Bạn có bị mất vị giác hoặc khứu giác không?",
+                        "Bạn có cảm thấy căng thẳng, lo âu không?",
+                        "Bạn có bị mất tập trung, khó học bài không?",
+                        "Bạn có cảm thấy buồn bã, chán nản không?",
+                        "Bạn có ít vận động, ngồi nhiều không?",
+                        "Bạn có bị đau nhức cơ thể sau vận động không?",
+                        "Bạn có bị chóng mặt, hoa mắt không?",
+                        "Bạn có bị phát ban, nổi mẩn đỏ không?",
+                        "Bạn có bị sưng hạch bạch huyết không?",
+                        "Bạn có bị đi ngoài phân lỏng không?",
+                        "Bạn có bị ngứa da không?",
+                        "Bạn có bị nổi mụn trên da không?"
+                    ];
+                    
+                    await db.collection('knowledge_base').add({
+                        type: 'checklist',
+                        answer: sampleChecklistQuestions.join('\n'),
+                        questions: sampleChecklistQuestions,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        description: "Danh sách câu hỏi triệu chứng cho học sinh (tham khảo)"
+                    });
+                    console.log("Đã tạo dữ liệu mẫu cho checklist");
+                }
+                
+                const diagnosisSnapshot = await db.collection('knowledge_base').where('type', '==', 'diagnosis').limit(1).get();
+                
+                if (diagnosisSnapshot.empty) {
+                    await db.collection('knowledge_base').add({
+                        type: 'diagnosis',
+                        answer: `Hướng dẫn phân loại bệnh học đường:
+1. Cảm cúm: sốt, ho, đau họng, mệt mỏi, đau nhức cơ
+2. Viêm họng: đau họng, sốt nhẹ, khó nuốt, ho khan
+3. Rối loạn tiêu hóa: đau bụng, buồn nôn, tiêu chảy
+4. Dị ứng da: phát ban, ngứa, mẩn đỏ, sưng
+5. Căng thẳng: đau đầu, mất ngủ, lo âu, mất tập trung
+6. Mụn trứng cá: nổi mụn trên mặt, lưng, ngực
+7. Viêm da cơ địa: da khô, ngứa, mẩn đỏ
+8. Nhiễm trùng da: vết thương sưng đỏ, có mủ`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        description: "Kiến thức chẩn đoán sơ bộ"
+                    });
+                    console.log("Đã tạo dữ liệu mẫu cho diagnosis");
+                }
+            } catch (error) {
+                console.error("Lỗi khởi tạo knowledge_base:", error);
+            }
+        }
+
         // ========== SỰ KIỆN UPLOAD ẢNH ==========
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
@@ -1902,6 +2103,7 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
         async function initApp() {
             if (!checkAuth()) return;
             await loadUserData();
+            await initKnowledgeBase();
             updateAuthUI();
             resetToStep1();
         }
