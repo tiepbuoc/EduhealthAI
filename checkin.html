@@ -730,6 +730,7 @@
             <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
         </div>
 
+        <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
         <div id="step1Container" class="card">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
             <div class="upload-area" id="dropZone">
@@ -757,6 +758,7 @@
             </div>
         </div>
 
+        <!-- BƯỚC 2: CHECKLIST -->
         <div id="step2Container" class="card" style="display: none;">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-check-square"></i> 2️⃣ Hãy cho EduHealth AI biết thêm về tình trạng của bạn</h3>
             <div id="checklistArea" class="checklist-container">
@@ -772,6 +774,7 @@
             </div>
         </div>
 
+        <!-- BƯỚC 3: KẾT QUẢ -->
         <div id="step3Container" class="card" style="display: none;">
             <div class="result-area" style="padding: 0;">
                 <div class="result-title"><i class="fas fa-chart-line"></i> 📊 Kết quả nhận biết từ EduHealth AI</div>
@@ -794,8 +797,10 @@
         </div>
     </div>
 
+    <!-- PDF Container ẩn -->
     <div id="pdfPrintContainer" class="pdf-print-container"></div>
     
+    <!-- Modal từ chối ảnh -->
     <div id="rejectModal" class="modal-overlay">
         <div class="modal-content">
             <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
@@ -981,7 +986,7 @@
             if (e.target === rejectModal) rejectModal.classList.remove('active');
         };
 
-        // ========== CHECKLIST MẶC ĐỊNH ==========
+        // ========== CHECKLIST MẶC ĐỊNH (nhiều câu) ==========
         function getDefaultChecklist() {
             return [
                 { id: 1, category: "🩺 Triệu chứng cơ bản", text: "Đau đầu", checked: false },
@@ -1496,7 +1501,7 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
                     formattedResult: analysisData
                 };
                 
-                // Lưu vào Firestore - checkin_records
+                // LƯU VÀO CHECKIN_RECORDS TRONG FIRESTORE
                 await db.collection('checkin_records').add({
                     ...lastCheckinData,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1585,7 +1590,7 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
             } catch(e) { console.error("Load history error:", e); }
         }
 
-        // ========== TẠO CHAT MỚI (LƯU ĐẦY ĐỦ THÔNG TIN HỌC SINH) ==========
+        // ========== TẠO CHAT MỚI ==========
         async function createNewChat() {
             if (!lastCheckinData) { alert("Không có dữ liệu!"); return null; }
             const chatId = 'SK_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
@@ -1629,7 +1634,6 @@ Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu 
                 });
                 return chatId;
             } catch (error) { 
-                console.error('Lỗi tạo chat:', error);
                 alert('Không thể tạo cuộc trò chuyện.'); 
                 return null; 
             }
