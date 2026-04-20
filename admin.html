@@ -10,6 +10,9 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --blue-primary: #3b82f6;
@@ -322,6 +325,25 @@
         .btn-outline:hover {
             border-color: var(--blue-primary);
             color: var(--blue-primary);
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .btn-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
         }
 
         .row {
@@ -895,7 +917,6 @@
             padding: 24px;
         }
 
-        /* ========== CONTENT VIEW STYLES - FIXED ========== */
         .modal-content-text {
             font-size: 16px;
             line-height: 1.7;
@@ -938,14 +959,6 @@
             font-size: 1.1em;
             font-weight: 600;
             margin: 0.6em 0 0.3em;
-            font-family: 'Fraunces', serif;
-            color: var(--text-dark);
-        }
-
-        .modal-content-text h5, .modal-content-text h6 {
-            font-size: 1em;
-            font-weight: 600;
-            margin: 0.5em 0 0.2em;
             font-family: 'Fraunces', serif;
             color: var(--text-dark);
         }
@@ -999,11 +1012,6 @@
             border-radius: 12px;
             overflow-x: auto;
             margin: 1em 0;
-        }
-
-        .modal-content-text pre code {
-            background: none;
-            padding: 0;
         }
 
         .modal-content-text table {
@@ -1271,6 +1279,35 @@
             cursor: pointer;
         }
 
+        .upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        .upload-area:hover {
+            border-color: var(--blue-primary);
+            background: var(--bg-surface);
+        }
+        .upload-area i {
+            font-size: 32px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .upload-area p {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -1362,6 +1399,10 @@
                     </div>
                     <textarea id="checklistKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức về cách tạo checklist triệu chứng..."></textarea>
                     <div class="knowledge-actions">
+                        <label class="btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-file-word"></i> Import từ Word
+                            <input type="file" id="importChecklistWord" accept=".docx" style="display: none;" onchange="importWordToKnowledge('checklist', this)">
+                        </label>
                         <button class="btn-primary" onclick="saveKnowledge('checklist')">
                             <i class="fas fa-save"></i> Lưu kiến thức
                         </button>
@@ -1378,6 +1419,10 @@
                     </div>
                     <textarea id="diagnosisKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức về phân tích bệnh da liễu..."></textarea>
                     <div class="knowledge-actions">
+                        <label class="btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-file-word"></i> Import từ Word
+                            <input type="file" id="importDiagnosisWord" accept=".docx" style="display: none;" onchange="importWordToKnowledge('diagnosis', this)">
+                        </label>
                         <button class="btn-primary" onclick="saveKnowledge('diagnosis')">
                             <i class="fas fa-save"></i> Lưu kiến thức
                         </button>
@@ -1394,6 +1439,10 @@
                     </div>
                     <textarea id="chatKnowledge" class="knowledge-textarea" rows="8" placeholder="Nhập kiến thức để AI trả lời trong chat..."></textarea>
                     <div class="knowledge-actions">
+                        <label class="btn-outline" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-file-word"></i> Import từ Word
+                            <input type="file" id="importChatWord" accept=".docx" style="display: none;" onchange="importWordToKnowledge('chat_response', this)">
+                        </label>
                         <button class="btn-primary" onclick="saveKnowledge('chat_response')">
                             <i class="fas fa-save"></i> Lưu kiến thức
                         </button>
@@ -1422,9 +1471,14 @@
                 <div class="chat-detail-container">
                     <div class="chat-detail-header">
                         <h3><i class="fas fa-message"></i> <span id="currentChatName">Chọn cuộc trò chuyện</span></h3>
-                        <button class="ai-toggle" id="aiToggle" style="display: none;">
-                            <i class="fas fa-robot"></i> Bật AI
-                        </button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-pdf" id="downloadChatPdfBtn" style="display: none;">
+                                <i class="fas fa-file-pdf"></i> Quản lý PDF
+                            </button>
+                            <button class="ai-toggle" id="aiToggle" style="display: none;">
+                                <i class="fas fa-robot"></i> Bật AI
+                            </button>
+                        </div>
                     </div>
                     <div class="messages-area" id="messagesArea">
                         <div class="empty-chat">
@@ -1573,13 +1627,25 @@
                         </select>
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <label class="form-label">🖼️ URL ảnh bìa</label>
-                        <input type="url" class="form-control" id="handbookCover" placeholder="https://example.com/cover.jpg" required>
+                        <label class="form-label">🖼️ Ảnh bìa</label>
+                        <div class="upload-area" id="handbookCoverUpload" onclick="document.getElementById('handbookCoverFile').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Nhấp để tải ảnh lên hoặc kéo thả ảnh vào đây</p>
+                        </div>
+                        <input type="file" id="handbookCoverFile" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'handbookCoverPreview', 'handbookCoverData')">
+                        <input type="hidden" id="handbookCoverData" value="">
+                        <img id="handbookCoverPreview" class="image-preview" style="display: none;">
                     </div>
                     <div style="margin-bottom: 20px;">
                         <label class="form-label">📝 Nội dung bài viết</label>
                         <div class="editor-container">
                             <div id="handbookEditor"></div>
+                        </div>
+                        <div class="knowledge-actions" style="margin-top: 12px;">
+                            <label class="btn-outline" style="cursor: pointer;">
+                                <i class="fas fa-file-word"></i> Import từ Word (giữ nguyên định dạng)
+                                <input type="file" id="importHandbookWord" accept=".docx" style="display: none;" onchange="importWordToEditor('handbookEditor', this)">
+                            </label>
                         </div>
                     </div>
                     <button type="submit" class="btn-primary">
@@ -1616,13 +1682,25 @@
                         <input type="text" class="form-control" id="newsTitle" required>
                     </div>
                     <div style="margin-bottom: 20px;">
-                        <label class="form-label">🖼️ URL ảnh bìa</label>
-                        <input type="url" class="form-control" id="newsCover" placeholder="https://example.com/cover.jpg" required>
+                        <label class="form-label">🖼️ Ảnh bìa</label>
+                        <div class="upload-area" id="newsCoverUpload" onclick="document.getElementById('newsCoverFile').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Nhấp để tải ảnh lên hoặc kéo thả ảnh vào đây</p>
+                        </div>
+                        <input type="file" id="newsCoverFile" accept="image/*" style="display: none;" onchange="uploadImageToBase64(this, 'newsCoverPreview', 'newsCoverData')">
+                        <input type="hidden" id="newsCoverData" value="">
+                        <img id="newsCoverPreview" class="image-preview" style="display: none;">
                     </div>
                     <div style="margin-bottom: 20px;">
                         <label class="form-label">📝 Nội dung bản tin</label>
                         <div class="editor-container">
                             <div id="newsEditor"></div>
+                        </div>
+                        <div class="knowledge-actions" style="margin-top: 12px;">
+                            <label class="btn-outline" style="cursor: pointer;">
+                                <i class="fas fa-file-word"></i> Import từ Word (giữ nguyên định dạng)
+                                <input type="file" id="importNewsWord" accept=".docx" style="display: none;" onchange="importWordToEditor('newsEditor', this)">
+                            </label>
                         </div>
                     </div>
                     <button type="submit" class="btn-primary">
@@ -1700,6 +1778,142 @@
         let messageListener = null;
         let allChats = [];
         const ADMIN_ID = 'admin_support';
+
+        // ========== HÀM RESIZE ẢNH VÀ CHUYỂN BASE64 ==========
+        async function resizeImageToBase64(file, maxWidth = 720) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        if (width > maxWidth) {
+                            height = (height * maxWidth) / width;
+                            width = maxWidth;
+                        }
+                        
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const base64 = canvas.toDataURL(file.type || 'image/jpeg', 0.8);
+                        resolve(base64);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ========== UPLOAD ẢNH TỪ MÁY ==========
+        async function uploadImageToBase64(input, previewId, dataId) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.type.startsWith('image/')) {
+                showToast('Vui lòng chọn file ảnh!', true);
+                return;
+            }
+            
+            try {
+                showToast('Đang xử lý ảnh...');
+                const base64 = await resizeImageToBase64(file, 720);
+                
+                const preview = document.getElementById(previewId);
+                preview.src = base64;
+                preview.style.display = 'block';
+                
+                document.getElementById(dataId).value = base64;
+                
+                showToast('Đã tải ảnh lên thành công!');
+            } catch (error) {
+                console.error('Lỗi xử lý ảnh:', error);
+                showToast('Lỗi xử lý ảnh!', true);
+            }
+        }
+
+        // ========== IMPORT WORD VÀO EDITOR ==========
+        async function importWordToEditor(editorId, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.docx')) {
+                showToast('Vui lòng chọn file Word (.docx)!', true);
+                return;
+            }
+            
+            try {
+                showToast('Đang đọc file Word...');
+                
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+                
+                let html = result.value;
+                
+                html = html.replace(/<p>/g, '<p class="ql-align-justify">');
+                html = html.replace(/<h1>/g, '<h1 class="ql-align-left">');
+                html = html.replace(/<h2>/g, '<h2 class="ql-align-left">');
+                html = html.replace(/<h3>/g, '<h3 class="ql-align-left">');
+                html = html.replace(/<h4>/g, '<h4 class="ql-align-left">');
+                html = html.replace(/<ul>/g, '<ul class="ql-indent-1">');
+                html = html.replace(/<ol>/g, '<ol class="ql-indent-1">');
+                
+                const quill = editorId === 'handbookEditor' ? handbookQuill : newsQuill;
+                if (quill) {
+                    quill.root.innerHTML = html;
+                    showToast('Đã import thành công!');
+                }
+            } catch (error) {
+                console.error('Lỗi import Word:', error);
+                showToast('Lỗi đọc file Word!', true);
+            }
+            
+            input.value = '';
+        }
+
+        // ========== IMPORT WORD VÀO KIẾN THỨC AI ==========
+        async function importWordToKnowledge(knowledgeType, input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.docx')) {
+                showToast('Vui lòng chọn file Word (.docx)!', true);
+                return;
+            }
+            
+            try {
+                showToast('Đang đọc file Word...');
+                
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                
+                let text = result.value;
+                
+                let textareaId = '';
+                if (knowledgeType === 'checklist') textareaId = 'checklistKnowledge';
+                else if (knowledgeType === 'diagnosis') textareaId = 'diagnosisKnowledge';
+                else textareaId = 'chatKnowledge';
+                
+                const textarea = document.getElementById(textareaId);
+                const currentContent = textarea.value;
+                
+                const newContent = currentContent + '\n\n--- Import từ Word ---\n' + text;
+                textarea.value = newContent;
+                
+                showToast('Đã thêm nội dung từ Word vào cuối!');
+            } catch (error) {
+                console.error('Lỗi import Word:', error);
+                showToast('Lỗi đọc file Word!', true);
+            }
+            
+            input.value = '';
+        }
 
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
@@ -1798,6 +2012,17 @@
             return formatted;
         }
 
+        function formatMarkdownToPlainText(text) {
+            if (!text) return '';
+            let formatted = text;
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            formatted = formatted.replace(/_(.*?)_/g, '<em>$1</em>');
+            formatted = formatted.replace(/\n/g, '<br>');
+            return formatted;
+        }
+
         async function loadKnowledge() {
             const snapshot = await db.collection('knowledge_base').get();
             let checklistText = '';
@@ -1806,13 +2031,13 @@
             
             snapshot.forEach(doc => {
                 const data = doc.data();
-                const content = `${data.question}\n${data.answer}`;
+                const content = data.answer || '';
                 if (data.type === 'checklist') {
-                    checklistText += content + '';
+                    checklistText += content + '\n';
                 } else if (data.type === 'diagnosis') {
-                    diagnosisText += content + '';
+                    diagnosisText += content + '\n';
                 } else if (data.type === 'chat_response') {
-                    chatText += content + '';
+                    chatText += content + '\n';
                 }
             });
             
@@ -1852,7 +2077,7 @@
                 
                 await db.collection('knowledge_base').add({
                     type: type,
-                    question: type === 'checklist' ? '' : (type === 'diagnosis' ? '' : ''),
+                    question: '',
                     answer: content,
                     keywords: [],
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1934,8 +2159,12 @@
             document.getElementById('currentChatName').textContent = displayName;
             document.getElementById('chatInputArea').style.display = 'flex';
             
+            const pdfBtn = document.getElementById('downloadChatPdfBtn');
             const aiToggle = document.getElementById('aiToggle');
+            
+            pdfBtn.style.display = 'inline-flex';
             aiToggle.style.display = 'inline-flex';
+            
             const isAIEnabled = currentChatData.aiEnabled !== false;
             aiToggle.innerHTML = isAIEnabled ? '<i class="fas fa-robot"></i> Tắt AI' : '<i class="fas fa-robot"></i> Bật AI';
             aiToggle.className = isAIEnabled ? 'ai-toggle' : 'ai-toggle off';
@@ -2035,6 +2264,110 @@
             }, 100);
         }
         
+        // ========== TẠO PDF TỪ CUỘC TRÒ CHUYỆN ==========
+        async function exportChatToPDF() {
+            if (!currentChatId || !currentChatData) {
+                showToast('Chưa chọn cuộc trò chuyện!', true);
+                return;
+            }
+            
+            const btn = document.getElementById('downloadChatPdfBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo...';
+            btn.disabled = true;
+            
+            try {
+                const messagesSnapshot = await db.collection('health_chats')
+                    .doc(currentChatId)
+                    .collection('messages')
+                    .orderBy('timestamp', 'asc')
+                    .get();
+                
+                let messagesHtml = '';
+                messagesSnapshot.forEach(doc => {
+                    const msg = doc.data();
+                    const senderName = msg.senderName || (msg.senderId === 'admin_support' ? 'Cộng tác viên y tế' : (msg.senderId === 'ai' ? 'EduHealth AI' : 'Học sinh'));
+                    const time = msg.timestamp ? msg.timestamp.toDate().toLocaleString('vi-VN') : '';
+                    messagesHtml += `
+                        <div style="margin-bottom: 15px; padding: 10px; border-bottom: 1px solid #e0e0e0;">
+                            <div style="font-weight: bold; color: #3b82f6;">${escapeHtml(senderName)}</div>
+                            <div style="margin: 5px 0;">${formatMarkdownToPlainText(msg.text || '')}</div>
+                            <div style="font-size: 10px; color: #999;">${time}</div>
+                        </div>
+                    `;
+                });
+                
+                const displayName = currentChatData.userName || currentChatData.name || 'Khách hàng';
+                const pdfHtml = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head><meta charset="UTF-8"><title>Lịch sử trò chuyện</title>
+                    <style>
+                        body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; }
+                        .header { text-align: center; border-bottom: 2px solid #f472b6; padding-bottom: 15px; margin-bottom: 20px; }
+                        .info { background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+                        .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #718096; }
+                        .message-container { margin-top: 20px; }
+                    </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>🏥 EduHealth AI - Lịch sử trò chuyện</h1>
+                            <p>Ngày xuất: ${new Date().toLocaleString('vi-VN')}</p>
+                        </div>
+                        <div class="info">
+                            <div><strong>👤 Học sinh:</strong> ${escapeHtml(displayName)}</div>
+                            <div><strong>🆔 Mã chat:</strong> ${currentChatId}</div>
+                            <div><strong>📅 Ngày tạo:</strong> ${currentChatData.createdAt ? currentChatData.createdAt.toDate().toLocaleString('vi-VN') : 'N/A'}</div>
+                        </div>
+                        <div class="message-container">
+                            <h3>💬 Nội dung trò chuyện</h3>
+                            ${messagesHtml || '<p>Chưa có tin nhắn nào.</p>'}
+                        </div>
+                        <div class="footer">© 2026 EduHealth AI</div>
+                    </body>
+                    </html>
+                `;
+                
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = pdfHtml;
+                tempDiv.style.position = 'fixed';
+                tempDiv.style.left = '-9999px';
+                tempDiv.style.top = '0';
+                tempDiv.style.width = '800px';
+                tempDiv.style.background = 'white';
+                document.body.appendChild(tempDiv);
+                
+                const canvas = await html2canvas(tempDiv, { scale: 2.5, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                const { jsPDF } = window.jspdf;
+                const imgWidth = 190;
+                const pageHeight = 277;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                doc.save(`EduHealth_Chat_${displayName.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.pdf`);
+                
+                document.body.removeChild(tempDiv);
+                showToast('Đã tải PDF thành công!');
+            } catch (error) {
+                console.error('Lỗi tạo PDF:', error);
+                showToast('Lỗi: ' + error.message, true);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
         document.getElementById('sendMessageBtn')?.addEventListener('click', async () => {
             const input = document.getElementById('adminMessageInput');
             const text = input.value.trim();
@@ -2057,6 +2390,24 @@
         
         document.getElementById('adminMessageInput')?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') document.getElementById('sendMessageBtn').click();
+        });
+        
+        document.getElementById('downloadChatPdfBtn')?.addEventListener('click', () => {
+            if (!currentChatId || !currentChatData) {
+                showToast('Chưa chọn cuộc trò chuyện!', true);
+                return;
+            }
+
+            // Lưu thông tin chat hiện tại vào localStorage để trang qlpdf.html có thể đọc
+            const chatInfo = {
+                chatId: currentChatId,
+                userName: currentChatData.userName || currentChatData.name || 'Khách hàng',
+                createdAt: currentChatData.createdAt ? currentChatData.createdAt.toDate().toISOString() : new Date().toISOString()
+            };
+            localStorage.setItem('selectedChatForPDF', JSON.stringify(chatInfo));
+
+            // Chuyển sang trang qlpdf.html
+            window.location.href = 'qlpdf.html';
         });
         
         function openImageModal(src) {
@@ -2586,7 +2937,7 @@
             
             const title = document.getElementById('handbookTitle').value.trim();
             const category = document.getElementById('handbookCategory').value;
-            const coverImage = document.getElementById('handbookCover').value.trim();
+            const coverImage = document.getElementById('handbookCoverData').value;
             const content = handbookQuill.root.innerHTML;
             
             if (!title) {
@@ -2598,7 +2949,7 @@
                 return;
             }
             if (!coverImage) {
-                showToast('Vui lòng nhập URL ảnh bìa!', true);
+                showToast('Vui lòng tải ảnh bìa lên!', true);
                 return;
             }
             if (!content || content === '<p><br></p>') {
@@ -2622,6 +2973,8 @@
                 await db.collection('handbook').add(handbookData);
                 showToast('✅ Đã đăng bài viết cẩm nang!');
                 document.getElementById('handbookForm').reset();
+                document.getElementById('handbookCoverPreview').style.display = 'none';
+                document.getElementById('handbookCoverData').value = '';
                 if (handbookQuill) handbookQuill.root.innerHTML = '';
                 loadHandbook();
             } catch (error) {
@@ -2699,7 +3052,7 @@
             initNewsEditor();
             
             const title = document.getElementById('newsTitle').value.trim();
-            const coverImage = document.getElementById('newsCover').value.trim();
+            const coverImage = document.getElementById('newsCoverData').value;
             const content = newsQuill.root.innerHTML;
             
             if (!title) {
@@ -2707,7 +3060,7 @@
                 return;
             }
             if (!coverImage) {
-                showToast('Vui lòng nhập URL ảnh bìa!', true);
+                showToast('Vui lòng tải ảnh bìa lên!', true);
                 return;
             }
             if (!content || content === '<p><br></p>') {
@@ -2730,6 +3083,8 @@
                 await db.collection('news').add(newsData);
                 showToast('✅ Đã đăng bản tin y tế!');
                 document.getElementById('newsForm').reset();
+                document.getElementById('newsCoverPreview').style.display = 'none';
+                document.getElementById('newsCoverData').value = '';
                 if (newsQuill) newsQuill.root.innerHTML = '';
                 loadNews();
             } catch (error) {
@@ -2790,6 +3145,9 @@
         window.viewNewsPost = viewNewsPost;
         window.closeModal = closeModal;
         window.saveKnowledge = saveKnowledge;
+        window.importWordToEditor = importWordToEditor;
+        window.importWordToKnowledge = importWordToKnowledge;
+        window.uploadImageToBase64 = uploadImageToBase64;
 
         loadLocations();
         loadPostsForApproval();
@@ -2803,6 +3161,38 @@
         document.getElementById('postModal').addEventListener('click', (e) => {
             if (e.target === document.getElementById('postModal')) closeModal();
         });
+
+        const setupDragDrop = (uploadAreaId, fileInputId, previewId, dataId) => {
+            const area = document.getElementById(uploadAreaId);
+            if (!area) return;
+            
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.style.borderColor = 'var(--blue-primary)';
+                area.style.background = 'var(--bg-surface)';
+            });
+            
+            area.addEventListener('dragleave', () => {
+                area.style.borderColor = 'var(--border-light)';
+                area.style.background = 'transparent';
+            });
+            
+            area.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                area.style.borderColor = 'var(--border-light)';
+                area.style.background = 'transparent';
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const input = document.getElementById(fileInputId);
+                    const fakeEvent = { target: { files: [file] } };
+                    await uploadImageToBase64(fakeEvent.target, previewId, dataId);
+                }
+            });
+        };
+        
+        setupDragDrop('handbookCoverUpload', 'handbookCoverFile', 'handbookCoverPreview', 'handbookCoverData');
+        setupDragDrop('newsCoverUpload', 'newsCoverFile', 'newsCoverPreview', 'newsCoverData');
 
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;

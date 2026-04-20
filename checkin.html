@@ -27,13 +27,15 @@
             --border-soft: #f1f5f9;
             --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            --hover-glow: rgba(59, 130, 246, 0.12);
             --nav-bg: rgba(255, 255, 255, 0.92);
             --tag-bg: #fce7f3;
             --input-bg: #ffffff;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --level1: #10b981;
+            --level2: #f59e0b;
+            --level3: #ef4444;
         }
 
         body.dark {
@@ -132,22 +134,62 @@
         .nav-link i { color: var(--pink-primary); }
         .nav-link:hover { color: var(--blue-primary); }
 
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .theme-toggle {
             background: transparent;
             border: 1px solid var(--border-light);
             border-radius: 40px;
-            padding: 8px 16px;
+            padding: 8px 12px;
             font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             color: var(--text-mid);
             font-family: 'DM Sans', sans-serif;
         }
         .theme-toggle:hover {
             border-color: var(--blue-primary);
             color: var(--blue-primary);
+        }
+
+        .auth-btn {
+            background: var(--grad-blue-pink);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .auth-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--tag-bg);
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        .user-info i {
+            color: var(--pink-primary);
         }
 
         .menu-toggle {
@@ -167,12 +209,6 @@
             background: var(--grad-pink-blue);
             color: white;
             border-color: transparent;
-        }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
         }
 
         .mobile-menu-panel {
@@ -331,14 +367,6 @@
         .btn-outline:hover {
             border-color: var(--blue-primary);
             color: var(--blue-primary);
-        }
-        .btn-success {
-            background: var(--success);
-            color: white;
-            border: none;
-        }
-        .btn-success:hover {
-            transform: translateY(-2px);
         }
         .image-preview {
             margin-top: 18px;
@@ -521,125 +549,49 @@
             color: var(--text-dim);
         }
 
-        .diagnosis-result {
-            background: linear-gradient(135deg, var(--bg-surface), var(--card-bg));
-            border-radius: 24px;
-            padding: 24px;
-        }
-        .diagnosis-header {
-            background: var(--grad-blue-pink);
+        .level-card {
+            background: var(--card-bg);
             border-radius: 20px;
             padding: 20px;
-            margin-bottom: 24px;
-            color: white;
+            margin: 16px 0;
+            border-left: 6px solid;
         }
-        .diagnosis-header h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-        .diagnosis-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 13px;
-        }
-        .info-row {
+        .level-card.level-1 { border-left-color: var(--level1); }
+        .level-card.level-2 { border-left-color: var(--level2); }
+        .level-card.level-3 { border-left-color: var(--level3); }
+        .level-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
             display: flex;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border-light);
-            gap: 16px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
         }
-        .info-label {
-            width: 140px;
-            font-weight: 600;
-            color: var(--blue-primary);
-        }
-        .info-value {
-            flex: 1;
+        .level-1 .level-title { color: var(--level1); }
+        .level-2 .level-title { color: var(--level2); }
+        .level-3 .level-title { color: var(--level3); }
+        .level-desc {
             color: var(--text-mid);
-        }
-        .warning-box {
-            background: rgba(245, 158, 11, 0.1);
-            border-left: 4px solid var(--warning);
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 20px;
-        }
-        .success-box {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 4px solid var(--success);
-            padding: 16px;
-            border-radius: 16px;
-            margin-top: 20px;
+            line-height: 1.5;
         }
 
-        .markdown-content {
+        .result-simple {
+            font-size: 1rem;
             line-height: 1.6;
         }
-        .markdown-content h1 {
-            font-size: 1.8em;
-            font-weight: 700;
-            margin: 0.8em 0 0.4em;
-            font-family: 'Fraunces', serif;
-            color: var(--text-dark);
+        .result-simple h3 {
+            font-size: 1.2rem;
+            margin: 16px 0 8px;
+            color: var(--blue-primary);
         }
-        .markdown-content h2 {
-            font-size: 1.5em;
-            font-weight: 700;
-            margin: 0.7em 0 0.35em;
-            font-family: 'Fraunces', serif;
-            color: var(--text-dark);
+        .result-simple p {
+            margin: 8px 0;
         }
-        .markdown-content h3 {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin: 0.6em 0 0.3em;
-            font-family: 'Fraunces', serif;
-            color: var(--text-dark);
+        .result-simple ul {
+            margin: 8px 0 8px 20px;
         }
-        .markdown-content h4 {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin: 0.5em 0 0.25em;
-            font-family: 'Fraunces', serif;
-            color: var(--text-dark);
-        }
-        .markdown-content p {
-            margin: 0.5em 0;
-        }
-        .markdown-content ul, .markdown-content ol {
-            margin: 0.5em 0 0.5em 1.5em;
-        }
-        .markdown-content li {
-            margin: 0.2em 0;
-        }
-        .markdown-content strong {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-        .markdown-content em {
-            font-style: italic;
-        }
-        .markdown-content hr {
-            margin: 1em 0;
-            border: none;
-            border-top: 1px solid var(--border-light);
-        }
-        .markdown-content blockquote {
-            border-left: 3px solid var(--pink-primary);
-            padding-left: 1em;
-            margin: 0.5em 0;
-            color: var(--text-mid);
-        }
-        .markdown-content code {
-            background: var(--tag-bg);
-            padding: 0.2em 0.4em;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.9em;
+        .result-simple li {
+            margin: 4px 0;
         }
 
         .btn-pdf {
@@ -672,44 +624,64 @@
             line-height: 1.6;
             z-index: -1;
         }
-        .pdf-print-container * {
-            font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif;
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 20px;
         }
 
         .image-comparison {
             display: flex;
             gap: 20px;
-            margin: 20px 0;
             flex-wrap: wrap;
             justify-content: center;
+            margin: 20px 0;
         }
         .image-comparison-item {
             flex: 1;
             min-width: 250px;
             text-align: center;
-            background: var(--bg-surface);
-            border-radius: 20px;
-            padding: 15px;
-            border: 1px solid var(--border-light);
         }
         .image-comparison-item h4 {
-            margin-bottom: 12px;
-            color: var(--text-dark);
+            margin-bottom: 10px;
+            color: var(--text-mid);
         }
         .image-comparison-item img {
             max-width: 100%;
             border-radius: 16px;
             box-shadow: var(--shadow-sm);
         }
-        .badge-confidence {
-            display: inline-block;
-            background: var(--success);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-top: 8px;
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 24px;
+            text-align: center;
+        }
+        .modal-content p { margin: 16px 0; }
+        .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
 
         @media (max-width: 768px) {
             .nav-menu { display: none; }
@@ -718,8 +690,10 @@
             .card { padding: 20px; }
             .container { padding: 90px 16px 40px; }
             .chat-nav-btn { padding: 10px 20px; font-size: 14px; }
-            .info-label { width: 100px; }
             .image-comparison { flex-direction: column; }
+            .user-info span { display: none; }
+            .auth-btn span { display: none; }
+            .auth-btn { padding: 8px 12px; }
         }
     </style>
 </head>
@@ -737,7 +711,8 @@
             <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
         </div>
         <div class="nav-right">
-            <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span></span></button>
+            <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
+            <div id="authContainer"></div>
             <button class="menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i> Menu</button>
         </div>
     </nav>
@@ -756,12 +731,11 @@
             <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
         </div>
 
-        <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
         <div id="step1Container" class="card">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
             <div class="upload-area" id="dropZone">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p>Tải ảnh hoặc chụp trực tiếp</p>
+                <p>Tải ảnh hoặc chụp trực tiếp <span style="color: var(--text-dim);">(không bắt buộc)</span></p>
                 <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display:none">
                 <div class="camera-controls">
                     <button class="btn btn-outline" id="chooseFileBtn"><i class="fas fa-folder-open"></i> Bấm để chọn ảnh</button>
@@ -770,11 +744,11 @@
                 <div class="image-preview" id="imagePreview"></div>
             </div>
             
-            <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này:</label>
-            <textarea id="symptomText" rows="3" placeholder="Bạn hãy chia sẻ kỹ hơn những gì mình đang cảm thấy, như đau, ngứa, rát, tiền sử dị ứng hoặc nhiệt độ cơ thể. Càng chi tiết, EduHealth AI càng hỗ trợ bạn tốt hơn."></textarea>
+            <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này <span style="color: var(--danger);">*</span>:</label>
+            <textarea id="symptomText" rows="3" placeholder="Ví dụ: Em bị đau họng 2 ngày nay, kèm theo sốt nhẹ và mệt mỏi... Càng chi tiết, EduHealth AI càng hỗ trợ bạn tốt hơn."></textarea>
             
             <label class="symptom-description"><i class="fas fa-clock"></i> ⏱️ Bạn đã gặp tình trạng này trong bao lâu?</label>
-            <input type="text" id="durationText" class="duration-input" placeholder="Ví dụ: 2 ngày, 1 tuần, 1 tháng, từ hồi tháng trước, khoảng 3 tháng nay..." autocomplete="off">
+            <input type="text" id="durationText" class="duration-input" placeholder="Ví dụ: 2 ngày, 1 tuần, 1 tháng, từ hồi tháng trước..." autocomplete="off">
             
             <div class="action-buttons">
                 <button class="btn btn-primary" id="step1Btn"><i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe</button>
@@ -784,7 +758,6 @@
             </div>
         </div>
 
-        <!-- BƯỚC 2: CHECKLIST -->
         <div id="step2Container" class="card" style="display: none;">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-check-square"></i> 2️⃣ Hãy cho EduHealth AI biết thêm về tình trạng của bạn</h3>
             <div id="checklistArea" class="checklist-container">
@@ -796,11 +769,10 @@
                 <button class="btn btn-primary" id="step2Btn"><i class="fas fa-stethoscope"></i> 🔍 Xem kết quả nhận biết</button>
             </div>
             <div class="back-info">
-                <i class="fas fa-arrow-left"></i> Checklist được tạo từ ảnh và mô tả của bạn
+                <i class="fas fa-arrow-left"></i> Checklist được tạo từ thông tin của bạn
             </div>
         </div>
 
-        <!-- BƯỚC 3: KẾT QUẢ -->
         <div id="step3Container" class="card" style="display: none;">
             <div class="result-area" style="padding: 0;">
                 <div class="result-title"><i class="fas fa-chart-line"></i> 📊 Kết quả nhận biết từ EduHealth AI</div>
@@ -823,14 +795,28 @@
         </div>
     </div>
 
-    <!-- PDF Container ẩn -->
     <div id="pdfPrintContainer" class="pdf-print-container"></div>
+    
+    <div id="rejectModal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+            <h3>🔧 Tính năng đang được nâng cấp</h3>
+            <p>Hiện tại, tính năng phân tích ảnh này đang trong quá trình nâng cấp để phục vụ bạn tốt hơn.</p>
+            <p>Bạn vui lòng quay lại <strong>Thư viện Cẩm nang sức khỏe</strong> để tìm hiểu thêm,<br>
+            và liên hệ với <strong>Cán bộ y tế nhà trường</strong> để được hỗ trợ kịp thời.</p>
+            <div class="modal-buttons">
+                <a href="index.html" class="btn btn-primary" style="text-decoration: none;"><i class="fas fa-book-open"></i> Đến Thư viện sức khỏe</a>
+                <button class="btn btn-outline" id="closeModalBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Cấu hình Firebase
+        // ========== CẤU HÌNH ==========
         const firebaseConfig = {
             apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
@@ -841,24 +827,23 @@
             measurementId: "G-GSP46EVLYG"
         };
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Cấu hình API
         const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
         const BASE_URL = "https://api.shopaikey.com/v1";
         const API_URL = BASE_URL + "/chat/completions";
         const MODEL_NAME = "gpt-5.4-nano";
 
-        // Biến toàn cục
+        // ========== BIẾN TOÀN CỤC ==========
         let currentImageBase64 = null;
-        let step1HiddenAnalysis = null;
         let currentChecklistItems = [];
         let isProcessing = false;
         let lastAnalysisResult = null;
-        let lastCompressedImage = null;
-        let currentUserId = null;
-        let userChats = [];
         let lastCheckinData = null;
+        let currentUserId = null;
+        let currentUserData = null;
+        let userChats = [];
         let highlightedImageBase64 = null;
         let diseaseAreas = [];
 
@@ -886,577 +871,85 @@
         const chatHistoryList = document.getElementById('chatHistoryList');
         const pdfPrintContainer = document.getElementById('pdfPrintContainer');
         const imageAnalysisSection = document.getElementById('imageAnalysisSection');
+        const authContainer = document.getElementById('authContainer');
+        const rejectModal = document.getElementById('rejectModal');
 
-        // ========== HÀM XỬ LÝ MARKDOWN ==========
-        function formatMarkdownToHtml(text) {
-            if (!text) return "";
-            let html = text;
+        // ========== KIỂM TRA ĐĂNG NHẬP ==========
+        function checkAuth() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            currentUserId = user.uid;
+            return true;
+        }
+
+        async function loadUserData() {
+            const user = auth.currentUser;
+            if (!user) return null;
             
-            html = html.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
-            html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-            html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-            html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+            let fullName = localStorage.getItem('healthUserName');
+            let phone = localStorage.getItem('healthUserPhone');
+            let dob = localStorage.getItem('healthUserDob');
+            let gender = localStorage.getItem('healthUserGender');
+            let email = user.email;
             
-            html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-            html = html.replace(/___(.*?)___/g, '<strong><em>$1</em></strong>');
-            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-            
-            html = html.replace(/^---$/gm, '<hr>');
-            html = html.replace(/^\*\*\*$/gm, '<hr>');
-            html = html.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
-            html = html.replace(/`(.*?)`/g, '<code>$1</code>');
-            
-            let inUl = false, inOl = false;
-            const lines = html.split('\n');
-            const processedLines = [];
-            
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-                const bulletMatch = line.match(/^[\*\-]\s+(.*)$/);
-                const numberMatch = line.match(/^\d+\.\s+(.*)$/);
-                
-                if (bulletMatch) {
-                    if (!inUl) {
-                        if (inOl) {
-                            processedLines.push('</ol>');
-                            inOl = false;
-                        }
-                        processedLines.push('<ul>');
-                        inUl = true;
-                    }
-                    processedLines.push(`<li>${bulletMatch[1]}</li>`);
-                } else if (numberMatch) {
-                    if (!inOl) {
-                        if (inUl) {
-                            processedLines.push('</ul>');
-                            inUl = false;
-                        }
-                        processedLines.push('<ol>');
-                        inOl = true;
-                    }
-                    processedLines.push(`<li>${numberMatch[1]}</li>`);
+            if (!fullName || fullName === user.email.split('@')[0]) {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    fullName = data.fullName;
+                    phone = data.phone || '';
+                    dob = data.dob || '';
+                    gender = data.gender || '';
+                    email = data.email || user.email;
+                    localStorage.setItem('healthUserName', fullName);
+                    localStorage.setItem('healthUserPhone', phone);
+                    localStorage.setItem('healthUserDob', dob);
+                    localStorage.setItem('healthUserGender', gender);
+                    currentUserData = data;
                 } else {
-                    if (inUl) {
-                        processedLines.push('</ul>');
-                        inUl = false;
-                    }
-                    if (inOl) {
-                        processedLines.push('</ol>');
-                        inOl = false;
-                    }
-                    processedLines.push(line);
+                    currentUserData = { fullName: user.email.split('@')[0], phone: '', dob: '', gender: '', email: user.email };
                 }
-            }
-            if (inUl) processedLines.push('</ul>');
-            if (inOl) processedLines.push('</ol>');
-            
-            html = processedLines.join('\n');
-            html = html.replace(/\n\n/g, '</p><p>');
-            html = html.replace(/\n/g, '<br>');
-            html = '<div class="markdown-content">' + html + '</div>';
-            html = html.replace(/<p><\/p>/g, '');
-            html = html.replace(/<p><br><\/p>/g, '');
-            html = html.replace(/<\/h1><br>/g, '</h1>');
-            html = html.replace(/<\/h2><br>/g, '</h2>');
-            html = html.replace(/<\/h3><br>/g, '</h3>');
-            html = html.replace(/<\/h4><br>/g, '</h4>');
-            
-            return html;
-        }
-
-        // ========== KHỞI TẠO USER ==========
-        function initUser() {
-            let userId = localStorage.getItem('healthUserId');
-            if (!userId) {
-                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('healthUserId', userId);
-            }
-            currentUserId = userId;
-            let userName = localStorage.getItem('healthUserName');
-            if (!userName) {
-                userName = "Bạn đọc " + currentUserId.substr(-6);
-                localStorage.setItem('healthUserName', userName);
-            }
-            return userName;
-        }
-        const currentUserName = initUser();
-
-        // ========== ESCAPE HTML ==========
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-
-        // ========== HÀM VẼ BOUNDING BOX LÊN ẢNH (KHÔNG CẦN AI MỚI) ==========
-        async function drawBoundingBoxes(imageBase64, areas) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Vẽ ảnh gốc
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Màu sắc cho các vùng khác nhau
-                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
-                    
-                    areas.forEach((area, idx) => {
-                        const color = colors[idx % colors.length];
-                        // Vẽ khung
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 3;
-                        ctx.strokeRect(area.x, area.y, area.width, area.height);
-                        
-                        // Tô màu mờ
-                        ctx.fillStyle = color + '33';
-                        ctx.fillRect(area.x, area.y, area.width, area.height);
-                        
-                        // Thêm nhãn với nền
-                        ctx.font = 'bold 14px "DM Sans"';
-                        const label = area.label;
-                        const textWidth = ctx.measureText(label).width;
-                        ctx.fillStyle = color;
-                        ctx.fillRect(area.x, area.y - 22, textWidth + 12, 22);
-                        ctx.fillStyle = 'white';
-                        ctx.fillText(label, area.x + 6, area.y - 8);
-                        
-                        // Thêm confidence
-                        if (area.confidence) {
-                            ctx.font = '10px "DM Sans"';
-                            ctx.fillStyle = color;
-                            ctx.fillRect(area.x, area.y + area.height + 2, 60, 16);
-                            ctx.fillStyle = 'white';
-                            ctx.fillText(`${Math.round(area.confidence * 100)}%`, area.x + 4, area.y + area.height + 14);
-                        }
-                    });
-                    
-                    resolve(canvas.toDataURL('image/jpeg', 0.9));
+            } else {
+                currentUserData = {
+                    fullName: fullName,
+                    phone: phone || '',
+                    dob: dob || '',
+                    gender: gender || '',
+                    email: email
                 };
-                img.src = imageBase64;
-            });
+            }
+            return currentUserData;
         }
 
-        // ========== AI TỰ ĐỘNG PHÁT HIỆN VÀ KHOANH VÙNG BỆNH ==========
-        async function detectAndHighlightDisease(imageBase64, userSymptom, userDuration) {
-            try {
-                console.log("🔍 AI đang phân tích ảnh để phát hiện vùng bệnh...");
-                
-                const detectionPrompt = `Bạn là chuyên gia y tế AI. Hãy phân tích ảnh bệnh lý này chi tiết.
-                
-Thông tin học sinh:
-- Mô tả triệu chứng: "${userSymptom}"
-- Thời gian mắc: ${userDuration || "không rõ"}
-
-Nhiệm vụ: 
-1. Xác định CÁC VÙNG bất thường trên ảnh (vùng da bị tổn thương, phát ban, mẩn đỏ, sưng tấy, vết loét, v.v.)
-2. Với MỖI vùng phát hiện được, hãy cung cấp tọa độ dạng PHẦN TRĂM (%) so với chiều rộng và chiều cao của ảnh.
-3. Đánh giá độ tin cậy cho mỗi vùng (0-1).
-
-Trả về DUY NHẤT một JSON object với cấu trúc:
-{
-    "disease_areas": [
-        {
-            "label": "tên vùng bệnh/bất thường (tiếng Việt)",
-            "x_percent": 0.35,
-            "y_percent": 0.42,
-            "width_percent": 0.25,
-            "height_percent": 0.20,
-            "confidence": 0.92,
-            "description": "mô tả ngắn về đặc điểm vùng này"
-        }
-    ],
-    "summary": "tóm tắt ngắn về các phát hiện trên ảnh"
-}
-
-Lưu ý QUAN TRỌNG:
-- x_percent, y_percent là tọa độ GÓC TRÊN BÊN TRÁI của vùng (0-1)
-- width_percent, height_percent là chiều rộng và chiều cao của vùng (0-1)
-- Nếu không phát hiện vùng bất thường nào, trả về mảng rỗng []
-- Chỉ trả về JSON, không thêm text giải thích bên ngoài`;
-
-                const messages = [
-                    { role: "system", content: "Bạn là AI chuyên phân tích ảnh y tế. Chỉ trả về JSON hợp lệ." },
-                    { role: "user", content: [
-                        { type: "text", text: detectionPrompt },
-                        { type: "image_url", image_url: { url: imageBase64 } }
-                    ]}
-                ];
-                
-                const rawResponse = await callAI(messages, 0.4);
-                let detection;
-                try {
-                    let clean = rawResponse.trim();
-                    if (clean.startsWith("```json")) clean = clean.slice(7);
-                    if (clean.startsWith("```")) clean = clean.slice(3);
-                    if (clean.endsWith("```")) clean = clean.slice(0, -3);
-                    detection = JSON.parse(clean);
-                } catch (e) {
-                    console.error("Parse detection JSON error:", e);
-                    return { imageBase64: imageBase64, areas: [], summary: "Không thể phân tích vùng bệnh" };
-                }
-                
-                if (!detection.disease_areas || detection.disease_areas.length === 0) {
-                    console.log("Không phát hiện vùng bệnh nào");
-                    return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường rõ rệt" };
-                }
-                
-                // Chuyển đổi tọa độ % sang pixel
-                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
-                
-                // Vẽ bounding box
-                const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
-                
-                return {
-                    imageBase64: highlightedImage,
-                    areas: areasInPixels,
-                    summary: detection.summary || `Phát hiện ${detection.disease_areas.length} vùng bất thường`
+        function updateAuthUI() {
+            const user = auth.currentUser;
+            if (user) {
+                const displayName = currentUserData?.fullName || user.email.split('@')[0];
+                authContainer.innerHTML = `
+                    <button class="auth-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></button>
+                `;
+                document.getElementById('logoutBtn').onclick = async () => {
+                    await auth.signOut();
+                    localStorage.removeItem('healthUserId');
+                    localStorage.removeItem('healthUserEmail');
+                    localStorage.removeItem('healthUserName');
+                    localStorage.removeItem('healthUserPhone');
+                    localStorage.removeItem('healthUserDob');
+                    localStorage.removeItem('healthUserGender');
+                    window.location.href = 'login.html';
                 };
-                
-            } catch (error) {
-                console.error("Detection error:", error);
-                return { imageBase64: imageBase64, areas: [], summary: "Lỗi khi phân tích ảnh" };
-            }
-        }
-        
-        // Chuyển đổi tọa độ % sang pixel
-        function convertPercentToPixels(imageBase64, areas) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const width = img.width;
-                    const height = img.height;
-                    const pixelAreas = areas.map(area => ({
-                        label: area.label,
-                        x: area.x_percent * width,
-                        y: area.y_percent * height,
-                        width: area.width_percent * width,
-                        height: area.height_percent * height,
-                        confidence: area.confidence,
-                        description: area.description || ""
-                    }));
-                    resolve(pixelAreas);
+            } else {
+                authContainer.innerHTML = `<button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i><span>Đăng nhập</span></button>`;
+                document.getElementById('loginBtn').onclick = () => {
+                    window.location.href = 'login.html';
                 };
-                img.src = imageBase64;
-            });
-        }
-        
-        // Hiển thị ảnh so sánh
-        function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas) {
-            let areasHtml = '';
-            if (areas && areas.length > 0) {
-                areasHtml = `<div style="margin-top: 15px; text-align: left;">
-                    <strong><i class="fas fa-tag"></i> Các vùng được phát hiện:</strong>
-                    <ul style="margin-top: 8px;">`;
-                areas.forEach(area => {
-                    areasHtml += `<li><span style="color: #ef4444; font-weight: bold;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%<br>
-                    <span style="font-size: 13px; color: var(--text-dim);">${escapeHtml(area.description || '')}</span></li>`;
-                });
-                areasHtml += `</ul></div>`;
-            }
-            
-            const comparisonHtml = `
-                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
-                    <h3 style="margin-bottom: 15px;"><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI tự động khoanh vùng bệnh</h3>
-                    <div class="image-comparison">
-                        <div class="image-comparison-item">
-                            <h4><i class="fas fa-image"></i> Ảnh gốc</h4>
-                            <img src="${originalImage}" alt="Ảnh gốc">
-                        </div>
-                        <div class="image-comparison-item">
-                            <h4><i class="fas fa-chart-line"></i> Vùng bệnh được phát hiện</h4>
-                            <img src="${highlightedImage}" alt="Đã khoanh vùng">
-                            ${detectionSummary ? `<div class="badge-confidence">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
-                        </div>
-                    </div>
-                    ${areasHtml}
-                    <div class="warning-box" style="margin-top: 15px; font-size: 12px;">
-                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Việc khoanh vùng do AI thực hiện dựa trên phân tích hình ảnh, có thể không hoàn toàn chính xác. Vui lòng tham khảo ý kiến chuyên gia y tế.
-                    </div>
-                </div>
-            `;
-            
-            imageAnalysisSection.innerHTML = comparisonHtml;
-            imageAnalysisSection.style.display = "block";
-        }
-
-        // ========== TẠO NỘI DUNG PDF ==========
-        function generatePDFHTML(data) {
-            const now = new Date();
-            const formattedDate = now.toLocaleString('vi-VN');
-            const analysisText = data.analysisResult || '';
-            const formattedContent = formatMarkdownToHtml(analysisText);
-            
-            let diagnosis = '', confidence = '', symptoms = '', causes = '', suggestions = '';
-            
-            const diagMatch = analysisText.match(/(?:CHẨN ĐOÁN|DIAGNOSIS)[:\s]*([^\n]+)/i);
-            if (diagMatch) diagnosis = diagMatch[1];
-            
-            const confMatch = analysisText.match(/(?:ĐỘ TIN CẬY|CONFIDENCE)[:\s]*([^\n]+)/i);
-            if (confMatch) confidence = confMatch[1];
-            
-            const symMatch = analysisText.match(/(?:TRIỆU CHỨNG GHI NHẬN|SYMPTOMS)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (symMatch) symptoms = symMatch[1];
-            
-            const causeMatch = analysisText.match(/(?:NGUYÊN NHÂN CÓ THỂ|CAUSES)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (causeMatch) causes = causeMatch[1];
-            
-            const suggMatch = analysisText.match(/(?:LỜI KHUYÊN TỪ EDUHEALTH AI|SUGGESTIONS|GỢI Ý)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (suggMatch) suggestions = suggMatch[1];
-            
-            let checklistHtml = '';
-            if (data.selectedSymptoms && data.selectedSymptoms.length > 0) {
-                checklistHtml = '<div style="margin:15px 0;padding:12px;background:#f7fafc;border-radius:8px;"><h3 style="color:#2b6cb0;margin:0 0 8px;">✅ Checklist đã chọn</h3><ul>';
-                data.selectedSymptoms.forEach(s => {
-                    checklistHtml += `<li style="margin:5px 0;">${escapeHtml(s)}</li>`;
-                });
-                checklistHtml += '</ul></div>';
-            }
-            
-            let diseaseAreasHtml = '';
-            if (diseaseAreas && diseaseAreas.length > 0) {
-                diseaseAreasHtml = '<div style="margin:15px 0;padding:12px;background:#f7fafc;border-radius:8px;"><h3 style="color:#2b6cb0;margin:0 0 8px;">🔬 Vùng bệnh được phát hiện</h3><ul>';
-                diseaseAreas.forEach(area => {
-                    diseaseAreasHtml += `<li><strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%<br>${escapeHtml(area.description || '')}</li>`;
-                });
-                diseaseAreasHtml += '</ul></div>';
-            }
-            
-            return `<!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>Eduhealth AI - Nền Tảng Giáo Gục Sức Khỏe – Sàn Lọc Sớm – Kết Nối Hỗ Trợ Trong Học Đường.</title>
-                <style>
-                    * { margin:0; padding:0; box-sizing:border-box; }
-                    body {
-                        font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif;
-                        padding: 40px;
-                        background: white;
-                        color: #1a202c;
-                        line-height: 1.6;
-                        word-wrap: break-word;
-                    }
-                    .pdf-header {
-                        text-align: center;
-                        border-bottom: 2px solid #e53e3e;
-                        padding-bottom: 15px;
-                        margin-bottom: 20px;
-                    }
-                    .pdf-header h1 { color: #2563eb; font-size: 24px; margin-bottom: 8px; }
-                    .pdf-header p { color: #718096; font-size: 12px; }
-                    .info-section {
-                        background: #f7fafc;
-                        padding: 15px;
-                        border-radius: 8px;
-                        margin-bottom: 15px;
-                    }
-                    .info-row {
-                        margin: 8px 0;
-                        padding: 4px 0;
-                        border-bottom: 1px solid #e2e8f0;
-                    }
-                    .info-label {
-                        font-weight: bold;
-                        color: #3182ce;
-                        display: inline-block;
-                        width: 140px;
-                    }
-                    .diagnosis-box {
-                        background: linear-gradient(135deg, #3182ce, #e53e3e);
-                        color: white;
-                        padding: 15px;
-                        border-radius: 8px;
-                        margin: 15px 0;
-                    }
-                    .diagnosis-box h2 { font-size: 18px; margin-bottom: 10px; }
-                    .content-box {
-                        margin: 15px 0;
-                        padding: 12px;
-                        background: #f7fafc;
-                        border-radius: 8px;
-                    }
-                    .content-box h3 { color: #2b6cb0; margin-bottom: 8px; font-size: 16px; }
-                    .suggestion-box {
-                        margin: 15px 0;
-                        padding: 12px;
-                        background: #e6fffa;
-                        border-radius: 8px;
-                        border-left: 3px solid #38b2ac;
-                    }
-                    .warning-box {
-                        background: #fef5e7;
-                        padding: 12px;
-                        border-radius: 8px;
-                        margin-top: 20px;
-                        border-left: 3px solid #ecc94b;
-                        font-size: 12px;
-                    }
-                    .footer {
-                        text-align: center;
-                        margin-top: 30px;
-                        padding-top: 15px;
-                        border-top: 1px solid #e2e8f0;
-                        font-size: 10px;
-                        color: #a0aec0;
-                    }
-                    .markdown-content { line-height: 1.6; }
-                    .markdown-content h1, .markdown-content h2, .markdown-content h3 { color: #2b6cb0; margin: 15px 0 8px; }
-                    .markdown-content p { margin: 8px 0; }
-                    .markdown-content ul, .markdown-content ol { margin: 8px 0 8px 25px; }
-                    .markdown-content li { margin: 4px 0; }
-                    .markdown-content strong { color: #e53e3e; }
-                    ul, ol { margin: 8px 0 8px 20px; padding-left: 10px; }
-                    li { margin: 4px 0; }
-                </style>
-            </head>
-            <body>
-                <div class="pdf-header">
-                    <h1>🏥 Eduhealth AI - Nền Tảng Giáo Gục Sức Khỏe – Sàn Lọc Sớm – Kết Nối Hỗ Trợ Trong Học Đường.</h1>
-                    <p>Ngày tạo: ${formattedDate}</p>
-                    <p>Mã số: ${data.checkinId || 'CHK_' + Date.now()}</p>
-                </div>
-                
-                <div class="info-section">
-                    <div class="info-row">
-                        <span class="info-label">👤 Tên / Mã số:</span>
-                        <span>${escapeHtml(data.userName || currentUserName)}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">📝 Mô tả triệu chứng:</span>
-                        <span>${escapeHtml((data.symptomDescription || 'Không có mô tả').substring(0, 500))}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">⏱️ Thời gian mắc:</span>
-                        <span>${escapeHtml(data.duration || 'Không cung cấp')}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">⏰ Thời gian check-in:</span>
-                        <span>${formattedDate}</span>
-                    </div>
-                </div>
-                
-                ${diseaseAreasHtml}
-                
-                <div class="diagnosis-box">
-                    <h2>📊 Kết quả nhận biết sớm</h2>
-                    ${diagnosis ? `<p><strong>Dấu hiệu nhận biết:</strong> ${escapeHtml(diagnosis)}</p>` : ''}
-                    ${confidence ? `<p><strong>Mức độ tương đồng:</strong> ${escapeHtml(confidence)}</p>` : ''}
-                </div>
-                
-                ${symptoms ? `<div class="content-box"><h3>📋 Triệu chứng ghi nhận</h3><div class="markdown-content">${formatMarkdownToHtml(symptoms)}</div></div>` : ''}
-                ${causes ? `<div class="content-box"><h3>🔬 Nguyên nhân có thể</h3><div class="markdown-content">${formatMarkdownToHtml(causes)}</div></div>` : ''}
-                ${suggestions ? `<div class="suggestion-box"><h3>💡 Gợi ý từ EduHealth AI</h3><div class="markdown-content">${formatMarkdownToHtml(suggestions)}</div></div>` : ''}
-                ${checklistHtml}
-                
-                <div class="content-box">
-                    <h3>📄 Phân tích chi tiết</h3>
-                    <div class="markdown-content">${formattedContent}</div>
-                </div>
-                
-                <div class="warning-box">
-                    <strong>⚠️ Lưu ý quan trọng:</strong><br>
-                    EduHealth AI hỗ trợ nhận biết sớm các dấu hiệu sức khỏe, không thay thế bác sĩ hay chẩn đoán trực tiếp. 
-                    Vui lòng tham khảo ý kiến chuyên gia y tế khi có triệu chứng bất thường hoặc kéo dài.
-                </div>
-                
-                <div class="footer">
-                    <p>© 2026 EduHealth AI - Nền tảng chăm sóc sức khỏe học đường</p>
-                </div>
-            </body>
-            </html>`;
-        }
-
-        // ========== XUẤT PDF ==========
-        async function exportToPDF() {
-            if (!lastCheckinData) {
-                showToast('Không có dữ liệu để xuất PDF!', true);
-                return;
-            }
-            
-            const btn = downloadPdfBtn;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo PDF...';
-            btn.disabled = true;
-            
-            try {
-                const pdfHtml = generatePDFHTML(lastCheckinData);
-                pdfPrintContainer.innerHTML = pdfHtml;
-                await new Promise(resolve => setTimeout(resolve, 500));
-                const canvas = await html2canvas(pdfPrintContainer, {
-                    scale: 2.5,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    useCORS: false,
-                    windowWidth: pdfPrintContainer.scrollWidth
-                });
-                const imgData = canvas.toDataURL('image/jpeg', 0.98);
-                const { jsPDF } = window.jspdf;
-                const imgWidth = 190;
-                const pageHeight = 277;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-                doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    doc.addPage();
-                    doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                doc.save(`EduHealth_Checkin_${currentUserName}_${Date.now()}.pdf`);
-                showToast('Đã tải xuống PDF thành công!');
-            } catch (error) {
-                console.error('PDF error:', error);
-                showToast('Lỗi khi tạo PDF: ' + error.message, true);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                pdfPrintContainer.innerHTML = '';
             }
         }
 
-        // ========== TOAST MESSAGE ==========
-        function showToast(message, isError = false) {
-            const oldToast = document.querySelector('.custom-toast');
-            if (oldToast) oldToast.remove();
-            const toast = document.createElement('div');
-            toast.className = 'custom-toast';
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: ${isError ? '#ef4444' : '#10b981'};
-                color: white;
-                padding: 12px 24px;
-                border-radius: 50px;
-                z-index: 10000;
-                font-size: 14px;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                max-width: 90%;
-                text-align: center;
-                font-family: 'DM Sans', sans-serif;
-            `;
-            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
-            document.body.appendChild(toast);
-            setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
-        }
-
-        // ========== NÉN ẢNH ==========
+        // ========== NÉN ẢNH 720p ==========
         async function compressImageTo720p(dataUrl, maxWidth = 720, quality = 0.7) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -1478,110 +971,81 @@ Lưu ý QUAN TRỌNG:
             });
         }
 
-        // ========== HIỂN THỊ ẢNH PREVIEW ==========
-        function displayImagePreview(fileOrDataUrl, isFile = true) {
-            if (isFile && fileOrDataUrl instanceof File) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    currentImageBase64 = e.target.result;
-                    lastCompressedImage = await compressImageTo720p(currentImageBase64);
-                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                };
-                reader.readAsDataURL(fileOrDataUrl);
-            } else if (typeof fileOrDataUrl === 'string') {
-                currentImageBase64 = fileOrDataUrl;
-                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-            }
+        function showRejectModal() {
+            rejectModal.classList.add('active');
         }
 
-        // ========== SỰ KIỆN UPLOAD ẢNH ==========
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            const file = e.dataTransfer.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = async (ev) => {
-                    currentImageBase64 = ev.target.result;
-                    lastCompressedImage = await compressImageTo720p(currentImageBase64);
-                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
-            } else alert('Vui lòng thả file ảnh hợp lệ');
-        });
-        
-        chooseFileBtn.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', async (e) => {
-            if (e.target.files.length) {
-                const reader = new FileReader();
-                reader.onload = async (ev) => {
-                    currentImageBase64 = ev.target.result;
-                    lastCompressedImage = await compressImageTo720p(currentImageBase64);
-                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                };
-                reader.readAsDataURL(e.target.files[0]);
-            }
-        });
-        
-        cameraBtn.addEventListener('click', async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.autoplay = true;
-                const modalDiv = document.createElement('div');
-                modalDiv.style.position = 'fixed';
-                modalDiv.style.top = 0;
-                modalDiv.style.left = 0;
-                modalDiv.style.width = '100%';
-                modalDiv.style.height = '100%';
-                modalDiv.style.background = 'rgba(0,0,0,0.8)';
-                modalDiv.style.zIndex = 2000;
-                modalDiv.style.display = 'flex';
-                modalDiv.style.justifyContent = 'center';
-                modalDiv.style.alignItems = 'center';
-                const videoContainer = document.createElement('div');
-                videoContainer.style.background = 'white';
-                videoContainer.style.padding = '16px';
-                videoContainer.style.borderRadius = '32px';
-                video.width = 320;
-                video.height = 240;
-                videoContainer.appendChild(video);
-                const captureBtn = document.createElement('button');
-                captureBtn.innerText = 'Chụp ảnh';
-                captureBtn.className = 'btn btn-primary';
-                captureBtn.style.marginTop = '12px';
-                const closeBtn = document.createElement('button');
-                closeBtn.innerText = 'Hủy';
-                closeBtn.className = 'btn btn-outline';
-                closeBtn.style.marginLeft = '10px';
-                videoContainer.appendChild(captureBtn);
-                videoContainer.appendChild(closeBtn);
-                modalDiv.appendChild(videoContainer);
-                document.body.appendChild(modalDiv);
-                captureBtn.onclick = async () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const dataURL = canvas.toDataURL('image/jpeg', 0.8);
-                    currentImageBase64 = dataURL;
-                    lastCompressedImage = await compressImageTo720p(currentImageBase64);
-                    displayImagePreview(dataURL, false);
-                    stream.getTracks().forEach(track => track.stop());
-                    document.body.removeChild(modalDiv);
-                };
-                closeBtn.onclick = () => {
-                    stream.getTracks().forEach(track => track.stop());
-                    document.body.removeChild(modalDiv);
-                };
-            } catch (err) {
-                alert("Không thể truy cập camera: " + err.message);
-            }
-        });
+        document.getElementById('closeModalBtn').onclick = () => {
+            rejectModal.classList.remove('active');
+        };
+        rejectModal.onclick = (e) => {
+            if (e.target === rejectModal) rejectModal.classList.remove('active');
+        };
+
+        // ========== CHECKLIST MẶC ĐỊNH ==========
+        function getDefaultChecklist() {
+            return [
+                { id: 1, category: "🩺 Triệu chứng cơ bản", text: "Đau đầu", checked: false },
+                { id: 2, category: "🩺 Triệu chứng cơ bản", text: "Mệt mỏi, uể oải", checked: false },
+                { id: 3, category: "🩺 Triệu chứng cơ bản", text: "Sốt (trên 38°C)", checked: false },
+                { id: 4, category: "🩺 Triệu chứng cơ bản", text: "Ho khan hoặc có đờm", checked: false },
+                { id: 5, category: "🩺 Triệu chứng cơ bản", text: "Đau họng, khó nuốt", checked: false },
+                { id: 6, category: "🩺 Triệu chứng cơ bản", text: "Nghẹt mũi, chảy nước mũi", checked: false },
+                { id: 7, category: "🩺 Triệu chứng cơ bản", text: "Khó thở, tức ngực", checked: false },
+                { id: 8, category: "🩺 Triệu chứng cơ bản", text: "Đau nhức cơ thể", checked: false },
+                { id: 9, category: "🩺 Triệu chứng cơ bản", text: "Đau bụng", checked: false },
+                { id: 10, category: "🩺 Triệu chứng cơ bản", text: "Buồn nôn, nôn", checked: false },
+                { id: 11, category: "🍽️ Ăn uống & sinh hoạt", text: "Chán ăn, ăn không ngon", checked: false },
+                { id: 12, category: "🍽️ Ăn uống & sinh hoạt", text: "Khó ngủ, ngủ không sâu giấc", checked: false },
+                { id: 13, category: "🍽️ Ăn uống & sinh hoạt", text: "Uống ít nước hơn bình thường", checked: false },
+                { id: 14, category: "🍽️ Ăn uống & sinh hoạt", text: "Mất vị giác hoặc khứu giác", checked: false },
+                { id: 15, category: "🧠 Tinh thần", text: "Căng thẳng, lo âu", checked: false },
+                { id: 16, category: "🧠 Tinh thần", text: "Mất tập trung, khó học bài", checked: false },
+                { id: 17, category: "🧠 Tinh thần", text: "Cảm thấy buồn bã, chán nản", checked: false },
+                { id: 18, category: "🏃 Vận động", text: "Ít vận động, ngồi nhiều", checked: false },
+                { id: 19, category: "🏃 Vận động", text: "Đau nhức cơ thể sau vận động", checked: false },
+                { id: 20, category: "🌡️ Dấu hiệu khác", text: "Chóng mặt, hoa mắt", checked: false },
+                { id: 21, category: "🌡️ Dấu hiệu khác", text: "Phát ban, nổi mẩn đỏ", checked: false },
+                { id: 22, category: "🌡️ Dấu hiệu khác", text: "Sưng hạch bạch huyết", checked: false },
+                { id: 23, category: "🌡️ Dấu hiệu khác", text: "Đi ngoài phân lỏng", checked: false }
+            ];
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(message, isError = false) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${isError ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-width: 90%;
+                text-align: center;
+            `;
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
+        }
 
         // ========== GỌI API AI ==========
         async function callAI(messages, temperature = 0.7) {
@@ -1589,7 +1053,7 @@ Lưu ý QUAN TRỌNG:
                 model: MODEL_NAME,
                 messages: messages,
                 temperature: temperature,
-                max_tokens: 3800,
+                max_tokens: 2800,
                 top_p: 0.9,
                 stream: false
             };
@@ -1612,64 +1076,322 @@ Lưu ý QUAN TRỌNG:
 
         // ========== LẤY KIẾN THỨC TỪ FIRESTORE ==========
         async function getKnowledgeByType(type) {
-            const snapshot = await db.collection('knowledge_base').where('type', '==', type).get();
-            let knowledgeText = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                knowledgeText += `\n--- ${data.question} ---\n${data.answer}\n`;
-            });
-            return knowledgeText || 'Không có kiến thức cụ thể. Hãy dựa trên chuyên môn của bạn.';
+            try {
+                const snapshot = await db.collection('knowledge_base').where('type', '==', type).get();
+                let knowledgeText = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    knowledgeText += data.answer || '';
+                });
+                return knowledgeText;
+            } catch (e) {
+                console.warn('Lỗi lấy knowledge từ Firestore:', e);
+                return '';
+            }
         }
 
-        // ========== HIỂN THỊ KẾT QUẢ PHÂN TÍCH ==========
-        function formatAnalysisResultToUI(analysisText) {
-            if (!analysisText) return '<div class="loading">Đang xử lý...</div>';
-            const formattedContent = formatMarkdownToHtml(analysisText);
-            let diagnosis = '', confidence = '', symptoms = '', causes = '', suggestions = '';
-            const diagMatch = analysisText.match(/(?:CHẨN ĐOÁN|DIAGNOSIS)[:\s]*([^\n]+)/i);
-            if (diagMatch) diagnosis = diagMatch[1];
-            const confMatch = analysisText.match(/(?:ĐỘ TIN CẬY|CONFIDENCE)[:\s]*([^\n]+)/i);
-            if (confMatch) confidence = confMatch[1];
-            const symMatch = analysisText.match(/(?:TRIỆU CHỨNG GHI NHẬN|SYMPTOMS)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (symMatch) symptoms = symMatch[1];
-            const causeMatch = analysisText.match(/(?:NGUYÊN NHÂN CÓ THỂ|CAUSES)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (causeMatch) causes = causeMatch[1];
-            const suggMatch = analysisText.match(/(?:LỜI KHUYÊN TỪ EDUHEALTH AI|SUGGESTIONS|GỢI Ý)[:\s]*([^\n]+(?:\n[^\n]+)*?)(?=\n\n|\n[A-ZÀ-Ỹ]+:|$)/i);
-            if (suggMatch) suggestions = suggMatch[1];
-            if (!diagnosis && !symptoms && !suggestions) {
-                return `<div class="diagnosis-result"><div class="diagnosis-header"><h2><i class="fas fa-robot"></i> Kết quả nhận biết từ EduHealth AI</h2><span class="diagnosis-badge">Phân tích sơ bộ</span></div><div class="analysis-card">${formattedContent}</div><div class="warning-box"><i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> EduHealth AI hỗ trợ nhận biết sớm, không thay thế bác sĩ.</div></div>`;
+        // ========== KIỂM TRA ẢNH LIÊN QUAN ==========
+        async function checkImageRelevance(imageBase64, userSymptom) {
+            try {
+                const prompt = `Bạn là chuyên gia y tế. Hãy xác định xem ảnh này có liên quan đến vấn đề về da như mụn, phát ban, mẩn đỏ, vết thương, tổn thương da, hoặc các dấu hiệu bệnh ngoài da không.
+                
+Thông tin thêm: "${userSymptom.substring(0, 300)}"
+
+Trả về JSON: {"is_relevant": true/false, "reason": "lý do"}`;
+
+                const messages = [
+                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                    { role: "user", content: [
+                        { type: "text", text: prompt },
+                        { type: "image_url", image_url: { url: imageBase64 } }
+                    ]}
+                ];
+                
+                const rawResponse = await callAI(messages, 0.3);
+                let clean = rawResponse.trim();
+                if (clean.startsWith("```json")) clean = clean.slice(7);
+                if (clean.startsWith("```")) clean = clean.slice(3);
+                if (clean.endsWith("```")) clean = clean.slice(0, -3);
+                return JSON.parse(clean);
+            } catch (error) {
+                return { is_relevant: true, reason: "Không thể xác định" };
             }
-            return `<div class="diagnosis-result"><div class="diagnosis-header"><h2><i class="fas fa-stethoscope"></i> Kết quả nhận biết sớm</h2><span class="diagnosis-badge">Dựa trên hình ảnh và thông tin bạn cung cấp</span></div>${diagnosis ? `<div class="info-row"><div class="info-label"><i class="fas fa-file-medical"></i> Dấu hiệu nhận biết:</div><div class="info-value"><div class="markdown-content">${formatMarkdownToHtml(diagnosis)}</div></div></div>` : ''}${confidence ? `<div class="info-row"><div class="info-label"><i class="fas fa-chart-simple"></i> Mức độ tương đồng:</div><div class="info-value"><div class="markdown-content">${formatMarkdownToHtml(confidence)}</div></div></div>` : ''}${symptoms ? `<div class="info-row"><div class="info-label"><i class="fas fa-list-check"></i> Triệu chứng ghi nhận:</div><div class="info-value"><div class="markdown-content">${formatMarkdownToHtml(symptoms)}</div></div></div>` : ''}${causes ? `<div class="info-row"><div class="info-label"><i class="fas fa-microscope"></i> Nguyên nhân có thể:</div><div class="info-value"><div class="markdown-content">${formatMarkdownToHtml(causes)}</div></div></div>` : ''}${suggestions ? `<div class="success-box"><i class="fas fa-lightbulb"></i> <strong>Gợi ý từ EduHealth AI:</strong><div class="markdown-content">${formatMarkdownToHtml(suggestions)}</div></div>` : ''}<div class="analysis-card" style="margin-top:20px;"><strong><i class="fas fa-file-alt"></i> Phân tích chi tiết:</strong><div style="margin-top:12px;">${formattedContent}</div></div><div class="warning-box"><i class="fas fa-shield-alt"></i> <strong>Thông tin quan trọng:</strong> EduHealth AI hỗ trợ nhận biết sớm các dấu hiệu sức khỏe, không thay thế bác sĩ.</div></div>`;
+        }
+
+        // ========== VẼ BOUNDING BOX TRÊN ẢNH ==========
+        async function drawBoundingBoxes(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+                    
+                    areas.forEach((area, idx) => {
+                        const color = colors[idx % colors.length];
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(area.x, area.y, area.width, area.height);
+                        ctx.fillStyle = color + '33';
+                        ctx.fillRect(area.x, area.y, area.width, area.height);
+                        
+                        ctx.font = 'bold 14px "DM Sans"';
+                        ctx.fillStyle = color;
+                        ctx.fillRect(area.x, area.y - 22, area.label.length * 8 + 12, 22);
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(area.label, area.x + 6, area.y - 8);
+                    });
+                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.9));
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== AI PHÁT HIỆN VÙNG BỆNH ==========
+        async function detectDiseaseAreas(imageBase64, userSymptom) {
+            try {
+                const prompt = `Phân tích ảnh y tế này. Xác định các vùng bất thường trên da (mụn, phát ban, mẩn đỏ, tổn thương).
+Trả về JSON: {"disease_areas": [{"label": "tên vùng", "x_percent": 0.35, "y_percent": 0.42, "width_percent": 0.25, "height_percent": 0.20, "confidence": 0.92}], "summary": "tóm tắt"}
+Nếu không có, trả về mảng rỗng.`;
+
+                const messages = [
+                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                    { role: "user", content: [
+                        { type: "text", text: prompt },
+                        { type: "image_url", image_url: { url: imageBase64 } }
+                    ]}
+                ];
+                
+                const rawResponse = await callAI(messages, 0.4);
+                let clean = rawResponse.trim();
+                if (clean.startsWith("```json")) clean = clean.slice(7);
+                if (clean.startsWith("```")) clean = clean.slice(3);
+                if (clean.endsWith("```")) clean = clean.slice(0, -3);
+                const detection = JSON.parse(clean);
+                
+                if (!detection.disease_areas || detection.disease_areas.length === 0) {
+                    return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường" };
+                }
+                
+                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
+                const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
+                
+                return { imageBase64: highlightedImage, areas: areasInPixels, summary: detection.summary };
+            } catch (error) {
+                return { imageBase64: imageBase64, areas: [], summary: "Lỗi phân tích ảnh" };
+            }
+        }
+        
+        function convertPercentToPixels(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const width = img.width;
+                    const height = img.height;
+                    const pixelAreas = areas.map(area => ({
+                        label: area.label,
+                        x: area.x_percent * width,
+                        y: area.y_percent * height,
+                        width: area.width_percent * width,
+                        height: area.height_percent * height,
+                        confidence: area.confidence
+                    }));
+                    resolve(pixelAreas);
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== HIỂN THỊ ẢNH SO SÁNH ==========
+        function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas) {
+            let areasHtml = '';
+            if (areas && areas.length > 0) {
+                areasHtml = `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Vùng phát hiện:</strong><ul style="margin-top: 8px;">`;
+                areas.forEach(area => {
+                    areasHtml += `<li><span style="color:#ef4444;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%</li>`;
+                });
+                areasHtml += `</ul></div>`;
+            }
+            
+            imageAnalysisSection.innerHTML = `
+                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
+                    <h3><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI khoanh vùng</h3>
+                    <div class="image-comparison">
+                        <div class="image-comparison-item">
+                            <h4>Ảnh gốc</h4>
+                            <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
+                        </div>
+                        <div class="image-comparison-item">
+                            <h4>Vùng bệnh phát hiện</h4>
+                            <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
+                            ${detectionSummary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
+                        </div>
+                    </div>
+                    ${areasHtml}
+                    <div class="warning-box" style="margin-top:15px; font-size:12px;">
+                        <i class="fas fa-info-circle"></i> Việc khoanh vùng do AI thực hiện, có thể không hoàn toàn chính xác.
+                    </div>
+                </div>
+            `;
+            imageAnalysisSection.style.display = "block";
+        }
+
+        // ========== TẠO KẾT QUẢ THEO MẪU ==========
+        async function getAnalysisInNewFormat(userSymptom, userDuration, selectedSymptoms, hasImage, imageBase64 = null) {
+            const selectedText = selectedSymptoms.map(s => `- ${s}`).join("\n");
+            const hasImageText = hasImage ? "Có ảnh chụp" : "Không có ảnh";
+            
+            let diagnosisKnowledge = await getKnowledgeByType('diagnosis');
+            if (diagnosisKnowledge) {
+                diagnosisKnowledge = "\n\n=== KIẾN THỨC Y TẾ THAM KHẢO ===\n" + diagnosisKnowledge;
+            } else {
+                diagnosisKnowledge = "";
+            }
+            
+            const prompt = `Bạn là trợ lý y tế của EduHealth AI, hỗ trợ nhận biết sớm vấn đề sức khỏe cho HỌC SINH.
+
+THÔNG TIN:
+- Mô tả triệu chứng: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+- Triệu chứng đã chọn: ${selectedText || "không có"}
+- ${hasImageText}
+${diagnosisKnowledge}
+
+YÊU CẦU: Trả về JSON:
+{
+    "preliminary": "nhận biết sơ bộ (1-2 câu)",
+    "explanation": "giải thích ngắn gọn",
+    "warning_signs": ["dấu hiệu 1", "dấu hiệu 2", "dấu hiệu 3"],
+    "action_level": 1 hoặc 2 hoặc 3,
+    "action_text": "khuyến nghị cụ thể"
+}
+
+QUY TẮC ACTION_LEVEL:
+- Mức 1: Triệu chứng nhẹ, theo dõi tại nhà
+- Mức 2: Triệu chứng rõ, cần đi khám sớm
+- Mức 3: Triệu chứng nặng, cần đi khám ngay
+
+Trả về JSON thuần túy.`;
+
+            let messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }];
+            
+            if (hasImage && imageBase64) {
+                messages.push({ role: "user", content: [
+                    { type: "text", text: prompt },
+                    { type: "image_url", image_url: { url: imageBase64 } }
+                ]});
+            } else {
+                messages.push({ role: "user", content: prompt });
+            }
+            
+            const rawResponse = await callAI(messages, 0.5);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            let result = JSON.parse(clean);
+            
+            if (!result.warning_signs || !Array.isArray(result.warning_signs)) {
+                result.warning_signs = ["Theo dõi thêm triệu chứng", "Ghi nhận sự thay đổi"];
+            }
+            if (![1,2,3].includes(result.action_level)) result.action_level = 1;
+            
+            return result;
         }
 
         // ========== BƯỚC 1: TẠO CHECKLIST ==========
         async function step1CreateChecklist() {
-            if (!currentImageBase64) { alert("Vui lòng tải ảnh hoặc chụp trực tiếp để EduHealth AI hỗ trợ nhận biết!"); return; }
             const userSymptom = symptomTextarea.value.trim();
             const userDuration = durationInput.value.trim();
-            if (!userSymptom) { alert("Vui lòng mô tả cảm giác của bạn để EduHealth AI hỗ trợ tốt hơn."); return; }
+            
+            if (!userSymptom) { 
+                alert("Vui lòng mô tả cảm giác của bạn để EduHealth AI hỗ trợ tốt hơn."); 
+                return; 
+            }
+            
             if (isProcessing) return;
             isProcessing = true;
             step1Btn.disabled = true;
             step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
             
             try {
-                const checklistKnowledge = await getKnowledgeByType('checklist');
-                const contentParts = [{ type: "text", text: `Bạn là chuyên gia hỗ trợ nhận biết sớm các vấn đề sức khỏe. Người dùng cung cấp ảnh và mô tả: "${userSymptom}". Thời gian mắc: ${userDuration || "không rõ"}. KIẾN THỨC THAM KHẢO ĐỂ TẠO CHECKLIST: ${checklistKnowledge} Nhiệm vụ: 1. Đưa ra nhận xét nội bộ (ẩn) về tình trạng sức khỏe. 2. Tạo một JSON checklist chi tiết dựa trên các yếu tố môi trường, thói quen, chăm sóc sức khỏe, giấc ngủ, căng thẳng, chế độ ăn uống. Checklist cần có cấu trúc: mảng các item, mỗi item gồm "category", "text", "id". Hãy tạo 12-18 item. Trả về DUY NHẤT một JSON object: {"internal_note": "...", "checklist": [{"id":1,"category":"...","text":"..."}]} KHÔNG thêm văn bản khác ngoài JSON.` }, { type: "image_url", image_url: { url: currentImageBase64 } }];
-                const messages = [{ role: "system", content: "Bạn là trợ lý y tế của EduHealth AI. Luôn trả lời bằng JSON thuần túy." }, { role: "user", content: contentParts }];
-                const rawJSON = await callAI(messages, 0.5);
-                let parsed;
-                try { let clean = rawJSON.trim(); if (clean.startsWith("```json")) clean = clean.slice(7); if (clean.startsWith("```")) clean = clean.slice(3); if (clean.endsWith("```")) clean = clean.slice(0, -3); parsed = JSON.parse(clean); } catch (e) { throw new Error("AI trả về JSON không hợp lệ: " + rawJSON.substring(0, 200)); }
-                if (!parsed.checklist || !Array.isArray(parsed.checklist)) throw new Error("Checklist missing");
-                step1HiddenAnalysis = parsed.internal_note || "Không có ghi chú nội bộ";
-                currentChecklistItems = parsed.checklist.map(item => ({ id: item.id || Math.random(), category: item.category, text: item.text, checked: false }));
+                if (currentImageBase64) {
+                    const relevance = await checkImageRelevance(currentImageBase64, userSymptom);
+                    if (!relevance.is_relevant) {
+                        step1Container.style.display = "none";
+                        step2Container.style.display = "none";
+                        step3Container.style.display = "block";
+                        showRejectModal();
+                        isProcessing = false;
+                        step1Btn.disabled = false;
+                        step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+                        return;
+                    }
+                }
+                
+                let checklistKnowledge = await getKnowledgeByType('checklist');
+                let checklist = null;
+                try {
+                    let contentParts;
+                    const promptText = `Tạo checklist triệu chứng cho học sinh dựa trên:
+- Triệu chứng mô tả: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+${checklistKnowledge ? `\n=== KIẾN THỨC THAM KHẢO (HÃY DỰA VÀO ĐÂY ĐỂ TẠO CHECKLIST PHÙ HỢP NHẤT) ===\n${checklistKnowledge}\n` : ''}
+
+Yêu cầu: Tạo danh sách các triệu chứng liên quan dưới dạng checklist. Mỗi mục có id, category và text. Hãy tạo NHIỀU câu hỏi (khoảng 15-25 câu) để khai thác đầy đủ thông tin.
+Trả về JSON: {"checklist": [{"id":1,"category":"Tên nhóm","text":"Triệu chứng cụ thể"}]}`;
+                    
+                    if (currentImageBase64) {
+                        contentParts = [
+                            { type: "text", text: promptText },
+                            { type: "image_url", image_url: { url: currentImageBase64 } }
+                        ];
+                    } else {
+                        contentParts = { type: "text", text: promptText };
+                    }
+                    
+                    const messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }, { role: "user", content: contentParts }];
+                    const rawJSON = await callAI(messages, 0.5);
+                    let clean = rawJSON.trim();
+                    if (clean.startsWith("```json")) clean = clean.slice(7);
+                    if (clean.startsWith("```")) clean = clean.slice(3);
+                    if (clean.endsWith("```")) clean = clean.slice(0, -3);
+                    const parsed = JSON.parse(clean);
+                    
+                    if (parsed.checklist && Array.isArray(parsed.checklist) && parsed.checklist.length > 0) {
+                        checklist = parsed.checklist;
+                    } else {
+                        throw new Error("Checklist không hợp lệ");
+                    }
+                } catch (aiError) {
+                    console.warn("Dùng checklist mặc định:", aiError);
+                    checklist = getDefaultChecklist();
+                }
+                
+                currentChecklistItems = checklist.map(item => ({ 
+                    id: item.id || Math.random(), 
+                    category: item.category || "Khác", 
+                    text: item.text, 
+                    checked: false 
+                }));
+                
                 renderChecklistUI();
                 step1Container.style.display = "none";
                 step2Container.style.display = "block";
                 step3Container.style.display = "none";
+                
             } catch (error) {
                 console.error(error);
-                alert("Lỗi: " + error.message + ". Vui lòng thử lại.");
+                currentChecklistItems = getDefaultChecklist();
+                renderChecklistUI();
+                step1Container.style.display = "none";
+                step2Container.style.display = "block";
+                step3Container.style.display = "none";
             } finally {
                 isProcessing = false;
                 step1Btn.disabled = false;
@@ -1678,23 +1400,39 @@ Lưu ý QUAN TRỌNG:
         }
         
         function renderChecklistUI() {
-            if (!currentChecklistItems.length) { checklistArea.innerHTML = '<div style="padding:20px; text-align:center;">Không có checklist, hãy thử lại bước 1.</div>'; return; }
+            if (!currentChecklistItems.length) {
+                checklistArea.innerHTML = '<div style="padding:20px; text-align:center;">Đang tạo checklist...</div>';
+                return;
+            }
+            
             const groups = {};
-            currentChecklistItems.forEach(item => { if (!groups[item.category]) groups[item.category] = []; groups[item.category].push(item); });
+            currentChecklistItems.forEach(item => { 
+                const cat = item.category || "Khác";
+                if (!groups[cat]) groups[cat] = []; 
+                groups[cat].push(item); 
+            });
+            
             let html = '';
             for (let cat in groups) {
                 html += `<div class="checklist-category"><div class="category-title">${escapeHtml(cat)}</div>`;
-                groups[cat].forEach(item => { const isChecked = item.checked ? 'checked' : ''; html += `<div class="check-item" data-id="${item.id}"><input type="checkbox" id="chk_${item.id}" ${isChecked}><label for="chk_${item.id}">${escapeHtml(item.text)}</label></div>`; });
+                groups[cat].forEach(item => { 
+                    const isChecked = item.checked ? 'checked' : ''; 
+                    html += `<div class="check-item"><input type="checkbox" id="chk_${item.id}" ${isChecked}><label for="chk_${item.id}">${escapeHtml(item.text)}</label></div>`; 
+                });
                 html += `</div>`;
             }
             checklistArea.innerHTML = html;
-            currentChecklistItems.forEach(item => { const chk = document.getElementById(`chk_${item.id}`); if (chk) { chk.addEventListener('change', (e) => { item.checked = e.target.checked; }); } });
+            
+            currentChecklistItems.forEach(item => { 
+                const chk = document.getElementById(`chk_${item.id}`); 
+                if (chk) { 
+                    chk.addEventListener('change', (e) => { item.checked = e.target.checked; }); 
+                } 
+            });
         }
 
-        // ========== BƯỚC 2: PHÂN TÍCH CUỐI CÙNG + KHOANH VÙNG BỆNH ==========
+        // ========== BƯỚC 2: PHÂN TÍCH ==========
         async function step2FinalAnalysis() {
-            if (!currentImageBase64) { alert("Dữ liệu ảnh bị thiếu, vui lòng quay lại bước 1."); return; }
-            if (!step1HiddenAnalysis) { alert("Chưa có dữ liệu phân tích lần 1. Hãy tạo checklist trước."); return; }
             const selectedItems = currentChecklistItems.filter(i => i.checked === true);
             const userDuration = durationInput.value.trim();
             const userSymptom = symptomTextarea.value.trim();
@@ -1706,104 +1444,70 @@ Lưu ý QUAN TRỌNG:
             
             step2Container.style.display = "none";
             step3Container.style.display = "block";
-            analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-brain"></i> EduHealth AI đang xem xét thông tin của bạn... (15-30s)</div>';
+            analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-brain"></i> EduHealth AI đang xem xét thông tin của bạn... (15-20s)</div>';
             chatButtonSection.style.display = "none";
             pdfButtonSection.style.display = "none";
             historySection.style.display = "none";
             imageAnalysisSection.style.display = "none";
             
             try {
-                // BƯỚC 2.1: AI PHÁT HIỆN VÀ KHOANH VÙNG BỆNH
-                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng bệnh...</div>';
-                
-                const detectionResult = await detectAndHighlightDisease(currentImageBase64, userSymptom, userDuration);
-                highlightedImageBase64 = detectionResult.imageBase64;
-                diseaseAreas = detectionResult.areas;
-                
-                // BƯỚC 2.2: PHÂN TÍCH CHI TIẾT BỆNH
-                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả chẩn đoán...</div>';
-                
-                const selectedSymptomsText = selectedItems.map(i => `- ${i.text}`).join("\n");
-                const diagnosisKnowledge = await getKnowledgeByType('diagnosis');
-                
-                let diseaseAreasText = '';
-                if (diseaseAreas.length > 0) {
-                    diseaseAreasText = '\n\nCÁC VÙNG BẤT THƯỜNG PHÁT HIỆN TRÊN ẢNH:\n';
-                    diseaseAreas.forEach((area, idx) => {
-                        diseaseAreasText += `${idx + 1}. ${area.label} - Độ tin cậy: ${Math.round(area.confidence * 100)}%\n   Mô tả: ${area.description || 'Chưa có mô tả chi tiết'}\n`;
-                    });
+                if (currentImageBase64) {
+                    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng...</div>';
+                    const detectionResult = await detectDiseaseAreas(currentImageBase64, userSymptom);
+                    highlightedImageBase64 = detectionResult.imageBase64;
+                    diseaseAreas = detectionResult.areas;
+                    displayComparisonImages(currentImageBase64, highlightedImageBase64, detectionResult.summary, diseaseAreas);
                 }
                 
-                const promptFinal = `Bạn là chuyên gia hỗ trợ nhận biết sớm các vấn đề sức khỏe. Dựa trên:
-                - Ảnh cung cấp (đã được phân tích, phát hiện ${diseaseAreas.length} vùng bất thường)
-                - Nhận xét nội bộ: "${step1HiddenAnalysis}"
-                - Mô tả: "${userSymptom}"
-                - Thời gian mắc: ${userDuration || "không rõ"}
-                - Checklist đã chọn: ${selectedSymptomsText || "Không có"}
-                ${diseaseAreasText}
+                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả...</div>';
                 
-                KIẾN THỨC CHUYÊN MÔN THAM KHẢO:
-                ${diagnosisKnowledge}
+                const analysisData = await getAnalysisInNewFormat(
+                    userSymptom, 
+                    userDuration, 
+                    selectedItems.map(i => i.text),
+                    !!currentImageBase64,
+                    currentImageBase64
+                );
                 
-                Yêu cầu: Hãy trả lời theo cấu trúc CHUẨN dưới đây (sử dụng markdown để trình bày đẹp mắt):
-
-                ### **CHẨN ĐOÁN:** [Tên vấn đề sức khỏe nghi ngờ]
-
-                **ĐỘ TIN CẬY:** [Cao/Trung bình/Thấp - kèm lý do ngắn gọn]
-
-                ### **TRIỆU CHỨNG GHI NHẬN:**
-                - [Triệu chứng 1]
-                - [Triệu chứng 2]
-                - [Triệu chứng 3]
-
-                ### **NGUYÊN NHÂN CÓ THỂ:**
-                - [Nguyên nhân 1]
-                - [Nguyên nhân 2]
-
-                ### **LỜI KHUYÊN TỪ EDUHEALTH AI:**
-                - [Gợi ý 1]
-                - [Gợi ý 2]
-                - [Gợi ý 3]
-
-                ---
-
-                Viết bằng tiếng Việt, dễ hiểu, thân thiện. Có thể sử dụng **bold**, *italic*, danh sách, headings để làm nổi bật thông tin quan trọng.`;
+                lastAnalysisResult = JSON.stringify(analysisData);
+                analysisResultDiv.innerHTML = formatSimpleResult(analysisData);
                 
-                const messages = [
-                    { role: "system", content: "Bạn là trợ lý y tế của EduHealth AI, chuyên hỗ trợ nhận biết sớm. Trả lời theo cấu trúc yêu cầu, có thể dùng markdown để trình bày đẹp. Không thay thế bác sĩ." },
-                    { role: "user", content: [
-                        { type: "text", text: promptFinal },
-                        { type: "image_url", image_url: { url: currentImageBase64 } }
-                    ]}
-                ];
-                
-                const finalAnalysis = await callAI(messages, 0.7);
-                lastAnalysisResult = finalAnalysis;
+                // Lấy thông tin học sinh từ user data
+                const studentName = currentUserData?.fullName || (auth.currentUser?.email?.split('@')[0]) || 'Học sinh';
+                const studentPhone = currentUserData?.phone || localStorage.getItem('healthUserPhone') || '';
+                const studentDob = currentUserData?.dob || localStorage.getItem('healthUserDob') || '';
+                const studentGender = currentUserData?.gender || localStorage.getItem('healthUserGender') || '';
+                const studentEmail = auth.currentUser?.email || '';
                 
                 lastCheckinData = {
                     checkinId: 'CHK_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
                     userId: currentUserId,
-                    userName: currentUserName,
+                    userName: studentName,
+                    userPhone: studentPhone,
+                    userDob: studentDob,
+                    userGender: studentGender,
+                    userEmail: studentEmail,
                     symptomDescription: userSymptom,
                     duration: userDuration || "Không cung cấp",
-                    analysisResult: finalAnalysis,
+                    analysisResult: lastAnalysisResult,
                     selectedSymptoms: selectedItems.map(i => i.text),
-                    imageBase64: null,
-                    timestamp: new Date().toISOString()
+                    originalImageBase64: currentImageBase64 || null,
+                    highlightedImageBase64: highlightedImageBase64 || null,
+                    timestamp: new Date().toISOString(),
+                    formattedResult: analysisData
                 };
                 
-                // Hiển thị kết quả
-                analysisResultDiv.innerHTML = formatAnalysisResultToUI(finalAnalysis);
+                // Lưu vào Firestore - checkin_records
+                await db.collection('checkin_records').add({
+                    ...lastCheckinData,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 
-                // Hiển thị ảnh so sánh
-                displayComparisonImages(currentImageBase64, highlightedImageBase64, detectionResult.summary, diseaseAreas);
+                pdfButtonSection.style.display = "flex";
+                chatButtonSection.style.display = "flex";
+                await loadUserChatHistory();
+                if (userChats.length > 0) historySection.style.display = "block";
                 
-                if (lastCompressedImage) {
-                    pdfButtonSection.style.display = "flex";
-                    chatButtonSection.style.display = "flex";
-                    await loadUserChatHistory();
-                    if (userChats.length > 0) historySection.style.display = "block";
-                }
             } catch (error) {
                 console.error(error);
                 analysisResultDiv.innerHTML = `<div style="color: var(--danger); padding: 20px; text-align: center;">⚠️ Có lỗi xảy ra: ${error.message}. Vui lòng thử lại.</div>`;
@@ -1814,43 +1518,359 @@ Lưu ý QUAN TRỌNG:
             }
         }
 
-        // ========== TẢI LỊCH SỬ CHAT ==========
-        async function loadUserChatHistory() {
-            const snapshot = await db.collection('health_chats').where('userId', '==', currentUserId).orderBy('createdAt', 'desc').get();
-            userChats = [];
-            snapshot.forEach(doc => { userChats.push({ id: doc.id, ...doc.data() }); });
-            if (userChats.length > 0) {
-                let historyHtml = '';
-                userChats.forEach(chat => { const date = chat.createdAt ? chat.createdAt.toDate() : new Date(); historyHtml += `<div class="history-item" onclick="window.location.href='chatbox.html?chatId=${chat.id}'"><span class="history-name">${escapeHtml(chat.name || 'Cuộc trò chuyện')}</span><span class="history-time">${date.toLocaleDateString('vi-VN')}</span></div>`; });
-                chatHistoryList.innerHTML = historyHtml;
-            }
+        function formatSimpleResult(analysisData) {
+            const preliminary = analysisData.preliminary || "Chưa có thông tin nhận biết sơ bộ";
+            const explanation = analysisData.explanation || "Đang phân tích thông tin bạn cung cấp.";
+            const warningSigns = Array.isArray(analysisData.warning_signs) && analysisData.warning_signs.length > 0 
+                ? analysisData.warning_signs 
+                : ["Theo dõi thêm các triệu chứng", "Ghi nhận sự thay đổi của cơ thể"];
+            const actionLevel = analysisData.action_level && [1,2,3].includes(analysisData.action_level) ? analysisData.action_level : 1;
+            const actionText = analysisData.action_text || "Hãy theo dõi thêm, báo cho phụ huynh và liên hệ với cán bộ y tế.";
+            
+            const levelTitles = { 1: "🟢 Mức 1 - Theo dõi", 2: "🟡 Mức 2 - Đi khám sớm", 3: "🔴 Mức 3 - Đi khám ngay" };
+            
+            let levelDesc = "";
+            if (actionLevel === 1) levelDesc = "Theo dõi, báo phụ huynh và liên hệ với cán bộ y tế để được tư vấn thêm";
+            else if (actionLevel === 2) levelDesc = "Đi khám sớm tại cơ sở y tế gần nhất";
+            else levelDesc = "Đi khám ngay lập tức tại cơ sở y tế";
+            
+            return `
+                <div class="result-simple">
+                    <div style="background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary)); border-radius: 20px; padding: 20px; margin-bottom: 20px; color: white;">
+                        <h3 style="color: white; margin: 0 0 8px 0;"><i class="fas fa-clipboard-list"></i> Nhận biết sơ bộ</h3>
+                        <p style="margin: 0; font-size: 1.1rem;">${escapeHtml(preliminary)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-lightbulb"></i> Giải thích ngắn gọn</h3>
+                        <p>${escapeHtml(explanation)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu cần lưu ý</h3>
+                        <ul>${warningSigns.map(sign => `<li>${escapeHtml(sign)}</li>`).join('')}</ul>
+                    </div>
+                    
+                    <div class="level-card level-${actionLevel}">
+                        <div class="level-title">
+                            <i class="fas ${actionLevel === 1 ? 'fa-eye' : (actionLevel === 2 ? 'fa-stethoscope' : 'fa-ambulance')}"></i>
+                            ${levelTitles[actionLevel]}
+                        </div>
+                        <div class="level-desc">
+                            <strong>${levelDesc}</strong><br><br>
+                            ${escapeHtml(actionText)}
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Đây là kết quả nhận biết bước đầu từ AI, không thay thế chẩn đoán của bác sĩ.
+                    </div>
+                </div>
+            `;
         }
 
-        // ========== TẠO CHAT MỚI ==========
+        // ========== LỊCH SỬ CHAT ==========
+        async function loadUserChatHistory() {
+            try {
+                const snapshot = await db.collection('health_chats').where('userId', '==', currentUserId).orderBy('createdAt', 'desc').get();
+                userChats = [];
+                snapshot.forEach(doc => { userChats.push({ id: doc.id, ...doc.data() }); });
+                if (userChats.length > 0) {
+                    let historyHtml = '';
+                    userChats.forEach(chat => { 
+                        const date = chat.createdAt ? chat.createdAt.toDate() : new Date(); 
+                        historyHtml += `<div class="history-item" onclick="window.location.href='chatbox.html?chatId=${chat.id}'"><span class="history-name">${escapeHtml(chat.name || 'Cuộc trò chuyện')}</span><span class="history-time">${date.toLocaleDateString('vi-VN')}</span></div>`; 
+                    });
+                    chatHistoryList.innerHTML = historyHtml;
+                }
+            } catch(e) { console.error("Load history error:", e); }
+        }
+
+        // ========== TẠO CHAT MỚI (LƯU ĐẦY ĐỦ THÔNG TIN HỌC SINH) ==========
         async function createNewChat() {
-            if (!lastAnalysisResult || !lastCompressedImage) { alert("Không có dữ liệu để tạo cuộc trò chuyện."); return null; }
+            if (!lastCheckinData) { alert("Không có dữ liệu!"); return null; }
             const chatId = 'SK_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
             const symptomSummary = symptomTextarea.value.trim().substring(0, 500);
             const durationSummary = durationInput.value.trim();
-            const pdfDataForAdmin = { analysisResult: lastAnalysisResult, symptomDescription: symptomSummary, duration: durationSummary, imageBase64: null, userName: currentUserName, timestamp: new Date().toISOString(), selectedSymptoms: currentChecklistItems.filter(i => i.checked).map(i => i.text), checkinId: lastCheckinData?.checkinId || 'CHK_' + Date.now() };
+            
+            let resultMessage = "";
+            if (lastCheckinData.formattedResult) {
+                const fr = lastCheckinData.formattedResult;
+                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Ngày sinh: ${lastCheckinData.userDob || 'Chưa cập nhật'}\n- Giới tính: ${lastCheckinData.userGender || 'Chưa cập nhật'}\n- SĐT: ${lastCheckinData.userPhone || 'Chưa cập nhật'}\n- Email: ${lastCheckinData.userEmail || 'Chưa cập nhật'}\n- Mô tả: ${symptomSummary}\n- Thời gian mắc: ${durationSummary || "Không cung cấp"}\n\n📊 **Kết quả nhận biết:**\n\n**🔍 Nhận biết sơ bộ:** ${fr.preliminary}\n\n**💡 Giải thích:** ${fr.explanation}\n\n**⚠️ Dấu hiệu cần lưu ý:**\n${fr.warning_signs.map(s => `- ${s}`).join('\n')}\n\n**🎯 Khuyến nghị:** ${fr.action_text}`;
+            } else {
+                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Mô tả: ${symptomSummary}\n\n📊 Kết quả: ${lastAnalysisResult || "Đã có kết quả"}`;
+            }
+            
             try {
-                await db.collection('health_chats').doc(chatId).set({ id: chatId, name: `Check-in ${new Date().toLocaleString('vi-VN')}`, userId: currentUserId, userName: currentUserName, createdAt: firebase.firestore.FieldValue.serverTimestamp(), lastMessage: "Đã gửi kết quả nhận biết", lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(), isHealthChat: true, aiEnabled: true, userInfo: { userId: currentUserId, displayName: currentUserName, analysisResult: lastAnalysisResult, symptomDescription: symptomSummary, duration: durationSummary, imageBase64: null, selectedSymptoms: currentChecklistItems.filter(i => i.checked).map(i => i.text), pdfData: pdfDataForAdmin } });
-                await db.collection('health_chats').doc(chatId).collection('messages').add({ text: `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin của bạn:**\n- Tên: ${currentUserName}\n- Mô tả: ${symptomSummary}\n- Thời gian mắc: ${durationSummary || "Không cung cấp"}\n\n📊 **Kết quả nhận biết từ EduHealth AI:**\n\n${lastAnalysisResult}`, senderId: 'system', senderName: 'EduHealth AI', timestamp: firebase.firestore.FieldValue.serverTimestamp(), isSystem: true });
+                await db.collection('health_chats').doc(chatId).set({ 
+                    id: chatId, 
+                    name: `Check-in ${new Date().toLocaleString('vi-VN')}`, 
+                    userId: currentUserId, 
+                    userName: lastCheckinData.userName,
+                    userInfo: {
+                        displayName: lastCheckinData.userName,
+                        phone: lastCheckinData.userPhone,
+                        dob: lastCheckinData.userDob,
+                        gender: lastCheckinData.userGender,
+                        email: lastCheckinData.userEmail,
+                        analysisResult: lastAnalysisResult
+                    },
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
+                    lastMessage: "Đã gửi kết quả nhận biết", 
+                    lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(), 
+                    isHealthChat: true, 
+                    aiEnabled: true
+                });
+                await db.collection('health_chats').doc(chatId).collection('messages').add({ 
+                    text: resultMessage, 
+                    senderId: 'system', 
+                    senderName: 'EduHealth AI', 
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
+                    isSystem: true 
+                });
                 return chatId;
-            } catch (error) { console.error('Error creating chat:', error); alert('Không thể tạo cuộc trò chuyện.'); return null; }
+            } catch (error) { 
+                console.error('Lỗi tạo chat:', error);
+                alert('Không thể tạo cuộc trò chuyện.'); 
+                return null; 
+            }
+        }
+
+        // ========== TẠO PDF ==========
+        function generatePDFHTML(data) {
+            const now = new Date();
+            const formattedDate = now.toLocaleString('vi-VN');
+            
+            const studentName = data.userName || 'Học sinh';
+            const studentPhone = data.userPhone || 'Chưa cập nhật';
+            const studentDob = data.userDob || 'Chưa cập nhật';
+            const studentGender = data.userGender || 'Chưa cập nhật';
+            const studentEmail = data.userEmail || 'Chưa cập nhật';
+            
+            let imageComparisonHtml = '';
+            if (data.originalImageBase64) {
+                const originalImg = data.originalImageBase64;
+                const highlightedImg = data.highlightedImageBase64 || data.originalImageBase64;
+                imageComparisonHtml = `
+                    <div style="margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 16px;">
+                        <h3 style="color: #2563eb;">🖼️ Phân tích ảnh</h3>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                            <div style="flex: 1; min-width: 200px; text-align: center;">
+                                <p><strong>Ảnh gốc</strong></p>
+                                <img src="${originalImg}" style="max-width: 100%; max-height: 250px; border-radius: 12px;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px; text-align: center;">
+                                <p><strong>AI khoanh vùng bệnh</strong></p>
+                                <img src="${highlightedImg}" style="max-width: 100%; max-height: 250px; border-radius: 12px;">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let formattedResult = "";
+            if (data.formattedResult) {
+                const fr = data.formattedResult;
+                const warningSigns = Array.isArray(fr.warning_signs) ? fr.warning_signs : [];
+                const levelText = fr.action_level === 1 ? '🟢 Mức 1 - Theo dõi' : (fr.action_level === 2 ? '🟡 Mức 2 - Đi khám sớm' : '🔴 Mức 3 - Đi khám ngay');
+                formattedResult = `
+                    <div style="margin: 15px 0;">
+                        <div style="background: linear-gradient(135deg, #3b82f6, #f472b6); border-radius: 16px; padding: 20px; color: white;">
+                            <h3 style="color: white; margin: 0 0 8px 0;">🔍 Nhận biết sơ bộ</h3>
+                            <p style="margin: 0;">${escapeHtml(fr.preliminary || '')}</p>
+                        </div>
+                        
+                        <h3 style="margin-top: 20px; color: #3b82f6;">💡 Giải thích</h3>
+                        <p>${escapeHtml(fr.explanation || '')}</p>
+                        
+                        <h3 style="margin-top: 20px; color: #f59e0b;">⚠️ Dấu hiệu cần lưu ý</h3>
+                        <ul>${warningSigns.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>
+                        
+                        <div style="background: #fef5e7; border-left: 6px solid ${fr.action_level === 1 ? '#10b981' : (fr.action_level === 2 ? '#f59e0b' : '#ef4444')}; padding: 16px; border-radius: 12px; margin: 20px 0;">
+                            <h3 style="margin: 0 0 8px 0; color: ${fr.action_level === 1 ? '#10b981' : (fr.action_level === 2 ? '#f59e0b' : '#ef4444')};">${levelText}</h3>
+                            <p>${escapeHtml(fr.action_text || '')}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `<!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"><title>Kết quả check-in</title>
+            <style>
+                body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; }
+                .header { text-align: center; border-bottom: 2px solid #f472b6; padding-bottom: 15px; margin-bottom: 20px; }
+                .info { background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+                .row { margin: 8px 0; }
+                .label { font-weight: bold; display: inline-block; width: 140px; }
+                .warning { background: #fef5e7; padding: 12px; border-radius: 8px; margin-top: 20px; }
+                .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #718096; }
+                img { max-width: 100%; height: auto; }
+            </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>🏥 EduHealth AI - Kết quả check-in</h1>
+                    <p>Ngày: ${formattedDate} | Mã: ${data.checkinId || ''}</p>
+                </div>
+                <div class="info">
+                    <h3 style="margin-bottom: 12px; color: #2563eb;">📋 Thông tin học sinh</h3>
+                    <div class="row"><span class="label">👤 Họ và tên:</span> ${escapeHtml(studentName)}</div>
+                    <div class="row"><span class="label">📞 Số điện thoại:</span> ${escapeHtml(studentPhone)}</div>
+                    <div class="row"><span class="label">🎂 Ngày sinh:</span> ${escapeHtml(studentDob)}</div>
+                    <div class="row"><span class="label">⚥ Giới tính:</span> ${escapeHtml(studentGender)}</div>
+                    <div class="row"><span class="label">📧 Email:</span> ${escapeHtml(studentEmail)}</div>
+                </div>
+                <div class="info">
+                    <h3 style="margin-bottom: 12px; color: #2563eb;">📝 Triệu chứng</h3>
+                    <div class="row"><span class="label">Mô tả:</span> ${escapeHtml((data.symptomDescription || '').substring(0, 500))}</div>
+                    <div class="row"><span class="label">Thời gian:</span> ${escapeHtml(data.duration || '')}</div>
+                    <div class="row"><span class="label">Triệu chứng chọn:</span> ${escapeHtml((data.selectedSymptoms || []).join(', '))}</div>
+                </div>
+                ${imageComparisonHtml}
+                ${formattedResult}
+                <div class="warning"><strong>⚠️ Lưu ý:</strong> Kết quả từ AI, không thay thế bác sĩ.</div>
+                <div class="footer">© 2026 EduHealth AI</div>
+            </body>
+            </html>`;
         }
         
-        openNewChatBtn.addEventListener('click', async () => { openNewChatBtn.disabled = true; openNewChatBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo...'; const chatId = await createNewChat(); if (chatId) window.location.href = 'chatbox.html?chatId=' + chatId; else { openNewChatBtn.disabled = false; openNewChatBtn.innerHTML = '<i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI về kết quả'; } });
+        async function exportToPDF() {
+            if (!lastCheckinData) { showToast('Không có dữ liệu!', true); return; }
+            const btn = downloadPdfBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo PDF...';
+            btn.disabled = true;
+            try {
+                const pdfHtml = generatePDFHTML(lastCheckinData);
+                pdfPrintContainer.innerHTML = pdfHtml;
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const canvas = await html2canvas(pdfPrintContainer, { scale: 2.5, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                const { jsPDF } = window.jspdf;
+                const imgWidth = 190;
+                const pageHeight = 277;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                const safeName = (lastCheckinData.userName || 'hocsinh').replace(/[^a-zA-Z0-9]/g, '_');
+                doc.save(`EduHealth_Checkin_${safeName}_${Date.now()}.pdf`);
+                showToast('Đã tải PDF thành công!');
+            } catch (error) {
+                showToast('Lỗi: ' + error.message, true);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                pdfPrintContainer.innerHTML = '';
+            }
+        }
+
+        // ========== SỰ KIỆN UPLOAD ẢNH ==========
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else alert('Vui lòng thả file ảnh hợp lệ');
+        });
+        
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                const modalDiv = document.createElement('div');
+                modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+                const videoContainer = document.createElement('div');
+                videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+                video.width = 320;
+                video.height = 240;
+                videoContainer.appendChild(video);
+                const captureBtn = document.createElement('button');
+                captureBtn.innerText = 'Chụp ảnh';
+                captureBtn.className = 'btn btn-primary';
+                captureBtn.style.marginTop = '12px';
+                const closeBtn = document.createElement('button');
+                closeBtn.innerText = 'Hủy';
+                closeBtn.className = 'btn btn-outline';
+                closeBtn.style.marginLeft = '10px';
+                videoContainer.appendChild(captureBtn);
+                videoContainer.appendChild(closeBtn);
+                modalDiv.appendChild(videoContainer);
+                document.body.appendChild(modalDiv);
+                captureBtn.onclick = async () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+                closeBtn.onclick = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+            } catch (err) {
+                alert("Không thể truy cập camera: " + err.message);
+            }
+        });
+
+        // ========== KHỞI TẠO ==========
+        openNewChatBtn.addEventListener('click', async () => { 
+            openNewChatBtn.disabled = true; 
+            openNewChatBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo...'; 
+            const chatId = await createNewChat(); 
+            if (chatId) window.location.href = 'chatbox.html?chatId=' + chatId; 
+            else { 
+                openNewChatBtn.disabled = false; 
+                openNewChatBtn.innerHTML = '<i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện'; 
+            } 
+        });
+        
         downloadPdfBtn.addEventListener('click', exportToPDF);
         
         function resetToStep1() {
             currentImageBase64 = null;
-            step1HiddenAnalysis = null;
             currentChecklistItems = [];
             lastAnalysisResult = null;
             lastCheckinData = null;
-            highlightedImageBase64 = null;
             diseaseAreas = [];
+            highlightedImageBase64 = null;
             imagePreviewDiv.innerHTML = '';
             symptomTextarea.value = "";
             if (durationInput) durationInput.value = "";
@@ -1870,19 +1890,53 @@ Lưu ý QUAN TRỌNG:
         step1Btn.addEventListener('click', step1CreateChecklist);
         step2Btn.addEventListener('click', step2FinalAnalysis);
         resetBtn.addEventListener('click', resetToStep1);
-        window.onload = resetToStep1;
         
-        // ========== CHẾ ĐỘ TỐI / SÁNG ==========
+        // ========== KHỞI TẠO APP ==========
+        async function initApp() {
+            if (!checkAuth()) return;
+            await loadUserData();
+            updateAuthUI();
+            resetToStep1();
+        }
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                initApp();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // ========== CHẾ ĐỘ TỐI/SÁNG ==========
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
-        function setTheme(theme) { body.classList.toggle('dark', theme === 'dark'); localStorage.setItem('eduhealth-theme', theme); const icon = themeBtn.querySelector('i'); const span = themeBtn.querySelector('span'); if (theme === 'dark') { icon.className = 'fas fa-sun'; span.innerText = 'Chế độ sáng'; } else { icon.className = 'fas fa-moon'; span.innerText = 'Chế độ tối'; } }
-        const savedTheme = localStorage.getItem('eduhealth-theme'); if (savedTheme === 'dark') setTheme('dark'); else setTheme('light');
+        function setTheme(theme) { 
+            body.classList.toggle('dark', theme === 'dark'); 
+            localStorage.setItem('eduhealth-theme', theme); 
+            const icon = themeBtn.querySelector('i'); 
+            if (theme === 'dark') { icon.className = 'fas fa-sun'; } 
+            else { icon.className = 'fas fa-moon'; } 
+        }
+        const savedTheme = localStorage.getItem('eduhealth-theme'); 
+        setTheme(savedTheme === 'dark' ? 'dark' : 'light');
         themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
         
         // ========== MOBILE MENU ==========
         const menuToggle = document.getElementById('menuToggleBtn');
         const mobilePanel = document.getElementById('mobileMenuPanel');
-        if (menuToggle) { menuToggle.addEventListener('click', () => { mobilePanel.classList.toggle('open'); const icon = menuToggle.querySelector('i'); if (mobilePanel.classList.contains('open')) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); } else { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } }); }
+        if (menuToggle) { 
+            menuToggle.addEventListener('click', () => { 
+                mobilePanel.classList.toggle('open'); 
+                const icon = menuToggle.querySelector('i'); 
+                if (mobilePanel.classList.contains('open')) { 
+                    icon.classList.remove('fa-bars'); 
+                    icon.classList.add('fa-times'); 
+                } else { 
+                    icon.classList.remove('fa-times'); 
+                    icon.classList.add('fa-bars'); 
+                } 
+            }); 
+        }
     </script>
 </body>
 </html>
