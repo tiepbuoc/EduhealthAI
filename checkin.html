@@ -932,7 +932,6 @@
             if (user) {
                 const displayName = currentUserData?.fullName || user.email.split('@')[0];
                 authContainer.innerHTML = `
-                    <div class="user-info"><i class="fas fa-user-circle"></i><span>${escapeHtml(displayName)}</span></div>
                     <button class="auth-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Đăng xuất</span></button>
                 `;
                 const logoutBtn = document.getElementById('logoutBtn');
