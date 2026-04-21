@@ -426,7 +426,7 @@
                 localStorage.setItem('healthUserGender', userData?.gender || '');
                 localStorage.setItem('healthUserFullData', JSON.stringify(userData || {}));
                 
-                window.location.href = 'checkin.html';
+                window.location.href = 'admin.html';
             } catch (error) {
                 let message = 'Đăng nhập thất bại';
                 if (error.code === 'auth/user-not-found') message = 'Email chưa được đăng ký';
@@ -522,7 +522,7 @@
                 successDiv.style.display = 'block';
 
                 setTimeout(() => {
-                    window.location.href = 'checkin.html';
+                    window.location.href = 'admin.html';
                 }, 1500);
             } catch (error) {
                 let message = 'Đăng ký thất bại';
@@ -576,7 +576,7 @@
         // Check if already logged in
         auth.onAuthStateChanged((user) => {
             if (user && window.location.pathname.includes('login.html')) {
-                window.location.href = 'checkin.html';
+                window.location.href = 'admin.html';
             }
         });
     </script>
