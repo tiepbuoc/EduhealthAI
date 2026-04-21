@@ -58,6 +58,7 @@
             transition: all 0.3s;
         }
 
+        /* ========== NAVIGATION ========== */
         nav {
             position: fixed;
             top: 0;
@@ -103,6 +104,125 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link i {
+            color: var(--pink-primary);
+        }
+
+        .nav-link:hover {
+            color: var(--blue-primary);
+        }
+        .nav-link:hover i {
+            color: var(--blue-primary);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pink-primary);
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-toggle:hover {
+            background: var(--grad-pink-blue);
+            color: white;
+            border-color: transparent;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .mobile-menu-panel {
+            position: fixed;
+            top: 74px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 99;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            pointer-events: none;
+        }
+
+        .mobile-menu-panel.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-panel .nav-links-mobile {
+            display: flex;
+            flex-direction: column;
+            padding: 24px 6%;
+            gap: 20px;
+        }
+
+        .mobile-menu-panel .nav-link-mobile {
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .mobile-menu-panel .nav-link-mobile i {
+            width: 28px;
+            color: var(--blue-primary);
+            font-size: 18px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -334,7 +454,14 @@
             height: 20px;
         }
 
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .menu-toggle { display: flex; }
             .stats-grid { grid-template-columns: 1fr; }
             .container { padding: 90px 16px 40px; }
             .form-card, .list-card { padding: 20px; }
@@ -342,13 +469,33 @@
     </style>
 </head>
 <body>
-    <nav>
+    <nav id="nav">
         <a href="index.html" class="logo">
             <div class="logo-mark"><i class="fas fa-heartbeat"></i></div>
             <div class="logo-type">EduHealth AI</div>
         </a>
-        <button class="theme-toggle" id="themeToggleBtn" style="background: transparent; border: 1px solid var(--border-light); border-radius: 40px; padding: 8px 16px; cursor: pointer;"><i class="fas fa-moon"></i> Chế độ tối</button>
+        <div class="nav-menu">
+            <a href="index.html" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
+        </div>
+        <div class="nav-right">
+            <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
+            <button class="menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i> Menu</button>
+        </div>
     </nav>
+
+    <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="nav-links-mobile">
+            <a href="index.html" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="minigame.html" class="nav-link-mobile"><i class="fas fa-brain"></i> Minigame</a>
+        </div>
+    </div>
 
     <div class="container">
         <div class="page-header">
@@ -458,6 +605,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
@@ -470,21 +618,91 @@
         };
 
         firebase.initializeApp(firebaseConfig);
+
+        // Khởi tạo App Check
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+            new firebase.appCheck.ReCaptchaEnterpriseProvider(
+                '6LfZOsIsAAAAAK_vBWSNgoIkHjLsFwXgBCixs37'
+            ),
+            true
+        );
+
         const db = firebase.firestore();
 
         let allCourses = [];
         let allQuestions = [];
 
-        // Load courses
+        // ========== TỰ ĐỘNG TẠO DỮ LIỆU MẪU NẾU CHƯA CÓ ==========
+        async function initSampleData() {
+            try {
+                const snapshot = await db.collection('courses').limit(1).get();
+                
+                if (snapshot.empty) {
+                    console.log('📚 Chưa có khóa học, đang tạo dữ liệu mẫu...');
+                    
+                    const course1Ref = await db.collection('courses').add({
+                        title: 'I. Da liễu học đường',
+                        emoji: '🧴',
+                        shortDesc: 'Tìm hiểu về các bệnh da liễu thường gặp ở học đường',
+                        content: 'Da liễu học đường là chuyên ngành nghiên cứu các bệnh về da thường gặp trong môi trường học đường.',
+                        videoUrl: '',
+                        coverImage: '',
+                        views: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    const course2Ref = await db.collection('courses').add({
+                        title: 'II. Bệnh truyền nhiễm học đường',
+                        emoji: '🤒',
+                        shortDesc: 'Nhận biết và phòng ngừa các bệnh truyền nhiễm thường gặp',
+                        content: 'Môi trường học đường là nơi dễ lây lan các bệnh truyền nhiễm như cúm, thủy đậu, quai bị.',
+                        videoUrl: '',
+                        coverImage: '',
+                        views: 0,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    await db.collection('courseQuestions').add({
+                        courseId: course1Ref.id,
+                        text: 'Mụn trứng cá thường gặp nhất ở lứa tuổi nào?',
+                        type: 'multiple',
+                        answers: { A: 'Trẻ em dưới 5 tuổi', B: 'Tuổi dậy thì (12-18 tuổi)', C: 'Người lớn trên 40 tuổi', D: 'Người cao tuổi' },
+                        correctAnswer: 'B',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    await db.collection('courseQuestions').add({
+                        courseId: course2Ref.id,
+                        text: 'Bệnh thủy đậu do loại virus nào gây ra?',
+                        type: 'multiple',
+                        answers: { A: 'Virus cúm', B: 'Virus Herpes', C: 'Virus Varicella Zoster', D: 'Virus HIV' },
+                        correctAnswer: 'C',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    console.log('✅ Đã tạo dữ liệu mẫu thành công!');
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Lỗi tạo dữ liệu mẫu:', error);
+                return false;
+            }
+        }
+
         async function loadCourses() {
             try {
+                await initSampleData();
+                
                 const snapshot = await db.collection('courses').orderBy('createdAt', 'desc').get();
                 allCourses = [];
                 snapshot.forEach(doc => {
                     allCourses.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Load questions count
                 const qSnapshot = await db.collection('courseQuestions').get();
                 allQuestions = [];
                 qSnapshot.forEach(doc => {
@@ -495,6 +713,7 @@
                 displayCourses();
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('coursesList').innerHTML = '<div style="text-align: center; padding: 40px;">⚠️ Lỗi tải dữ liệu</div>';
             }
         }
 
@@ -502,6 +721,17 @@
             document.getElementById('totalCourses').textContent = allCourses.length;
             document.getElementById('totalQuestions').textContent = allQuestions.length;
             document.getElementById('totalStudents').textContent = Math.floor(Math.random() * 100) + 50;
+        }
+
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return '';
+            let videoId = '';
+            if (url.includes('youtube.com/watch')) {
+                videoId = url.split('v=')[1]?.split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1]?.split('?')[0];
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
         }
 
         function displayCourses() {
@@ -554,17 +784,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        function getYouTubeEmbedUrl(url) {
-            if (!url) return '';
-            let videoId = '';
-            if (url.includes('youtube.com/watch')) {
-                videoId = url.split('v=')[1]?.split('&')[0];
-            } else if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1]?.split('?')[0];
-            }
-            return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
         }
 
         document.getElementById('courseVideoUrl')?.addEventListener('input', function() {
@@ -658,6 +877,7 @@
             document.getElementById('questionType').value = 'multiple';
             document.getElementById('multipleChoiceArea').style.display = 'block';
             document.getElementById('trueFalseArea').style.display = 'none';
+            window.scrollTo({ top: document.getElementById('questionForm').offsetTop - 100, behavior: 'smooth' });
         }
 
         function cancelQuestionForm() {
@@ -754,8 +974,14 @@
         function setTheme(theme) {
             body.classList.toggle('dark', theme === 'dark');
             localStorage.setItem('eduhealth-theme', theme);
-            if (themeBtn) {
-                themeBtn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i> Chế độ sáng' : '<i class="fas fa-moon"></i> Chế độ tối';
+            const icon = themeBtn.querySelector('i');
+            const span = themeBtn.querySelector('span');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+                span.innerText = 'Chế độ sáng';
+            } else {
+                icon.className = 'fas fa-moon';
+                span.innerText = 'Chế độ tối';
             }
         }
         const savedTheme = localStorage.getItem('eduhealth-theme');
@@ -763,17 +989,24 @@
         else setTheme('light');
         if (themeBtn) themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
 
+        // Mobile menu
+        const menuToggle = document.getElementById('menuToggleBtn');
+        const mobilePanel = document.getElementById('mobileMenuPanel');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                mobilePanel.classList.toggle('open');
+                const icon = menuToggle.querySelector('i');
+                if (mobilePanel.classList.contains('open')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+
         loadCourses();
     </script>
-    <style>
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .text-muted { color: var(--text-dim); }
-        .small { font-size: 13px; }
-        .theme-toggle { background: transparent; border: 1px solid var(--border-light); border-radius: 40px; padding: 8px 16px; cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--text-mid); }
-        .theme-toggle:hover { border-color: var(--blue-primary); color: var(--blue-primary); }
-    </style>
 </body>
 </html>
