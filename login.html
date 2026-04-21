@@ -336,8 +336,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
-<script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
@@ -350,8 +350,7 @@
 
         firebase.initializeApp(firebaseConfig);
 
-        // === TH�M �O?N CODE M?I ===
-        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+        // Khởi tạo App Check với reCAPTCHA Enterprise
         const appCheck = firebase.appCheck();
         appCheck.activate(
           new firebase.appCheck.ReCaptchaEnterpriseProvider(
@@ -359,12 +358,12 @@
           ),
           true
         );
-        // ===============================
 
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        function togglePassword(inputId, icon) {
+        // Helper: toggle mật khẩu hiển thị
+        window.togglePassword = function(inputId, icon) {
             const input = document.getElementById(inputId);
             if (input.type === 'password') {
                 input.type = 'text';
@@ -375,8 +374,9 @@
                 icon.classList.remove('fa-eye-slash');
                 icon.classList.add('fa-eye');
             }
-        }
+        };
 
+        // Lưu thông tin người dùng vào Firestore
         async function saveUserToFirestore(userId, userData) {
             await db.collection('users').doc(userId).set({
                 fullName: userData.fullName,
@@ -388,6 +388,7 @@
             });
         }
 
+        // Lấy thông tin người dùng từ Firestore
         window.getUserFromFirestore = async function(userId) {
             const doc = await db.collection('users').doc(userId).get();
             if (doc.exists) {
@@ -396,6 +397,33 @@
             return null;
         };
 
+        // Hàm chuyển hướng sang admin.html (thay vì checkin.html)
+        function redirectToAdmin() {
+            window.location.href = 'admin.html';
+        }
+
+        // Lưu thông tin vào localStorage trước khi chuyển hướng
+        function storeUserDataLocally(userId, email, fullName, phone, dob, gender, fullData = null) {
+            localStorage.setItem('healthUserId', userId);
+            localStorage.setItem('healthUserEmail', email);
+            localStorage.setItem('healthUserName', fullName || email.split('@')[0]);
+            localStorage.setItem('healthUserPhone', phone || '');
+            localStorage.setItem('healthUserDob', dob || '');
+            localStorage.setItem('healthUserGender', gender || '');
+            if (fullData) {
+                localStorage.setItem('healthUserFullData', JSON.stringify(fullData));
+            } else {
+                localStorage.setItem('healthUserFullData', JSON.stringify({
+                    fullName: fullName,
+                    phone: phone,
+                    dob: dob,
+                    gender: gender,
+                    email: email
+                }));
+            }
+        }
+
+        // XỬ LÝ ĐĂNG NHẬP -> Chuyển hướng admin.html
         document.getElementById('loginBtn').onclick = async () => {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -417,16 +445,15 @@
                 const user = userCredential.user;
                 
                 const userData = await window.getUserFromFirestore(user.uid);
+                const fullName = userData?.fullName || '';
+                const phone = userData?.phone || '';
+                const dob = userData?.dob || '';
+                const gender = userData?.gender || '';
                 
-                localStorage.setItem('healthUserId', user.uid);
-                localStorage.setItem('healthUserEmail', user.email);
-                localStorage.setItem('healthUserName', userData?.fullName || user.email.split('@')[0]);
-                localStorage.setItem('healthUserPhone', userData?.phone || '');
-                localStorage.setItem('healthUserDob', userData?.dob || '');
-                localStorage.setItem('healthUserGender', userData?.gender || '');
-                localStorage.setItem('healthUserFullData', JSON.stringify(userData || {}));
+                storeUserDataLocally(user.uid, user.email, fullName, phone, dob, gender, userData || {});
                 
-                window.location.href = 'admin.html';
+                // CHUYỂN HƯỚNG SANG admin.html
+                redirectToAdmin();
             } catch (error) {
                 let message = 'Đăng nhập thất bại';
                 if (error.code === 'auth/user-not-found') message = 'Email chưa được đăng ký';
@@ -441,6 +468,7 @@
             }
         };
 
+        // XỬ LÝ ĐĂNG KÝ -> Chuyển hướng admin.html sau khi đăng ký thành công
         document.getElementById('registerBtn').onclick = async () => {
             const fullName = document.getElementById('regFullName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
@@ -504,25 +532,20 @@
                     email: email
                 });
 
-                localStorage.setItem('healthUserId', user.uid);
-                localStorage.setItem('healthUserEmail', email);
-                localStorage.setItem('healthUserName', fullName);
-                localStorage.setItem('healthUserPhone', phone);
-                localStorage.setItem('healthUserDob', dob);
-                localStorage.setItem('healthUserGender', gender);
-                localStorage.setItem('healthUserFullData', JSON.stringify({
+                storeUserDataLocally(user.uid, email, fullName, phone, dob, gender, {
                     fullName: fullName,
                     phone: phone,
                     dob: dob,
                     gender: gender,
                     email: email
-                }));
+                });
 
-                successDiv.textContent = 'Đăng ký thành công! Đang chuyển hướng...';
+                successDiv.textContent = 'Đăng ký thành công! Đang chuyển hướng đến Admin...';
                 successDiv.style.display = 'block';
 
+                // CHUYỂN HƯỚNG SANG admin.html sau khi đăng ký
                 setTimeout(() => {
-                    window.location.href = 'admin.html';
+                    redirectToAdmin();
                 }, 1500);
             } catch (error) {
                 let message = 'Đăng ký thất bại';
@@ -538,12 +561,16 @@
             }
         };
 
-        // Switch tabs
+        // Chuyển đổi giữa tab đăng nhập / đăng ký
         document.getElementById('loginTabBtn').onclick = () => {
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('registerForm').style.display = 'none';
             document.getElementById('loginTabBtn').classList.add('active');
             document.getElementById('registerTabBtn').classList.remove('active');
+            // Ẩn các thông báo lỗi cũ khi chuyển tab
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+            document.getElementById('registerSuccess').style.display = 'none';
         };
 
         document.getElementById('registerTabBtn').onclick = () => {
@@ -551,9 +578,12 @@
             document.getElementById('registerForm').style.display = 'block';
             document.getElementById('registerTabBtn').classList.add('active');
             document.getElementById('loginTabBtn').classList.remove('active');
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+            document.getElementById('registerSuccess').style.display = 'none';
         };
 
-        // Theme toggle
+        // Chế độ sáng / tối
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
         function setTheme(theme) {
@@ -573,14 +603,13 @@
         setTheme(savedTheme === 'dark' ? 'dark' : 'light');
         themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
 
-        // Check if already logged in
+        // Kiểm tra nếu đã đăng nhập và đang ở trang login -> chuyển hướng sang admin.html
         auth.onAuthStateChanged((user) => {
-            if (user && window.location.pathname.includes('login.html')) {
+            if (user && (window.location.pathname.includes('login.html') || window.location.pathname === '/' || window.location.pathname === '')) {
+                // Tránh chuyển hướng liên tục nếu đã ở admin
                 window.location.href = 'admin.html';
             }
         });
     </script>
 </body>
 </html>
-
-
