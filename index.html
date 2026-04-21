@@ -1593,16 +1593,62 @@ footer {
   };
   firebase.initializeApp(firebaseConfig);
 
-  // === TH�M �O?N CODE M?I ===
-  // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+console.log("🔍 BẮT ĐẦU KIỂM TRA APP CHECK");
+
+// 1. Kiểm tra App Check đã được tải chưa
+if (typeof firebase.appCheck === 'undefined') {
+  console.error("❌ LỖI: firebase-app-check-compat.js chưa được tải!");
+} else {
+  console.log("✅ firebase.appCheck đã sẵn sàng");
+}
+
+// 2. Bật debug token
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+console.log("🐛 Đã bật debug token, kiểm tra Console để lấy token");
+
+// 3. Khởi tạo App Check và bắt lỗi
+try {
   const appCheck = firebase.appCheck();
+  console.log("📦 Đã lấy instance appCheck");
+  
   appCheck.activate(
     new firebase.appCheck.ReCaptchaEnterpriseProvider(
       '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
     ),
     true
   );
-  // ===============================
+  console.log("✅ App Check đã được kích hoạt thành công!");
+  
+} catch (error) {
+  console.error("❌ LỖI KHI KÍCH HOẠT APP CHECK:", error);
+}
+
+// 4. Kiểm tra token có được tạo không
+setTimeout(async () => {
+  try {
+    const token = await firebase.appCheck().getToken();
+    if (token && token.token) {
+      console.log("✅ TOKEN ĐÃ ĐƯỢC TẠO:", token.token.substring(0, 50) + "...");
+      console.log("⏰ Token hết hạn lúc:", new Date(token.expireTimeMillis).toLocaleString());
+    } else {
+      console.error("❌ KHÔNG LẤY ĐƯỢC TOKEN!");
+    }
+  } catch (error) {
+    console.error("❌ LỖI KHI LẤY TOKEN:", error);
+  }
+}, 2000);
+
+// 5. Theo dõi lỗi từ Firestore
+const originalConsoleError = console.error;
+console.error = function(...args) {
+  if (args[0] && typeof args[0] === 'string' && args[0].includes('Missing or insufficient permissions')) {
+    console.log("🚨 PHÁT HIỆN LỖI PERMISSION!");
+    console.log("→ Có thể do App Check token không hợp lệ hoặc Security Rules đang chặn");
+  }
+  originalConsoleError.apply(console, args);
+};
+
+console.log("🔍 KẾT THÚC KIỂM TRA, CHỜ KẾT QUẢ...");
 
   const db = firebase.firestore();
 
@@ -1946,5 +1992,10 @@ footer {
 </script>
 </body>
 </html>
+
+
+
+
+
 
 
