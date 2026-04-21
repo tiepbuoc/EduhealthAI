@@ -1580,6 +1580,7 @@ footer {
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
@@ -1591,6 +1592,18 @@ footer {
     measurementId: "G-GSP46EVLYG"
   };
   firebase.initializeApp(firebaseConfig);
+
+  // === THÊM ÐO?N CODE M?I ===
+  // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+  const appCheck = firebase.appCheck();
+  appCheck.activate(
+    new firebase.appCheck.ReCaptchaEnterpriseProvider(
+      '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+    ),
+    true
+  );
+  // ===============================
+
   const db = firebase.firestore();
 
   const categories = [
@@ -1933,3 +1946,5 @@ footer {
 </script>
 </body>
 </html>
+
+
