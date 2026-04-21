@@ -66,6 +66,7 @@
             color: var(--text-dark);
             transition: background-color 0.3s ease;
             min-height: 100vh;
+            display: none; /* Ẩn cho đến khi auth check xong */
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -1963,10 +1964,11 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
 <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
+            apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
             projectId: "eduhealth-4bcab",
             storageBucket: "eduhealth-4bcab.firebasestorage.app",
@@ -1989,7 +1991,24 @@
   // ===============================
 
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
+  // Kiểm tra xác thực người dùng
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      // Chưa đăng nhập, chuyển hướng đến login.html
+      window.location.href = 'login.html';
+    } else if (user.email !== 'admin@eduhealth-ai.com') {
+      // Sai tài khoản admin, chuyển hướng đến index.html
+      window.location.href = 'index.html';
+    } else {
+      // Nếu đúng admin, khởi tạo trang
+      initializeAdminPage();
+    }
+  });
+
+  function initializeAdminPage() {
+        document.body.style.display = 'block'; // Hiển thị trang sau khi auth check
         let locations = [];
         let pendingPosts = [];
         let approvedPosts = [];
@@ -3645,6 +3664,7 @@
         if (savedTheme === 'dark') setTheme('dark');
         else setTheme('light');
         themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
+  }
     </script>
 </body>
 </html>
