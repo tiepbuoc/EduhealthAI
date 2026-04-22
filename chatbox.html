@@ -1198,57 +1198,84 @@
             }
         }
         
-        async function processOfflineQueue() {
-            const queue = getOfflineQueue();
-            if (queue.length === 0) return;
+async function processOfflineQueue() {
+    const queue = getOfflineQueue();
+    if (queue.length === 0) return;
+    
+    console.log(`🔄 Đang xử lý ${queue.length} tin nhắn trong hàng đợi...`);
+    
+    for (const item of queue) {
+        try {
+            const isAIEnabled = await checkAIEnabledForChat(item.chatId);
             
-            console.log(`🔄 Đang xử lý ${queue.length} tin nhắn trong hàng đợi...`);
+            // ========== GỬI LÊN FIRESTORE ==========
+            const messageData = {
+                text: item.text,
+                senderId: item.senderId,
+                senderName: item.senderName,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (item.imageData) messageData.imageData = item.imageData;
             
-            for (const item of queue) {
-                try {
-                    const isAIEnabled = await checkAIEnabledForChat(item.chatId);
-                    
-                    const messageData = {
-                        text: item.text,
-                        senderId: item.senderId,
-                        senderName: item.senderName,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    if (item.imageData) messageData.imageData = item.imageData;
-                    
-                    await db.collection('health_chats').doc(item.chatId).collection('messages').add(messageData);
-                    
-                    await db.collection('health_chats').doc(item.chatId).update({
-                        lastMessage: item.text.substring(0, 100),
-                        lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    if (isAIEnabled && !item.isAICalled) {
-                        await callAIAndRespondForMessage(item.chatId, item.text, item.messageId);
+            await db.collection('health_chats').doc(item.chatId).collection('messages').add(messageData);
+            
+            await db.collection('health_chats').doc(item.chatId).update({
+                lastMessage: item.text.substring(0, 100),
+                lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // ========== GỬI WEBHOOK N8N (ZALO) ==========
+            try {
+                const webhookData = {
+                    type: 'chat',
+                    data: {
+                        chatId: item.chatId,
+                        userName: item.senderName || 'Học sinh',
+                        messageText: item.text.substring(0, 200),
+                        timestamp: new Date().toLocaleString('vi-VN'),
+                        isOfflineRetry: true  // Đánh dấu là tin nhắn từ queue
                     }
-                    
-                    removeFromOfflineQueue(item.id);
-                    console.log(`✅ Đã gửi thành công tin nhắn ${item.id}`);
-                    
-                } catch (error) {
-                    console.error(`❌ Lỗi gửi tin nhắn ${item.id}:`, error);
-                    item.retryCount++;
-                    if (item.retryCount >= 3) {
-                        console.warn(`⚠️ Bỏ tin nhắn ${item.id} sau ${item.retryCount} lần thử`);
-                        removeFromOfflineQueue(item.id);
-                        showToast(`⚠️ Không thể gửi tin nhắn: ${item.text.substring(0, 50)}...`, true);
-                    } else {
-                        const currentQueue = getOfflineQueue();
-                        const updatedQueue = currentQueue.map(q => 
-                            q.id === item.id ? { ...q, retryCount: item.retryCount } : q
-                        );
-                        saveOfflineQueue(updatedQueue);
-                    }
-                }
+                };
+                
+                await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(webhookData)
+                });
+                console.log(`✅ Đã gửi webhook n8n cho tin nhắn ${item.id}`);
+            } catch (webhookError) {
+                console.log('⚠️ Không gửi được webhook n8n:', webhookError);
+                // Không throw lỗi ở đây, vẫn tiếp tục xử lý
             }
             
-            updateOfflineBadge();
+            // ========== GỌI AI RESPOND ==========
+            if (isAIEnabled && !item.isAICalled) {
+                await callAIAndRespondForMessage(item.chatId, item.text, item.messageId);
+            }
+            
+            // Xóa khỏi queue sau khi thành công
+            removeFromOfflineQueue(item.id);
+            console.log(`✅ Đã gửi thành công tin nhắn ${item.id}`);
+            
+        } catch (error) {
+            console.error(`❌ Lỗi gửi tin nhắn ${item.id}:`, error);
+            item.retryCount++;
+            if (item.retryCount >= 3) {
+                console.warn(`⚠️ Bỏ tin nhắn ${item.id} sau ${item.retryCount} lần thử`);
+                removeFromOfflineQueue(item.id);
+                showToast(`⚠️ Không thể gửi tin nhắn: ${item.text.substring(0, 50)}...`, true);
+            } else {
+                const currentQueue = getOfflineQueue();
+                const updatedQueue = currentQueue.map(q => 
+                    q.id === item.id ? { ...q, retryCount: item.retryCount } : q
+                );
+                saveOfflineQueue(updatedQueue);
+            }
         }
+    }
+    
+    updateOfflineBadge();
+}
         
         async function checkAIEnabledForChat(chatId) {
             try {
