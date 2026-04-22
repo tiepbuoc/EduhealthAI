@@ -1326,7 +1326,7 @@ function closeImageWarning() {
 }
 
 // Ghi đè các hàm upload ảnh để hiển thị popup trước
-chooseFileBtn.onclick = (e) {
+chooseFileBtn.onclick = (e) => {  // ✅ Thêm "=>"
     e.preventDefault();
     fileInput.click();
 };
