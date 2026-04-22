@@ -3148,7 +3148,6 @@ try {
             } else alert('Vui lòng thả file ảnh hợp lệ');
         });
         
-        chooseFileBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', async (e) => {
             if (e.target.files.length) {
                 const reader = new FileReader();
