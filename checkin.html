@@ -888,6 +888,119 @@
     justify-content: center;
     gap: 6px;
 }
+/* Privacy Modal Styles */
+.privacy-modal-content {
+    max-width: 550px;
+    width: 90%;
+    text-align: left;
+    max-height: 85vh; /* Giới hạn chiều cao tối đa 85% viewport */
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Bỏ padding để checklist chiếm toàn bộ */
+    overflow: hidden; /* Ẩn overflow bên ngoài */
+}
+
+/* Phần header của modal (cố định) */
+.privacy-modal-header {
+    padding: 24px 24px 0 24px;
+    flex-shrink: 0; /* Không co lại */
+}
+
+/* Phần checklist (có thanh cuộn) */
+.privacy-checklist {
+    margin: 0;
+    background: var(--bg-surface);
+    border-radius: 0;
+    padding: 16px 24px;
+    border: none;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    overflow-y: auto; /* Thanh cuộn dọc */
+    flex: 1; /* Chiếm phần không gian còn lại */
+    max-height: 50vh; /* Chiều cao tối đa 50% viewport */
+}
+
+/* Phần footer của modal (cố định) */
+.privacy-modal-footer {
+    padding: 20px 24px 24px 24px;
+    flex-shrink: 0; /* Không co lại */
+    background: var(--card-bg);
+    border-radius: 0 0 32px 32px;
+}
+
+.privacy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.privacy-item:hover {
+    background: var(--tag-bg);
+}
+
+.privacy-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.privacy-item label {
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--text-mid);
+    flex: 1;
+}
+
+.privacy-item label strong {
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.privacy-item label small {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 4px;
+}
+
+.privacy-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#privacyConfirmBtn {
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+#privacyConfirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.required-hint {
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
     </style>
 </head>
 <body>
@@ -928,12 +1041,14 @@
 <!-- PRIVACY & DEMO MODAL - BẮT BUỘC TICK HẾT -->
 <div id="privacyModal" class="modal-overlay" style="z-index: 2002;">
     <div class="modal-content privacy-modal-content">
-        <div style="text-align: center; margin-bottom: 16px;">
-            <div style="font-size: 48px; margin-bottom: 8px;">🔒</div>
-            <h3 style="font-family: 'Fraunces', serif; font-size: 22px; background: var(--grad-blue-pink); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
-                Thông tin về dữ liệu của bạn
-            </h3>
-            <p style="font-size: 13px; color: var(--text-dim); margin-top: 5px;">Vui lòng đọc kỹ và xác nhận để tiếp tục</p>
+        <div class="privacy-modal-header">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 48px; margin-bottom: 8px;">🔒</div>
+                <h3 style="font-family: 'Fraunces', serif; font-size: 22px; background: var(--grad-blue-pink); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
+                    Thông tin về dữ liệu của bạn
+                </h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">Vui lòng đọc kỹ và xác nhận để tiếp tục</p>
+            </div>
         </div>
 
         <div class="privacy-checklist">
@@ -982,17 +1097,19 @@
                 <input type="checkbox" id="privacyChk6" class="privacy-chk">
                 <label for="privacyChk6">
                     <strong>📞 Liên hệ hỗ trợ / Xóa dữ liệu</strong>
-                    Email: <strong>support@eduhealth.ai</strong> hoặc liên hệ qua mục "Trợ giúp" trong ứng dụng.
+                    Email: <strong>eduhealthai08@gmail.com</strong> 
                 </label>
             </div>
         </div>
         
-        <div class="privacy-footer">
-            <button id="privacyConfirmBtn" class="btn-primary" disabled style="padding: 12px 32px; border-radius: 50px;">
-                <i class="fas fa-check-circle"></i> Tôi đã hiểu và đồng ý
-            </button>
-            <div class="required-hint" id="requiredHint">
-                <i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục
+        <div class="privacy-modal-footer">
+            <div class="privacy-footer">
+                <button id="privacyConfirmBtn" class="btn-primary" disabled style="padding: 12px 32px; border-radius: 50px;">
+                    <i class="fas fa-check-circle"></i> Tôi đã hiểu và đồng ý
+                </button>
+                <div class="required-hint" id="requiredHint">
+                    <i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục
+                </div>
             </div>
         </div>
     </div>
