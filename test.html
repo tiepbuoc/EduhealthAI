@@ -837,6 +837,78 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
 <script>
+
+        // ========== CẤU HÌNH ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
+            authDomain: "eduhealth-4bcab.firebaseapp.com",
+            projectId: "eduhealth-4bcab",
+            storageBucket: "eduhealth-4bcab.firebasestorage.app",
+            messagingSenderId: "390541255938",
+            appId: "1:390541255938:web:aa7b5beca0105c28f70e1b",
+            measurementId: "G-GSP46EVLYG"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // === TH�M �O?N CODE M?I ===
+        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+          new firebase.appCheck.ReCaptchaEnterpriseProvider(
+            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+          ),
+          true
+        );
+        // ===============================
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
+        const BASE_URL = "https://api.shopaikey.com/v1";
+        const API_URL = BASE_URL + "/chat/completions";
+        const MODEL_NAME = "gpt-5.4-nano";
+
+        // ========== BIẾN TOÀN CỤC ==========
+        let currentImageBase64 = null;
+        let currentChecklistItems = [];
+        let isProcessing = false;
+        let lastAnalysisResult = null;
+        let lastCheckinData = null;
+        let currentUserId = null;
+        let currentUserData = null;
+        let userChats = [];
+        let highlightedImageBase64 = null;
+        let diseaseAreas = [];
+        let cachedChecklistQuestions = []; // Lưu cache câu hỏi từ Firestore để tham khảo
+
+        // DOM elements
+        const step1Container = document.getElementById('step1Container');
+        const step2Container = document.getElementById('step2Container');
+        const step3Container = document.getElementById('step3Container');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const imagePreviewDiv = document.getElementById('imagePreview');
+        const symptomTextarea = document.getElementById('symptomText');
+        const durationInput = document.getElementById('durationText');
+        const step1Btn = document.getElementById('step1Btn');
+        const step2Btn = document.getElementById('step2Btn');
+        const checklistArea = document.getElementById('checklistArea');
+        const analysisResultDiv = document.getElementById('analysisResult');
+        const resetBtn = document.getElementById('resetBtn');
+        const openNewChatBtn = document.getElementById('openNewChatBtn');
+        const chatButtonSection = document.getElementById('chatButtonSection');
+        const pdfButtonSection = document.getElementById('pdfButtonSection');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const historySection = document.getElementById('historySection');
+        const chatHistoryList = document.getElementById('chatHistoryList');
+        const pdfPrintContainer = document.getElementById('pdfPrintContainer');
+        const imageAnalysisSection = document.getElementById('imageAnalysisSection');
+        const authContainer = document.getElementById('authContainer');
+        const rejectModal = document.getElementById('rejectModal');
+
 // ========== POPUP CẢNH BÁO ẢNH ==========
 let imageWarningAccepted = false;
 
@@ -957,76 +1029,6 @@ fileInput.onchange = async (e) => {
         });
     }
 };
-        // ========== CẤU HÌNH ==========
-        const firebaseConfig = {
-            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
-            authDomain: "eduhealth-4bcab.firebaseapp.com",
-            projectId: "eduhealth-4bcab",
-            storageBucket: "eduhealth-4bcab.firebasestorage.app",
-            messagingSenderId: "390541255938",
-            appId: "1:390541255938:web:aa7b5beca0105c28f70e1b",
-            measurementId: "G-GSP46EVLYG"
-        };
-        firebase.initializeApp(firebaseConfig);
-
-        // === TH�M �O?N CODE M?I ===
-        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
-        const appCheck = firebase.appCheck();
-        appCheck.activate(
-          new firebase.appCheck.ReCaptchaEnterpriseProvider(
-            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
-          ),
-          true
-        );
-        // ===============================
-
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
-        const BASE_URL = "https://api.shopaikey.com/v1";
-        const API_URL = BASE_URL + "/chat/completions";
-        const MODEL_NAME = "gpt-5.4-nano";
-
-        // ========== BIẾN TOÀN CỤC ==========
-        let currentImageBase64 = null;
-        let currentChecklistItems = [];
-        let isProcessing = false;
-        let lastAnalysisResult = null;
-        let lastCheckinData = null;
-        let currentUserId = null;
-        let currentUserData = null;
-        let userChats = [];
-        let highlightedImageBase64 = null;
-        let diseaseAreas = [];
-        let cachedChecklistQuestions = []; // Lưu cache câu hỏi từ Firestore để tham khảo
-
-        // DOM elements
-        const step1Container = document.getElementById('step1Container');
-        const step2Container = document.getElementById('step2Container');
-        const step3Container = document.getElementById('step3Container');
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const chooseFileBtn = document.getElementById('chooseFileBtn');
-        const cameraBtn = document.getElementById('cameraBtn');
-        const imagePreviewDiv = document.getElementById('imagePreview');
-        const symptomTextarea = document.getElementById('symptomText');
-        const durationInput = document.getElementById('durationText');
-        const step1Btn = document.getElementById('step1Btn');
-        const step2Btn = document.getElementById('step2Btn');
-        const checklistArea = document.getElementById('checklistArea');
-        const analysisResultDiv = document.getElementById('analysisResult');
-        const resetBtn = document.getElementById('resetBtn');
-        const openNewChatBtn = document.getElementById('openNewChatBtn');
-        const chatButtonSection = document.getElementById('chatButtonSection');
-        const pdfButtonSection = document.getElementById('pdfButtonSection');
-        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-        const historySection = document.getElementById('historySection');
-        const chatHistoryList = document.getElementById('chatHistoryList');
-        const pdfPrintContainer = document.getElementById('pdfPrintContainer');
-        const imageAnalysisSection = document.getElementById('imageAnalysisSection');
-        const authContainer = document.getElementById('authContainer');
-        const rejectModal = document.getElementById('rejectModal');
 
         // ========== KIỂM TRA ĐĂNG NHẬP ==========
         function checkAuth() {
