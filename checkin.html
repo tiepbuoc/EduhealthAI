@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -1910,39 +1909,336 @@ Trả về JSON thuần túy, không có markdown.`;
         }
 
         // ========== AI PHÁT HIỆN VÙNG BỆNH ==========
-        async function detectDiseaseAreas(imageBase64, userSymptom) {
-            try {
-                const prompt = `Phân tích ảnh y tế này. Xác định các vùng bất thường trên da (mụn, phát ban, mẩn đỏ, tổn thương).
-Trả về JSON: {"disease_areas": [{"label": "tên vùng", "x_percent": 0.35, "y_percent": 0.42, "width_percent": 0.25, "height_percent": 0.20, "confidence": 0.92}], "summary": "tóm tắt"}
-Nếu không có, trả về mảng rỗng.`;
+// ========== STAGE 1: THUẬT TOÁN PHÁT HIỆN VÙNG (Canny + Contour + HSV) ==========
+function rgbToHsv(r,g,b) {
+    r/=255; g/=255; b/=255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h=0, s, v=max;
+    const d = max-min;
+    s = max === 0 ? 0 : d/max;
+    if (max !== min) {
+        if (max === r) h = (g-b)/d + (g<b?6:0);
+        else if (max === g) h = (b-r)/d + 2;
+        else h = (r-g)/d + 4;
+        h *= 60;
+    }
+    return [h, s, v];
+}
 
-                const messages = [
-                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
-                    { role: "user", content: [
-                        { type: "text", text: prompt },
-                        { type: "image_url", image_url: { url: imageBase64 } }
-                    ]}
-                ];
-                
-                const rawResponse = await callAI(messages, 0.4);
-                let clean = rawResponse.trim();
-                if (clean.startsWith("```json")) clean = clean.slice(7);
-                if (clean.startsWith("```")) clean = clean.slice(3);
-                if (clean.endsWith("```")) clean = clean.slice(0, -3);
-                const detection = JSON.parse(clean);
-                
-                if (!detection.disease_areas || detection.disease_areas.length === 0) {
-                    return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường" };
+function computeAbnormalityMap(imageData, width, height) {
+    const data = imageData.data;
+    const gray = new Uint8Array(width*height);
+    const redness = new Float32Array(width*height);
+    for (let i=0; i<width*height; i++) {
+        const r = data[i*4], g = data[i*4+1], b = data[i*4+2];
+        gray[i] = 0.299*r + 0.587*g + 0.114*b;
+        const [h,s,v] = rgbToHsv(r,g,b);
+        const isReddish = (h <= 20 || h >= 340) && s > 0.2 && v > 0.4;
+        redness[i] = isReddish ? 1.0 : 0.0;
+    }
+    // Sobel edge magnitude
+    const edgeMag = new Float32Array(width*height);
+    for (let y=1; y<height-1; y++) {
+        for (let x=1; x<width-1; x++) {
+            const idx = y*width + x;
+            const gx = (gray[idx - width -1] + 2*gray[idx-1] + gray[idx+width-1]) - (gray[idx - width +1] + 2*gray[idx+1] + gray[idx+width+1]);
+            const gy = (gray[idx - width -1] + 2*gray[idx - width] + gray[idx - width+1]) - (gray[idx + width -1] + 2*gray[idx+width] + gray[idx+width+1]);
+            edgeMag[idx] = Math.hypot(gx, gy);
+        }
+    }
+    // Kết hợp: edge + redness
+    const scoreMap = new Float32Array(width*height);
+    for (let i=0; i<width*height; i++) {
+        let edgeNorm = Math.min(edgeMag[i] / 80, 1.0);
+        scoreMap[i] = edgeNorm * 0.6 + redness[i] * 0.4;
+    }
+    return { scoreMap, width, height };
+}
+
+function findTopRegions(scoreMap, width, height, maxRegions=3) {
+    // Làm mờ nhẹ để gộp vùng
+    const blurred = new Float32Array(width*height);
+    for (let y=1; y<height-1; y++) {
+        for (let x=1; x<width-1; x++) {
+            let sum=0;
+            for (let dy=-1; dy<=1; dy++) {
+                for (let dx=-1; dx<=1; dx++) {
+                    sum += scoreMap[(y+dy)*width + (x+dx)];
                 }
-                
-                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
-                const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
-                
-                return { imageBase64: highlightedImage, areas: areasInPixels, summary: detection.summary };
-            } catch (error) {
-                return { imageBase64: imageBase64, areas: [], summary: "Lỗi phân tích ảnh" };
+            }
+            blurred[y*width + x] = sum/9;
+        }
+    }
+    // Tìm các cực đại địa phương
+    const candidates = [];
+    for (let y=10; y<height-10; y++) {
+        for (let x=10; x<width-10; x++) {
+            const idx = y*width + x;
+            let isPeak = true;
+            for (let dy=-5; dy<=5; dy++) {
+                for (let dx=-5; dx<=5; dx++) {
+                    if (dx===0 && dy===0) continue;
+                    if (blurred[(y+dy)*width + (x+dx)] > blurred[idx]) { isPeak=false; break; }
+                }
+                if (!isPeak) break;
+            }
+            if (isPeak && blurred[idx] > 0.25) {
+                candidates.push({x, y, score: blurred[idx]});
             }
         }
+    }
+    candidates.sort((a,b)=>b.score - a.score);
+    const top = candidates.slice(0, maxRegions);
+    // Với mỗi điểm, tạo bounding box dựa trên vùng lân cận
+    const regions = [];
+    for (let cand of top) {
+        let minX = cand.x, maxX = cand.x, minY = cand.y, maxY = cand.y;
+        const threshold = cand.score * 0.5;
+        let changed = true;
+        let iter = 0;
+        while (changed && iter < 15) {
+            changed = false;
+            for (let y = Math.max(0, minY-2); y <= Math.min(height-1, maxY+2); y++) {
+                for (let x = Math.max(0, minX-2); x <= Math.min(width-1, maxX+2); x++) {
+                    if (blurred[y*width + x] >= threshold) {
+                        if (x < minX) { minX = x; changed=true; }
+                        if (x > maxX) { maxX = x; changed=true; }
+                        if (y < minY) { minY = y; changed=true; }
+                        if (y > maxY) { maxY = y; changed=true; }
+                    }
+                }
+            }
+            iter++;
+        }
+        // Mở rộng thêm biên
+        minX = Math.max(0, minX-5);
+        maxX = Math.min(width-1, maxX+5);
+        minY = Math.max(0, minY-5);
+        maxY = Math.min(height-1, maxY+5);
+        const boxW = maxX - minX;
+        const boxH = maxY - minY;
+        if (boxW > 15 && boxH > 15) {
+            regions.push({
+                x_percent: (minX + maxX)/2 / width,
+                y_percent: (minY + maxY)/2 / height,
+                width_percent: boxW / width,
+                height_percent: boxH / height,
+                label: "nghi ngờ tổn thương da",
+                confidence_algo: Math.min(0.95, cand.score * 1.2)
+            });
+        }
+    }
+    return regions.slice(0, maxRegions);
+}
+
+// Vẽ bounding boxes từ thuật toán (màu cam)
+async function drawAlgorithmBoxes(base64, regions) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            regions.forEach((reg, idx) => {
+                const cx = reg.x_percent * img.width;
+                const cy = reg.y_percent * img.height;
+                const w = reg.width_percent * img.width;
+                const h = reg.height_percent * img.height;
+                const x = cx - w/2;
+                const y = cy - h/2;
+                ctx.save();
+                ctx.strokeStyle = "#f97316";
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 6]);
+                ctx.strokeRect(x, y, w, h);
+                ctx.fillStyle = "#f97316aa";
+                ctx.fillRect(x, y, w, h);
+                ctx.font = `bold 14px "DM Sans"`;
+                ctx.fillStyle = "#f97316";
+                ctx.fillRect(x, y-22, 150, 20);
+                ctx.fillStyle = "white";
+                ctx.fillText(`🔬 ALGO #${idx+1}`, x+6, y-8);
+                ctx.setLineDash([]);
+                ctx.restore();
+            });
+            resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.src = base64;
+    });
+}
+
+// Vẽ bounding boxes cuối (màu đỏ/xanh)
+async function drawFinalBoxes(base64, areas) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const colors = ['#ef4444', '#3b82f6', '#10b981'];
+            areas.forEach((area, idx) => {
+                const color = colors[idx % colors.length];
+                const cx = area.x_percent * img.width;
+                const cy = area.y_percent * img.height;
+                const w = area.width_percent * img.width;
+                const h = area.height_percent * img.height;
+                const x = cx - w/2;
+                const y = cy - h/2;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 3;
+                ctx.strokeRect(x, y, w, h);
+                ctx.fillStyle = color + '44';
+                ctx.fillRect(x, y, w, h);
+                ctx.font = `bold ${Math.max(13, img.width*0.022)}px "DM Sans"`;
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y-24, area.label.length*10+20, 22);
+                ctx.fillStyle = 'white';
+                ctx.fillText(area.label, x+6, y-8);
+            });
+            resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.src = base64;
+    });
+}
+
+// Hàm chính detect disease areas - THAY THẾ HOÀN TOÀN
+async function detectDiseaseAreas(imageBase64, userSymptom) {
+    try {
+        addLog("🔬 STAGE 1: Thuật toán (Canny + Contour + HSV) đang phân tích...");
+        
+        // Load ảnh và resize về kích thước hợp lý
+        const imgLoad = await new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.src = imageBase64;
+        });
+        
+        const canvas = document.createElement('canvas');
+        const w = Math.min(imgLoad.width, 800);
+        const h = (imgLoad.height * w) / imgLoad.width;
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imgLoad, 0, 0, w, h);
+        const imageData = ctx.getImageData(0, 0, w, h);
+        
+        // Thuật toán phát hiện vùng
+        const { scoreMap } = computeAbnormalityMap(imageData, w, h);
+        const algorithmRegions = findTopRegions(scoreMap, w, h, 3);
+        
+        addLog(`✅ Thuật toán phát hiện ${algorithmRegions.length} vùng tiềm năng.`);
+        
+        // Chuyển đổi regions sang định dạng cho AI
+        const regionsForAI = algorithmRegions.map(reg => ({
+            ...reg,
+            label_tam: reg.label || "nghi ngờ tổn thương"
+        }));
+        
+        // Vẽ ảnh đã đánh dấu bằng thuật toán
+        const algorithmMarkedBase64 = await drawAlgorithmBoxes(imageBase64, regionsForAI);
+        
+        // Gửi cho AI điều chỉnh
+        addLog(`🧠 STAGE 2: Gửi cho AI điều chỉnh...`);
+        const refinedResult = await callAIRefinement(imageBase64, algorithmMarkedBase64, regionsForAI);
+        
+        addLog(`🎯 AI hoàn tất: ${refinedResult.refined_areas?.length || 0} vùng cuối cùng.`);
+        
+        // Vẽ bản cuối
+        const finalMarkedBase64 = await drawFinalBoxes(imageBase64, refinedResult.refined_areas || []);
+        
+        return {
+            imageBase64: finalMarkedBase64,
+            areas: refinedResult.refined_areas || [],
+            summary: refinedResult.summary || "Đã phân tích xong",
+            algorithmRegions: regionsForAI,
+            refinedResult: refinedResult
+        };
+    } catch (error) {
+        console.error("Lỗi detect disease areas:", error);
+        addLog(`❌ Lỗi: ${error.message}`, true);
+        return {
+            imageBase64: imageBase64,
+            areas: [],
+            summary: "Lỗi phân tích ảnh, vui lòng thử lại",
+            algorithmRegions: [],
+            refinedResult: null
+        };
+    }
+}
+
+// Thêm hàm callAIRefinement (Stage 2)
+async function callAIRefinement(originalBase64, markedBase64, algorithmRegions) {
+    const regionsInfo = algorithmRegions.map((r, i) => 
+        `Vùng ${i+1}: tâm (${(r.x_percent*100).toFixed(1)}%, ${(r.y_percent*100).toFixed(1)}%), kích thước ${(r.width_percent*100).toFixed(1)}% x ${(r.height_percent*100).toFixed(1)}%, độ tin cậy: ${(r.confidence_algo*100).toFixed(0)}%`
+    ).join('\n');
+    
+    const prompt = `BẠN LÀ CHUYÊN GIA DA LIỄU AI. Dưới đây là KẾT QUẢ TỪ THUẬT TOÁN XỬ LÝ ẢNH đã tự động khoanh vùng trên ảnh.
+⚠️ **LƯU Ý**: Thuật toán có thể SAI, có thể khoanh vùng nhầm (nhiễu, bóng, lông, ánh sáng). Nhiệm vụ của bạn là DỰA VÀO ẢNH GỐC để ĐIỀU CHỈNH, HOÀN THIỆN bản khoanh vùng cuối cùng.
+
+THÔNG TIN THUẬT TOÁN ĐÃ PHÁT HIỆN (tối đa 3 vùng):
+${regionsInfo}
+
+YÊU CẦU:
+- Phân tích kỹ ảnh gốc, xác định vùng bệnh da thực sự (mụn, viêm da, vảy nến, herpes, chàm, phát ban).
+- Nếu thuật toán khoanh đúng → GIỮ NGUYÊN hoặc TINH CHỈNH nhẹ tọa độ.
+- Nếu thuật toán khoanh SAI → LOẠI BỎ vùng đó.
+- Nếu thuật toán bỏ sót → THÊM VÙNG MỚI (tối đa tổng 3 vùng).
+- Kết quả cuối cùng phải CHÍNH XÁC, CHUYÊN NGHIỆP.
+
+Trả về JSON duy nhất:
+{
+  "refined_areas": [
+    {
+      "label": "tên tổn thương (tiếng Việt)",
+      "x_percent": 0.35,
+      "y_percent": 0.48,
+      "width_percent": 0.20,
+      "height_percent": 0.18,
+      "confidence": 0.92,
+      "note": "giữ từ thuật toán / điều chỉnh / thêm mới"
+    }
+  ],
+  "summary": "tóm tắt tình trạng da",
+  "preliminary_diagnosis": "chẩn đoán sơ bộ",
+  "warning_signs": ["dấu hiệu 1"],
+  "severity": "nhẹ/trung bình/nặng",
+  "action_advice": "khuyến nghị",
+  "algorithm_accuracy_note": "đánh giá thuật toán"
+}`;
+
+    const messages = [
+        { role: "system", content: "Bạn là bác sĩ da liễu AI chuyên điều chỉnh kết quả thuật toán. Chỉ trả JSON." },
+        { role: "user", content: [
+            { type: "text", text: prompt },
+            { type: "image_url", image_url: { url: originalBase64 } }
+        ]}
+    ];
+    
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
+        body: JSON.stringify({ model: MODEL_NAME, messages, temperature: 0.2, max_tokens: 2500 })
+    });
+    
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+    const data = await response.json();
+    let content = data.choices[0].message.content;
+    content = content.replace(/```json|```/g, '').trim();
+    const firstBrace = content.indexOf('{');
+    const lastBrace = content.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace !== -1) content = content.substring(firstBrace, lastBrace+1);
+    return JSON.parse(content);
+}
+
+// Hàm addLog để ghi log
+function addLog(msg, isErr = false) {
+    console.log(msg);
+    // Có thể thêm hiển thị log trong UI nếu muốn
+}
         
         function convertPercentToPixels(imageBase64, areas) {
             return new Promise((resolve) => {
@@ -1965,38 +2261,55 @@ Nếu không có, trả về mảng rỗng.`;
         }
 
         // ========== HIỂN THỊ ẢNH SO SÁNH ==========
-        function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas) {
-            let areasHtml = '';
-            if (areas && areas.length > 0) {
-                areasHtml = `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Vùng phát hiện:</strong><ul style="margin-top: 8px;">`;
-                areas.forEach(area => {
-                    areasHtml += `<li><span style="color:#ef4444;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%</li>`;
-                });
-                areasHtml += `</ul></div>`;
-            }
-            
-            imageAnalysisSection.innerHTML = `
-                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
-                    <h3><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI khoanh vùng</h3>
-                    <div class="image-comparison">
-                        <div class="image-comparison-item">
-                            <h4>Ảnh gốc</h4>
-                            <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
-                        </div>
-                        <div class="image-comparison-item">
-                            <h4>Vùng bệnh phát hiện</h4>
-                            <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
-                            ${detectionSummary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
-                        </div>
-                    </div>
-                    ${areasHtml}
-                    <div class="warning-box" style="margin-top:15px; font-size:12px;">
-                        <i class="fas fa-info-circle"></i> Việc khoanh vùng do AI thực hiện, có thể không hoàn toàn chính xác.
-                    </div>
+function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas, algorithmRegions = null, refinedResult = null) {
+    let areasHtml = '';
+    if (areas && areas.length > 0) {
+        areasHtml = `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Vùng bệnh sau AI:</strong><ul style="margin-top: 8px;">`;
+        areas.forEach(area => {
+            areasHtml += `<li><span style="color:#ef4444;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%<br><small style="color: var(--text-dim);">${area.note || ''}</small></li>`;
+        });
+        areasHtml += `</ul></div>`;
+    }
+    
+    let algorithmHtml = '';
+    if (algorithmRegions && algorithmRegions.length > 0) {
+        algorithmHtml = `<div style="margin-top: 10px; padding: 8px; background: rgba(249, 115, 22, 0.1); border-radius: 12px;">
+            <strong><i class="fas fa-microchip"></i> Thuật toán phát hiện (Stage 1):</strong> ${algorithmRegions.length} vùng
+            <div style="font-size: 12px; margin-top: 5px;">${refinedResult?.algorithm_accuracy_note || ''}</div>
+        </div>`;
+    }
+    
+    imageAnalysisSection.innerHTML = `
+        <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
+            <h3><i class="fas fa-robot"></i> 🔍 2-STAGE AI: Thuật toán → AI Refinement</h3>
+            <div class="image-comparison">
+                <div class="image-comparison-item">
+                    <h4>📷 Ảnh gốc</h4>
+                    <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
                 </div>
-            `;
-            imageAnalysisSection.style.display = "block";
-        }
+                <div class="image-comparison-item">
+                    <h4>🎯 AI khoanh vùng bệnh (Stage 2)</h4>
+                    <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
+                    ${detectionSummary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
+                </div>
+            </div>
+            ${areasHtml}
+            ${algorithmHtml}
+            ${refinedResult?.preliminary_diagnosis ? `
+            <div class="info-card" style="margin-top: 15px; background: var(--card-bg); padding: 12px; border-radius: 16px;">
+                <strong>🧪 Chẩn đoán sơ bộ:</strong> ${escapeHtml(refinedResult.preliminary_diagnosis)}<br>
+                <strong>⚠️ Dấu hiệu:</strong> ${refinedResult.warning_signs?.join(', ') || 'không'}<br>
+                <strong>📈 Mức độ:</strong> <span style="color: ${refinedResult.severity === 'nặng' ? '#ef4444' : (refinedResult.severity === 'trung bình' ? '#f59e0b' : '#10b981')}">${refinedResult.severity || 'chưa rõ'}</span><br>
+                <strong>💊 Khuyến nghị:</strong> ${escapeHtml(refinedResult.action_advice || '')}
+            </div>
+            ` : ''}
+            <div class="warning-box" style="margin-top:15px; font-size:12px;">
+                <i class="fas fa-info-circle"></i> <strong>2-Stage Process:</strong> Stage 1 (Thuật toán Canny+HSV) → Stage 2 (AI điều chỉnh và hoàn thiện)
+            </div>
+        </div>
+    `;
+    imageAnalysisSection.style.display = "block";
+}
 
         // ========== TẠO KẾT QUẢ THEO MẪU ==========
         async function getAnalysisInNewFormat(userSymptom, userDuration, selectedSymptoms, hasImage, imageBase64 = null) {
@@ -2181,13 +2494,21 @@ Trả về JSON thuần túy.`;
             imageAnalysisSection.style.display = "none";
             
             try {
-                if (currentImageBase64) {
-                    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng...</div>';
-                    const detectionResult = await detectDiseaseAreas(currentImageBase64, userSymptom);
-                    highlightedImageBase64 = detectionResult.imageBase64;
-                    diseaseAreas = detectionResult.areas;
-                    displayComparisonImages(currentImageBase64, highlightedImageBase64, detectionResult.summary, diseaseAreas);
-                }
+// Tìm đoạn này trong step2FinalAnalysis():
+if (currentImageBase64) {
+    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Stage 1: Thuật toán phát hiện vùng...</div>';
+    const detectionResult = await detectDiseaseAreas(currentImageBase64, userSymptom);
+    highlightedImageBase64 = detectionResult.imageBase64;
+    diseaseAreas = detectionResult.areas;
+    displayComparisonImages(
+        currentImageBase64, 
+        highlightedImageBase64, 
+        detectionResult.summary, 
+        detectionResult.areas,
+        detectionResult.algorithmRegions,
+        detectionResult.refinedResult
+    );
+}
                 
                 analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả...</div>';
                 
