@@ -136,9 +136,7 @@
             <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
             <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
             <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="EPH.html" class="nav-link" style="background: linear-gradient(135deg, #f59e0b, #ec489a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
-                <i class="fas fa-gamepad" style="color: #f59e0b;"></i> EduPlay Health
-            </a>
+            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
         </div>
         <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
     </nav>
@@ -191,10 +189,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
-<script>
+    <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
+            apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
             projectId: "eduhealth-4bcab",
             storageBucket: "eduhealth-4bcab.firebasestorage.app",
@@ -203,18 +200,6 @@
             measurementId: "G-GSP46EVLYG"
         };
         firebase.initializeApp(firebaseConfig);
-
-        // === TH�M �O?N CODE M?I ===
-        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
-        const appCheck = firebase.appCheck();
-        appCheck.activate(
-          new firebase.appCheck.ReCaptchaEnterpriseProvider(
-            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
-          ),
-          true
-        );
-        // ===============================
-
         const auth = firebase.auth();
         const db = firebase.firestore();
 
@@ -534,4 +519,3 @@
     </script>
 </body>
 </html>
-
