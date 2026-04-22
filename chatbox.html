@@ -1289,7 +1289,28 @@ Trả lời:`;
                 const docRef = await db.collection('health_chats').doc(currentChatId).collection('messages').add(messageData);
                 const userMessageId = docRef.id;
                 const userMessageText = text || '[Đã gửi hình ảnh]';
-                
+// ========== GỬI THÔNG BÁO ĐẾN ZALO (NHÓM CỐ ĐỊNH) ==========
+try {
+    const webhookData = {
+        type: 'chat',
+        data: {
+            chatId: currentChatId,
+            userName: getCurrentUser()?.displayName || 'Học sinh',
+            messageText: text || '[Đã gửi hình ảnh]',
+            timestamp: new Date().toLocaleString('vi-VN')
+        }
+    };
+    
+    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookData)
+    });
+    console.log('✅ Đã gửi thông báo Zalo');
+} catch (webhookError) {
+    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
+}
+// ========== KẾT THÚC ==========
                 await db.collection('health_chats').doc(currentChatId).update({
                     lastMessage: text || 'Đã gửi hình ảnh',
                     lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
