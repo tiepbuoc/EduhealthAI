@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -310,6 +311,7 @@
         }
 
         .upload-area {
+            position: relative;
             border: 2px dashed var(--border-light);
             border-radius: 28px;
             padding: 28px 16px;
@@ -681,7 +683,100 @@
         }
         .modal-content p { margin: 16px 0; }
         .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        
 
+.upload-warning-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeInScale 0.25s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.warning-popup-content {
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 24px 28px;
+    max-width: 450px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.warning-popup-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+}
+
+.warning-popup-content h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--warning);
+}
+
+.warning-popup-content p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+}
+
+.warning-popup-btn {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.warning-popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .menu-toggle { display: flex; }
@@ -744,6 +839,18 @@
                     <button class="btn btn-outline" id="cameraBtn"><i class="fas fa-camera"></i> Chụp ảnh</button>
                 </div>
                 <div class="image-preview" id="imagePreview"></div>
+                <!-- Popup cảnh báo khi upload ảnh -->
+<div id="imageWarningPopup" class="upload-warning-popup" style="display: none;">
+    <div class="warning-popup-content">
+        <div class="warning-popup-icon">⚠️</div>
+        <h4>Lưu ý về hình ảnh</h4>
+        <p>Vui lòng <strong>không tải ảnh chứa khuôn mặt hoặc thông tin nhận diện cá nhân</strong> trong bản demo.</p>
+        <button id="confirmImageWarningBtn" class="warning-popup-btn">
+            Tôi đã hiểu
+        </button>
+    </div>
+</div>
+
             </div>
             
             <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này <span style="color: var(--danger);">*</span>:</label>
@@ -823,6 +930,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
 <script>
+
         // ========== CẤU HÌNH ==========
         const firebaseConfig = {
             apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
@@ -893,6 +1001,134 @@
         const imageAnalysisSection = document.getElementById('imageAnalysisSection');
         const authContainer = document.getElementById('authContainer');
         const rejectModal = document.getElementById('rejectModal');
+
+// ========== POPUP CẢNH BÁO ẢNH TRÊN UPLOAD-AREA ==========
+let imageWarningAccepted = false;
+const warningPopup = document.getElementById('imageWarningPopup');
+
+function showImageWarning(callback) {
+    // Nếu đã chấp nhận trước đó thì không hiển thị lại
+    if (imageWarningAccepted) {
+        if (callback) callback();
+        return;
+    }
+    
+    // Hiển thị popup ngay trên upload-area
+    if (warningPopup) {
+        warningPopup.style.display = 'flex';
+        
+        // Xử lý nút xác nhận (chỉ gắn event 1 lần)
+        const confirmBtn = document.getElementById('confirmImageWarningBtn');
+        const handleConfirm = () => {
+            imageWarningAccepted = true;
+            warningPopup.style.display = 'none';
+            if (callback) callback();
+            confirmBtn.removeEventListener('click', handleConfirm);
+        };
+        confirmBtn.addEventListener('click', handleConfirm);
+    } else {
+        // Fallback nếu không tìm thấy popup
+        if (callback) callback();
+    }
+}
+
+// Hàm đóng popup (nếu cần)
+function closeImageWarning() {
+    if (warningPopup) {
+        warningPopup.style.display = 'none';
+    }
+}
+
+// Ghi đè các hàm upload ảnh để hiển thị popup trước
+chooseFileBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(() => {
+        fileInput.click();
+    });
+};
+
+cameraBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            const modalDiv = document.createElement('div');
+            modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+            video.width = 320;
+            video.height = 240;
+            videoContainer.appendChild(video);
+            const captureBtn = document.createElement('button');
+            captureBtn.innerText = 'Chụp ảnh';
+            captureBtn.className = 'btn btn-primary';
+            captureBtn.style.marginTop = '12px';
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'Hủy';
+            closeBtn.className = 'btn btn-outline';
+            closeBtn.style.marginLeft = '10px';
+            videoContainer.appendChild(captureBtn);
+            videoContainer.appendChild(closeBtn);
+            modalDiv.appendChild(videoContainer);
+            document.body.appendChild(modalDiv);
+            captureBtn.onclick = async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+            closeBtn.onclick = () => {
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+        } catch (err) {
+            alert("Không thể truy cập camera: " + err.message);
+        }
+    });
+};
+
+// Xử lý khi kéo thả ảnh
+dropZone.ondrop = async (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        alert('Vui lòng thả file ảnh hợp lệ');
+    }
+};
+
+// Ghi đè file input change event
+fileInput.onchange = async (e) => {
+    if (e.target.files.length) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    }
+};
 
         // ========== KIỂM TRA ĐĂNG NHẬP ==========
         function checkAuth() {
@@ -995,9 +1231,59 @@
             });
         }
 
-        function showRejectModal() {
-            rejectModal.classList.add('active');
+function showRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    const modalBody = modal.querySelector('.modal-content');
+    
+    // Cập nhật nội dung modal
+    modalBody.innerHTML = `
+        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px;">⚠️ Thông báo</h3>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Hiện tại AI Check-in của EduHealth AI đang hỗ trợ chuyên sâu cho <strong>module mụn học đường</strong>. 
+            Với vấn đề bạn đang gặp, hệ thống chưa đủ cơ sở để đưa ra hỗ trợ check-in chuyên sâu một cách an toàn.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Để hỗ trợ bạn tốt hơn, bạn có thể chọn một trong các hướng sau:
+        </p>
+        <ul style="text-align: left; margin-bottom: 20px; padding-left: 20px; line-height: 1.8;">
+            <li><strong>(1)</strong> Xem thông tin phù hợp trong <strong>Thư viện sức khỏe</strong></li>
+            <li><strong>(2)</strong> Liên hệ <strong>CBYT / phụ huynh</strong> để được hỗ trợ thêm</li>
+            <li><strong>(3)</strong> Trò chuyện với <strong>EduHealth AI</strong> để được hướng dẫn bước tiếp theo</li>
+        </ul>
+        <p style="line-height: 1.6; margin-bottom: 20px; font-size: 13px; color: var(--text-dim);">
+            Nếu có dấu hiệu bất thường hoặc bạn đang lo lắng nhiều, hãy ưu tiên liên hệ người lớn hoặc cơ sở y tế.
+        </p>
+        <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">
+                <i class="fas fa-book-open"></i> Đến Thư viện sức khỏe
+            </a>
+            <a href="chatbox.html" class="btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #10b981, #3b82f6); padding: 10px 20px;">
+                <i class="fas fa-comment-dots"></i> Trò chuyện với AI
+            </a>
+            <button class="btn-outline" id="closeModalBtn" style="padding: 10px 20px;">Đóng</button>
+        </div>
+    `;
+    
+    modal.classList.add('active');
+    
+    // Gắn lại event cho nút đóng
+    const closeBtn = document.getElementById('closeModalBtn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('active');
+            resetToStep1();
+        };
+    }
+    
+    // Gắn event cho overlay
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            resetToStep1();
         }
+    };
+}
 
         document.getElementById('closeModalBtn').onclick = () => {
             rejectModal.classList.remove('active');
@@ -2114,13 +2400,18 @@ Trả về JSON thuần túy.`;
         resetBtn.addEventListener('click', resetToStep1);
         
         // ========== KHỞI TẠO APP ==========
-        async function initApp() {
-            if (!checkAuth()) return;
-            await loadUserData();
-            await initKnowledgeBase();
-            updateAuthUI();
-            resetToStep1();
-        }
+async function initApp() {
+    if (!checkAuth()) return;
+    await loadUserData();
+    await initKnowledgeBase();
+    updateAuthUI();
+    resetToStep1();
+    
+    // === THÊM DÒNG NÀY: HIỂN THỊ POPUP CẢNH BÁO NGAY KHI VÀO TRANG ===
+    setTimeout(() => {
+        showImageWarning(() => {});
+    }, 500);
+}
         
         auth.onAuthStateChanged((user) => {
             if (user) {
