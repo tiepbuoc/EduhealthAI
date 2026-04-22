@@ -789,6 +789,18 @@
             .auth-btn span { display: none; }
             .auth-btn { padding: 8px 12px; }
         }
+/* Demo notice popup - có thể tùy chỉnh thêm nếu muốn */
+#demoNoticeModal .modal-content {
+    background: var(--card-bg);
+    border: 2px solid var(--blue-primary);
+}
+
+#demoNoticeModal h3 {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
     </style>
 </head>
 <body>
@@ -826,7 +838,21 @@
             <h1 class="page-title"><i class="fas fa-stethoscope"></i> Check-in sức khỏe cùng EduHealth AI</h1>
             <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
         </div>
-
+<div id="demoNoticeModal" class="modal-overlay" style="z-index: 2002;">
+    <div class="modal-content" style="max-width: 480px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 16px;">ℹ️</div>
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 12px; color: var(--blue-primary);">Thông báo về bản dùng thử</h3>
+        <p style="line-height: 1.6; margin-bottom: 20px; text-align: left;">
+            Phiên bản trình diễn hiện <strong>không thu thập thông tin định danh cá nhân</strong>; 
+            dữ liệu nhập demo chỉ dùng để minh họa chức năng và không phải hồ sơ bệnh án.
+        </p>
+        <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center;">
+            <button id="closeDemoNoticeBtn" class="btn-primary" style="padding: 10px 28px;">
+                <i class="fas fa-check-circle"></i> Tôi đã hiểu
+            </button>
+        </div>
+    </div>
+</div>
         <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
         <div id="step1Container" class="card">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
@@ -2400,6 +2426,36 @@ Trả về JSON thuần túy.`;
         resetBtn.addEventListener('click', resetToStep1);
         
         // ========== KHỞI TẠO APP ==========
+// ========== KHỞI TẠO POPUP THÔNG BÁO DEMO ==========
+let demoNoticeShown = false;
+
+function showDemoNotice() {
+    if (demoNoticeShown) return;
+    
+    const demoModal = document.getElementById('demoNoticeModal');
+    if (!demoModal) return;
+    
+    demoModal.classList.add('active');
+    
+    const closeBtn = document.getElementById('closeDemoNoticeBtn');
+    const handleClose = () => {
+        demoModal.classList.remove('active');
+        demoNoticeShown = true;
+        closeBtn.removeEventListener('click', handleClose);
+    };
+    
+    closeBtn.addEventListener('click', handleClose);
+    
+    // Đóng modal khi click ra ngoài
+    demoModal.onclick = (e) => {
+        if (e.target === demoModal) {
+            demoModal.classList.remove('active');
+            demoNoticeShown = true;
+        }
+    };
+}
+
+// ========== KHỞI TẠO APP ==========
 async function initApp() {
     if (!checkAuth()) return;
     await loadUserData();
@@ -2407,10 +2463,15 @@ async function initApp() {
     updateAuthUI();
     resetToStep1();
     
-    // === THÊM DÒNG NÀY: HIỂN THỊ POPUP CẢNH BÁO NGAY KHI VÀO TRANG ===
+    // === HIỂN THỊ POPUP THÔNG BÁO DEMO ===
+    setTimeout(() => {
+        showDemoNotice();
+    }, 300);
+    
+    // === HIỂN THỊ POPUP CẢNH BÁO ẢNH ===
     setTimeout(() => {
         showImageWarning(() => {});
-    }, 500);
+    }, 600);
 }
         
         auth.onAuthStateChanged((user) => {
