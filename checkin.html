@@ -1,14 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Check-in sức khỏe cùng EduHealth AI - Phân tích thông minh</title>
+    <title>Check-in sức khỏe cùng EduHealth AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
         :root {
             --blue-primary: #3b82f6;
@@ -683,115 +683,100 @@
         }
         .modal-content p { margin: 16px 0; }
         .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        
 
-        /* Quality Indicator */
-        .quality-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 500;
-            margin-top: 12px;
-        }
-        .quality-good { background: rgba(16, 185, 129, 0.15); color: var(--success); }
-        .quality-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
-        .quality-bad { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+.upload-warning-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeInScale 0.25s ease-out;
+}
 
-        .upload-warning-popup {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(4px);
-            border-radius: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            animation: fadeInScale 0.25s ease-out;
-        }
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
+.warning-popup-content {
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 24px 28px;
+    max-width: 450px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    animation: slideUp 0.3s ease;
+}
 
-        .warning-popup-content {
-            background: var(--card-bg);
-            border-radius: 28px;
-            padding: 24px 28px;
-            max-width: 450px;
-            width: 85%;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-light);
-            animation: slideUp 0.3s ease;
-        }
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+.warning-popup-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+}
 
-        .warning-popup-icon {
-            font-size: 52px;
-            margin-bottom: 12px;
-        }
+.warning-popup-content h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--warning);
+}
 
-        .warning-popup-content h4 {
-            font-family: 'Fraunces', serif;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--warning);
-        }
+.warning-popup-content p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+}
 
-        .warning-popup-content p {
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--text-mid);
-            margin-bottom: 20px;
-        }
+.warning-popup-btn {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+}
 
-        .warning-popup-btn {
-            background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .warning-popup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .confidence-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 8px;
-        }
-        .confidence-high { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .confidence-medium { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        .confidence-low { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-
+.warning-popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .menu-toggle { display: flex; }
@@ -804,117 +789,218 @@
             .auth-btn span { display: none; }
             .auth-btn { padding: 8px 12px; }
         }
+/* Demo notice popup - có thể tùy chỉnh thêm nếu muốn */
+#demoNoticeModal .modal-content {
+    background: var(--card-bg);
+    border: 2px solid var(--blue-primary);
+}
 
-        /* Privacy Modal Styles */
-        .privacy-modal-content {
-            max-width: 550px;
-            width: 90%;
-            text-align: left;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-            overflow: hidden;
-        }
+#demoNoticeModal h3 {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+/* Privacy Modal Styles */
+.privacy-modal-content {
+    max-width: 550px;
+    text-align: left;
+}
 
-        .privacy-modal-header {
-            padding: 24px 24px 0 24px;
-            flex-shrink: 0;
-        }
+.privacy-checklist {
+    margin: 20px 0;
+    background: var(--bg-surface);
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid var(--border-light);
+}
 
-        .privacy-checklist {
-            margin: 0;
-            background: var(--bg-surface);
-            border-radius: 0;
-            padding: 16px 24px;
-            border: none;
-            border-top: 1px solid var(--border-light);
-            border-bottom: 1px solid var(--border-light);
-            overflow-y: auto;
-            flex: 1;
-            max-height: 50vh;
-        }
+.privacy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
 
-        .privacy-modal-footer {
-            padding: 20px 24px 24px 24px;
-            flex-shrink: 0;
-            background: var(--card-bg);
-            border-radius: 0 0 32px 32px;
-        }
+.privacy-item:hover {
+    background: var(--tag-bg);
+}
 
-        .privacy-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 14px;
-            margin: 16px 0;
-            padding: 8px;
-            border-radius: 12px;
-            transition: background 0.2s;
-            cursor: pointer;
-        }
+.privacy-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
 
-        .privacy-item:hover {
-            background: var(--tag-bg);
-        }
+.privacy-item label {
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--text-mid);
+    flex: 1;
+}
 
-        .privacy-item input[type="checkbox"] {
-            margin-top: 3px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
+.privacy-item label strong {
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
 
-        .privacy-item label {
-            font-size: 14px;
-            line-height: 1.5;
-            cursor: pointer;
-            color: var(--text-mid);
-            flex: 1;
-        }
+.privacy-item label small {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 4px;
+}
 
-        .privacy-item label strong {
-            color: var(--text-dark);
-            display: block;
-            margin-bottom: 4px;
-            font-size: 15px;
-        }
+.privacy-footer {
+    margin-top: 20px;
+    text-align: center;
+}
 
-        .privacy-item label small {
-            font-size: 12px;
-            color: var(--text-dim);
-            display: block;
-            margin-top: 4px;
-        }
+#privacyConfirmBtn {
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
 
-        .privacy-footer {
-            margin-top: 20px;
-            text-align: center;
-        }
+#privacyConfirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
 
-        #privacyConfirmBtn {
-            padding: 12px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+.required-hint {
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+/* Privacy Modal Styles */
+.privacy-modal-content {
+    max-width: 550px;
+    width: 90%;
+    text-align: left;
+    max-height: 85vh; /* Giới hạn chiều cao tối đa 85% viewport */
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Bỏ padding để checklist chiếm toàn bộ */
+    overflow: hidden; /* Ẩn overflow bên ngoài */
+}
 
-        #privacyConfirmBtn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+/* Phần header của modal (cố định) */
+.privacy-modal-header {
+    padding: 24px 24px 0 24px;
+    flex-shrink: 0; /* Không co lại */
+}
 
-        .required-hint {
-            font-size: 12px;
-            color: var(--danger);
-            text-align: center;
-            margin-top: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
+/* Phần checklist (có thanh cuộn) */
+.privacy-checklist {
+    margin: 0;
+    background: var(--bg-surface);
+    border-radius: 0;
+    padding: 16px 24px;
+    border: none;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    overflow-y: auto; /* Thanh cuộn dọc */
+    flex: 1; /* Chiếm phần không gian còn lại */
+    max-height: 50vh; /* Chiều cao tối đa 50% viewport */
+}
+
+/* Phần footer của modal (cố định) */
+.privacy-modal-footer {
+    padding: 20px 24px 24px 24px;
+    flex-shrink: 0; /* Không co lại */
+    background: var(--card-bg);
+    border-radius: 0 0 32px 32px;
+}
+
+.privacy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.privacy-item:hover {
+    background: var(--tag-bg);
+}
+
+.privacy-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.privacy-item label {
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--text-mid);
+    flex: 1;
+}
+
+.privacy-item label strong {
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.privacy-item label small {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 4px;
+}
+
+.privacy-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#privacyConfirmBtn {
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+#privacyConfirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.required-hint {
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
     </style>
 </head>
 <body>
@@ -952,84 +1038,82 @@
             <h1 class="page-title"><i class="fas fa-stethoscope"></i> Check-in sức khỏe cùng EduHealth AI</h1>
             <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
         </div>
-
-        <!-- PRIVACY MODAL -->
-        <div id="privacyModal" class="modal-overlay" style="z-index: 2002;">
-            <div class="modal-content privacy-modal-content">
-                <div class="privacy-modal-header">
-                    <div style="text-align: center; margin-bottom: 16px;">
-                        <div style="font-size: 48px; margin-bottom: 8px;">🔒</div>
-                        <h3 style="font-family: 'Fraunces', serif; font-size: 22px; background: var(--grad-blue-pink); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
-                            Thông tin về dữ liệu của bạn
-                        </h3>
-                        <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">Vui lòng đọc kỹ và xác nhận để tiếp tục</p>
-                    </div>
-                </div>
-
-                <div class="privacy-checklist">
-                    <div class="privacy-item" data-item="0">
-                        <input type="checkbox" id="privacyChk1" class="privacy-chk">
-                        <label for="privacyChk1">
-                            <strong>📋 Dữ liệu nào được nhập?</strong>
-                            Mô tả triệu chứng, ảnh (tự nguyện cung cấp), checklist triệu chứng.
-                            <small>Ảnh sẽ được nén trước khi lưu để bảo vệ quyền riêng tư.</small>
-                        </label>
-                    </div>
-                    
-                    <div class="privacy-item" data-item="1">
-                        <input type="checkbox" id="privacyChk2" class="privacy-chk">
-                        <label for="privacyChk2">
-                            <strong>🎯 Mục đích sử dụng</strong>
-                            Hỗ trợ check-in sức khỏe ban đầu, nhận biết sớm vấn đề. <strong>Không thay thế chẩn đoán y tế.</strong>
-                        </label>
-                    </div>
-                    
-                    <div class="privacy-item" data-item="2">
-                        <input type="checkbox" id="privacyChk3" class="privacy-chk">
-                        <label for="privacyChk3">
-                            <strong>🏢 Chủ thể xử lý dữ liệu</strong>
-                            Đội dự án EduHealth - Đơn vị vận hành hệ thống chăm sóc sức khỏe học đường.
-                        </label>
-                    </div>
-                    
-                    <div class="privacy-item" data-item="3">
-                        <input type="checkbox" id="privacyChk4" class="privacy-chk">
-                        <label for="privacyChk4">
-                            <strong>💾 Lưu trữ dữ liệu</strong>
-                            Dữ liệu được lưu trên Firebase (đám mây) của dự án, thời gian lưu tối đa <strong>12 tháng</strong> hoặc cho đến khi bạn yêu cầu xóa.
-                        </label>
-                    </div>
-                    
-                    <div class="privacy-item" data-item="4">
-                        <input type="checkbox" id="privacyChk5" class="privacy-chk">
-                        <label for="privacyChk5">
-                            <strong>⚖️ Quyền của bạn</strong>
-                            Bạn có quyền: xem lại dữ liệu đã cung cấp, rút lại đồng ý, yêu cầu xóa dữ liệu cá nhân bất kỳ lúc nào.
-                        </label>
-                    </div>
-                    
-                    <div class="privacy-item" data-item="5">
-                        <input type="checkbox" id="privacyChk6" class="privacy-chk">
-                        <label for="privacyChk6">
-                            <strong>📞 Liên hệ hỗ trợ / Xóa dữ liệu</strong>
-                            Email: <strong>eduhealthai08@gmail.com</strong> 
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="privacy-modal-footer">
-                    <div class="privacy-footer">
-                        <button id="privacyConfirmBtn" class="btn-primary" disabled style="padding: 12px 32px; border-radius: 50px;">
-                            <i class="fas fa-check-circle"></i> Tôi đã hiểu và đồng ý
-                        </button>
-                        <div class="required-hint" id="requiredHint">
-                            <i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục
-                        </div>
-                    </div>
-                </div>
+<!-- PRIVACY & DEMO MODAL - BẮT BUỘC TICK HẾT -->
+<div id="privacyModal" class="modal-overlay" style="z-index: 2002;">
+    <div class="modal-content privacy-modal-content">
+        <div class="privacy-modal-header">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 48px; margin-bottom: 8px;">🔒</div>
+                <h3 style="font-family: 'Fraunces', serif; font-size: 22px; background: var(--grad-blue-pink); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
+                    Thông tin về dữ liệu của bạn
+                </h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">Vui lòng đọc kỹ và xác nhận để tiếp tục</p>
             </div>
         </div>
 
+        <div class="privacy-checklist">
+            <div class="privacy-item" data-item="0">
+                <input type="checkbox" id="privacyChk1" class="privacy-chk">
+                <label for="privacyChk1">
+                    <strong>📋 Dữ liệu nào được nhập?</strong>
+                    Mô tả triệu chứng, ảnh (tự nguyện cung cấp), checklist triệu chứng.
+                    <small>Ảnh sẽ được nén trước khi lưu để bảo vệ quyền riêng tư.</small>
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="1">
+                <input type="checkbox" id="privacyChk2" class="privacy-chk">
+                <label for="privacyChk2">
+                    <strong>🎯 Mục đích sử dụng</strong>
+                    Hỗ trợ check-in sức khỏe ban đầu, nhận biết sớm vấn đề. <strong>Không thay thế chẩn đoán y tế.</strong>
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="2">
+                <input type="checkbox" id="privacyChk3" class="privacy-chk">
+                <label for="privacyChk3">
+                    <strong>🏢 Chủ thể xử lý dữ liệu</strong>
+                    Đội dự án EduHealth - Đơn vị vận hành hệ thống chăm sóc sức khỏe học đường.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="3">
+                <input type="checkbox" id="privacyChk4" class="privacy-chk">
+                <label for="privacyChk4">
+                    <strong>💾 Lưu trữ dữ liệu</strong>
+                    Dữ liệu được lưu trên Firebase (đám mây) của dự án, thời gian lưu tối đa <strong>12 tháng</strong> hoặc cho đến khi bạn yêu cầu xóa.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="4">
+                <input type="checkbox" id="privacyChk5" class="privacy-chk">
+                <label for="privacyChk5">
+                    <strong>⚖️ Quyền của bạn</strong>
+                    Bạn có quyền: xem lại dữ liệu đã cung cấp, rút lại đồng ý, yêu cầu xóa dữ liệu cá nhân bất kỳ lúc nào.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="5">
+                <input type="checkbox" id="privacyChk6" class="privacy-chk">
+                <label for="privacyChk6">
+                    <strong>📞 Liên hệ hỗ trợ / Xóa dữ liệu</strong>
+                    Email: <strong>eduhealthai08@gmail.com</strong> 
+                </label>
+            </div>
+        </div>
+        
+        <div class="privacy-modal-footer">
+            <div class="privacy-footer">
+                <button id="privacyConfirmBtn" class="btn-primary" disabled style="padding: 12px 32px; border-radius: 50px;">
+                    <i class="fas fa-check-circle"></i> Tôi đã hiểu và đồng ý
+                </button>
+                <div class="required-hint" id="requiredHint">
+                    <i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
         <div id="step1Container" class="card">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
@@ -1042,18 +1126,18 @@
                     <button class="btn btn-outline" id="cameraBtn"><i class="fas fa-camera"></i> Chụp ảnh</button>
                 </div>
                 <div class="image-preview" id="imagePreview"></div>
-                <div id="qualityIndicator" class="quality-indicator" style="display: none;"></div>
-                
-                <div id="imageWarningPopup" class="upload-warning-popup" style="display: none;">
-                    <div class="warning-popup-content">
-                        <div class="warning-popup-icon">⚠️</div>
-                        <h4>Lưu ý về hình ảnh</h4>
-                        <p>Vui lòng <strong>không tải ảnh chứa khuôn mặt hoặc thông tin nhận diện cá nhân</strong> trong bản demo.</p>
-                        <button id="confirmImageWarningBtn" class="warning-popup-btn">
-                            Tôi đã hiểu
-                        </button>
-                    </div>
-                </div>
+                <!-- Popup cảnh báo khi upload ảnh -->
+<div id="imageWarningPopup" class="upload-warning-popup" style="display: none;">
+    <div class="warning-popup-content">
+        <div class="warning-popup-icon">⚠️</div>
+        <h4>Lưu ý về hình ảnh</h4>
+        <p>Vui lòng <strong>không tải ảnh chứa khuôn mặt hoặc thông tin nhận diện cá nhân</strong> trong bản demo.</p>
+        <button id="confirmImageWarningBtn" class="warning-popup-btn">
+            Tôi đã hiểu
+        </button>
+    </div>
+</div>
+
             </div>
             
             <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này <span style="color: var(--danger);">*</span>:</label>
@@ -1092,7 +1176,6 @@
                 <div class="result-title"><i class="fas fa-chart-line"></i> 📊 Kết quả nhận biết từ EduHealth AI</div>
                 <div id="analysisResult">✨ EduHealth AI đã sẵn sàng, hãy chia sẻ cùng mình nhé!</div>
                 <div id="imageAnalysisSection" style="display: none;"></div>
-                <div id="confidenceExplanation" style="display: none; margin: 16px 0; padding: 12px; background: var(--bg-surface); border-radius: 16px; font-size: 13px;"></div>
                 <div id="pdfButtonSection" class="chat-btn-section" style="display: none;">
                     <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> Tải xuống PDF đánh giá</button>
                 </div>
@@ -1116,28 +1199,15 @@
     <!-- Modal từ chối -->
     <div id="rejectModal" class="modal-overlay">
         <div class="modal-content">
-            <i class="fas fa-info-circle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
-            <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px;">⚠️ Thông báo</h3>
-            <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
-                Hiện tại AI Check-in của EduHealth AI đang hỗ trợ chuyên sâu cho <strong>module mụn học đường</strong>. 
-                Với vấn đề bạn đang gặp, hệ thống chưa đủ cơ sở để đưa ra hỗ trợ check-in chuyên sâu một cách an toàn.
-            </p>
-            <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
-                Để hỗ trợ bạn tốt hơn, bạn có thể chọn một trong các hướng sau:
-            </p>
-            <ul style="text-align: left; margin-bottom: 20px; padding-left: 20px; line-height: 1.8;">
-                <li><strong>(1)</strong> Xem thông tin phù hợp trong <strong>Thư viện sức khỏe</strong></li>
-                <li><strong>(2)</strong> Liên hệ <strong>CBYT / phụ huynh</strong> để được hỗ trợ thêm</li>
-                <li><strong>(3)</strong> Trò chuyện với <strong>EduHealth AI</strong> để được hướng dẫn bước tiếp theo</li>
-            </ul>
-            <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">
-                    <i class="fas fa-book-open"></i> Đến Thư viện sức khỏe
-                </a>
-                <a href="chatbox.html" class="btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #10b981, #3b82f6); padding: 10px 20px;">
-                    <i class="fas fa-comment-dots"></i> Trò chuyện với AI
-                </a>
-                <button class="btn-outline" id="closeModalBtn" style="padding: 10px 20px;">Đóng</button>
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+            <h3>⚠️ Không hỗ trợ vấn đề này</h3>
+            <p>EduHealth AI hiện tại chỉ hỗ trợ nhận biết <strong>các vấn đề về da liễu</strong> (mụn, phát ban, mẩn đỏ, vết thương, tổn thương da).</p>
+            <p>Thông tin bạn cung cấp (cả ảnh và mô tả) không liên quan đến da liễu.</p>
+            <p>Vui lòng quay lại <strong>Thư viện Cẩm nang sức khỏe</strong> để tìm hiểu thêm,<br>
+            và liên hệ với <strong>Cán bộ y tế nhà trường</strong> để được hỗ trợ kịp thời.</p>
+            <div class="modal-buttons">
+                <a href="index.html" class="btn btn-primary" style="text-decoration: none;"><i class="fas fa-book-open"></i> Đến Thư viện sức khỏe</a>
+                <button class="btn btn-outline" id="closeModalBtn">Đóng</button>
             </div>
         </div>
     </div>
@@ -1145,8 +1215,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
-    <script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+<script>
+
         // ========== CẤU HÌNH ==========
         const firebaseConfig = {
             apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
@@ -1159,14 +1230,16 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // App Check
+        // === TH�M �O?N CODE M?I ===
+        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
         const appCheck = firebase.appCheck();
         appCheck.activate(
-            new firebase.appCheck.ReCaptchaEnterpriseProvider(
-                '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
-            ),
-            true
+          new firebase.appCheck.ReCaptchaEnterpriseProvider(
+            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+          ),
+          true
         );
+        // ===============================
 
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1187,9 +1260,7 @@
         let userChats = [];
         let highlightedImageBase64 = null;
         let diseaseAreas = [];
-        let cachedChecklistQuestions = [];
-        let lastImageQualityScore = null;
-        let imageQualityAssessment = null;
+        let cachedChecklistQuestions = []; // Lưu cache câu hỏi từ Firestore để tham khảo
 
         // DOM elements
         const step1Container = document.getElementById('step1Container');
@@ -1217,463 +1288,215 @@
         const imageAnalysisSection = document.getElementById('imageAnalysisSection');
         const authContainer = document.getElementById('authContainer');
         const rejectModal = document.getElementById('rejectModal');
-        const qualityIndicator = document.getElementById('qualityIndicator');
-        const confidenceExplanation = document.getElementById('confidenceExplanation');
 
-        // ========== PHƯƠNG PHÁP 1: LAPLACIAN VARIANCE - PHÁT HIỆN ẢNH MỜ ==========
-        // Lý do chọn: Nhanh, nhẹ, chạy trực tiếp trên trình duyệt, không tốn API
-        // Hoạt động: Tính độ biến thiên cường độ sáng giữa các pixel
-        // Ảnh rõ có variance cao, ảnh mờ có variance thấp
-        async function detectBlurWithLaplacian(imageBase64) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imageData.data;
-                    
-                    // Chuyển sang grayscale
-                    const gray = [];
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i];
-                        const g = data[i + 1];
-                        const b = data[i + 2];
-                        gray.push(0.299 * r + 0.587 * g + 0.114 * b);
-                    }
-                    
-                    // Tính Laplacian (đạo hàm bậc 2)
-                    const width = canvas.width;
-                    const height = canvas.height;
-                    let sum = 0;
-                    let count = 0;
-                    
-                    for (let y = 1; y < height - 1; y++) {
-                        for (let x = 1; x < width - 1; x++) {
-                            const idx = y * width + x;
-                            // Kernel Laplacian 3x3
-                            const lap = Math.abs(
-                                4 * gray[idx] -
-                                gray[idx - 1] - gray[idx + 1] -
-                                gray[idx - width] - gray[idx + width]
-                            );
-                            sum += lap;
-                            count++;
-                        }
-                    }
-                    
-                    const variance = sum / count;
-                    
-                    // Ngưỡng: < 50 = rất mờ, 50-100 = hơi mờ, > 100 = rõ
-                    let isBlurry = variance < 80;
-                    let score = Math.min(100, Math.max(0, (variance / 150) * 100));
-                    let level = score > 70 ? 'good' : (score > 40 ? 'warning' : 'bad');
-                    
-                    resolve({
-                        isBlurry: isBlurry,
-                        variance: variance,
-                        clarityScore: Math.round(score),
-                        level: level,
-                        method: 'Laplacian Variance'
-                    });
-                };
-                img.src = imageBase64;
-            });
-        }
+// ========== POPUP CẢNH BÁO ẢNH TRÊN UPLOAD-AREA ==========
+let imageWarningAccepted = false;
+const warningPopup = document.getElementById('imageWarningPopup');
 
-        // ========== PHƯƠNG PHÁP 2: TENENGRAD - PHÁT HIỆN CẠNH ==========
-        // Lý do chọn: Bổ sung cho Laplacian, phát hiện mờ do out-of-focus tốt hơn
-        // Hoạt động: Tính gradient Sobel theo cả 2 hướng X và Y
-        async function detectBlurWithTenengrad(imageBase64) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    
-                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imageData.data;
-                    
-                    // Chuyển sang grayscale
-                    const gray = [];
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i];
-                        const g = data[i + 1];
-                        const b = data[i + 2];
-                        gray.push(0.299 * r + 0.587 * g + 0.114 * b);
-                    }
-                    
-                    const width = canvas.width;
-                    const height = canvas.height;
-                    let sum = 0;
-                    let count = 0;
-                    
-                    // Kernel Sobel X và Y
-                    for (let y = 1; y < height - 1; y++) {
-                        for (let x = 1; x < width - 1; x++) {
-                            const idx = y * width + x;
-                            
-                            // Sobel X
-                            const gx = 
-                                -1 * gray[idx - width - 1] + 0 * gray[idx - width] + 1 * gray[idx - width + 1] +
-                                -2 * gray[idx - 1] + 0 * gray[idx] + 2 * gray[idx + 1] +
-                                -1 * gray[idx + width - 1] + 0 * gray[idx + width] + 1 * gray[idx + width + 1];
-                            
-                            // Sobel Y
-                            const gy = 
-                                -1 * gray[idx - width - 1] + -2 * gray[idx - width] + -1 * gray[idx - width + 1] +
-                                0 * gray[idx - 1] + 0 * gray[idx] + 0 * gray[idx + 1] +
-                                1 * gray[idx + width - 1] + 2 * gray[idx + width] + 1 * gray[idx + width + 1];
-                            
-                            const grad = Math.sqrt(gx * gx + gy * gy);
-                            sum += grad;
-                            count++;
-                        }
-                    }
-                    
-                    const avgGrad = sum / count;
-                    let score = Math.min(100, (avgGrad / 50) * 100);
-                    let isBlurry = avgGrad < 25;
-                    
-                    resolve({
-                        isBlurry: isBlurry,
-                        tenengradScore: avgGrad,
-                        clarityScore: Math.round(score),
-                        level: score > 70 ? 'good' : (score > 40 ? 'warning' : 'bad'),
-                        method: 'Tenengrad'
-                    });
-                };
-                img.src = imageBase64;
-            });
-        }
-
-        // ========== PHƯƠNG PHÁP 3: AI QUALITY ASSESSMENT - CHI TIẾT NHẤT ==========
-        // Lý do chọn: Độ chính xác cao nhất, có thể đưa ra hướng dẫn cụ thể
-        // Hoạt động: Gửi ảnh đến Vision AI để đánh giá toàn diện
-        async function assessImageQualityWithAI(imageBase64, userSymptom = '') {
-            const prompt = `Bạn là chuyên gia y tế và nhiếp ảnh y khoa. Hãy đánh giá CHI TIẾT chất lượng ảnh da liễu này.
-
-NGƯỜI DÙNG MÔ TẢ: "${userSymptom || 'Không có mô tả cụ thể'}"
-
-Hãy đánh giá các tiêu chí sau:
-1. ĐỘ NÉT (Sharpness): Có bị mờ do rung tay, lấy nét sai, hoặc out-of-focus không?
-2. ĐỘ SÁNG (Brightness): Có đủ sáng để nhìn rõ tổn thương không? Có bị tối quá hoặc cháy sáng không?
-3. ĐỘ TƯƠNG PHẢN (Contrast): Vùng tổn thương có nổi bật so với vùng da xung quanh không?
-4. GÓC CHỤP (Angle): Có chụp đúng vùng tổn thương cần quan sát không?
-5. NHIỄU (Noise): Ảnh có bị nhiễu hạt, vỡ ảnh không?
-6. YẾU TỐ NHẬN DIỆN: Có chứa khuôn mặt, tên, hoặc thông tin cá nhân không?
-
-Trả về JSON CHÍNH XÁC theo format:
-{
-    "overall_score": 0-100,
-    "is_usable": true/false,
-    "issues": ["vấn đề 1", "vấn đề 2"],
-    "suggestions": ["cách khắc phục 1", "cách khắc phục 2"],
-    "sharpness_score": 0-100,
-    "brightness_score": 0-100,
-    "contrast_score": 0-100,
-    "angle_score": 0-100,
-    "has_personal_info": true/false,
-    "detailed_analysis": "phân tích chi tiết bằng tiếng Việt"
-}`;
-
-            const messages = [
-                { role: "system", content: "Bạn là chuyên gia đánh giá chất lượng ảnh y tế. Chỉ trả về JSON hợp lệ." },
-                { role: "user", content: [
-                    { type: "text", text: prompt },
-                    { type: "image_url", image_url: { url: imageBase64 } }
-                ]}
-            ];
-            
-            try {
-                const response = await callAI(messages, 0.3);
-                let clean = response.trim();
-                if (clean.startsWith("```json")) clean = clean.slice(7);
-                if (clean.startsWith("```")) clean = clean.slice(3);
-                if (clean.endsWith("```")) clean = clean.slice(0, -3);
-                return JSON.parse(clean);
-            } catch (error) {
-                console.error("AI quality assessment error:", error);
-                return {
-                    overall_score: 50,
-                    is_usable: true,
-                    issues: ["Không thể đánh giá tự động"],
-                    suggestions: ["Vui lòng đảm bảo ảnh rõ nét và đủ sáng"],
-                    sharpness_score: 50,
-                    brightness_score: 50,
-                    contrast_score: 50,
-                    angle_score: 50,
-                    has_personal_info: false,
-                    detailed_analysis: "Không thể phân tích chi tiết do lỗi hệ thống."
-                };
-            }
-        }
-
-        // ========== HÀM TỔNG HỢP ĐÁNH GIÁ CHẤT LƯỢNG ẢNH ==========
-        async function comprehensiveImageQualityCheck(imageBase64, userSymptom = '') {
-            // Chạy song song 3 phương pháp để có kết quả chính xác nhất
-            const [laplacianResult, tenengradResult, aiResult] = await Promise.all([
-                detectBlurWithLaplacian(imageBase64),
-                detectBlurWithTenengrad(imageBase64),
-                assessImageQualityWithAI(imageBase64, userSymptom)
-            ]);
-            
-            // Tính điểm tổng hợp (weighted average)
-            const mathScore = (laplacianResult.clarityScore + tenengradResult.clarityScore) / 2;
-            const finalScore = Math.round(mathScore * 0.4 + aiResult.overall_score * 0.6);
-            
-            const isUsable = finalScore >= 50 && aiResult.is_usable && !aiResult.has_personal_info;
-            
-            // Tổng hợp các vấn đề và gợi ý
-            const allIssues = [...(aiResult.issues || [])];
-            if (laplacianResult.isBlurry) allIssues.push("Ảnh bị mờ (phát hiện bằng Laplacian)");
-            if (tenengradResult.isBlurry) allIssues.push("Độ nét cạnh thấp (phát hiện bằng Tenengrad)");
-            if (aiResult.sharpness_score < 50) allIssues.push("Độ nét thấp theo đánh giá AI");
-            if (aiResult.brightness_score < 50) allIssues.push("Ảnh quá tối hoặc quá sáng");
-            if (aiResult.contrast_score < 50) allIssues.push("Độ tương phản thấp, khó phân biệt vùng tổn thương");
-            if (aiResult.angle_score < 50) allIssues.push("Góc chụp chưa phù hợp");
-            
-            const uniqueIssues = [...new Set(allIssues)];
-            
-            let level = 'good';
-            let levelText = 'Chất lượng tốt';
-            if (finalScore < 40) {
-                level = 'bad';
-                levelText = 'Chất lượng kém - Cần chụp lại';
-            } else if (finalScore < 65) {
-                level = 'warning';
-                levelText = 'Chất lượng trung bình - Kết quả có thể không chính xác';
-            } else {
-                level = 'good';
-                levelText = 'Chất lượng tốt - Phân tích đáng tin cậy';
-            }
-            
-            return {
-                overallScore: finalScore,
-                isUsable: isUsable,
-                level: level,
-                levelText: levelText,
-                issues: uniqueIssues.slice(0, 5),
-                suggestions: aiResult.suggestions || [],
-                detailedAnalysis: aiResult.detailed_analysis || "",
-                laplacianResult: laplacianResult,
-                tenengradResult: tenengradResult,
-                aiResult: aiResult
-            };
-        }
-
-        // Hiển thị chất lượng ảnh
-        function displayQualityAssessment(assessment) {
-            if (!qualityIndicator) return;
-            
-            let qualityClass = 'quality-good';
-            let icon = '✅';
-            if (assessment.level === 'warning') {
-                qualityClass = 'quality-warning';
-                icon = '⚠️';
-            } else if (assessment.level === 'bad') {
-                qualityClass = 'quality-bad';
-                icon = '❌';
-            }
-            
-            qualityIndicator.className = `quality-indicator ${qualityClass}`;
-            qualityIndicator.innerHTML = `${icon} ${assessment.levelText} (${assessment.overallScore}/100)`;
-            qualityIndicator.style.display = 'inline-flex';
-            
-            if (assessment.issues.length > 0) {
-                const issueText = assessment.issues.slice(0, 2).join('; ');
-                qualityIndicator.title = `Vấn đề: ${issueText}`;
-            }
-        }
-
-        // ========== PHƯƠNG PHÁP 4: ENHANCED DETECTION - KHOANH VÙNG CHÍNH XÁC HƠN ==========
-        // Lý do cải tiến: Yêu cầu AI trả về độ tin cậy (confidence) cho từng vùng
-        // Giúp người dùng biết được mức độ tin cậy của từng phát hiện
-        async function detectDiseaseAreasEnhanced(imageBase64, userSymptom) {
-            const prompt = `Phân tích ảnh y tế này một cách CHI TIẾT. Xác định các vùng bất thường trên da.
-
-THÔNG TIN BỔ SUNG: Người dùng mô tả: "${userSymptom || 'Không có mô tả'}"
-
-YÊU CẦU:
-1. Xác định TẤT CẢ các vùng bất thường (mụn, phát ban, mẩn đỏ, tổn thương, vết thương)
-2. Với MỖI vùng, cung cấp:
-   - label: tên loại tổn thương (ví dụ: "Mụn viêm", "Mảng đỏ", "Vảy nến")
-   - x_percent, y_percent: tọa độ trung tâm vùng (0-1)
-   - width_percent, height_percent: kích thước vùng (0-1)
-   - confidence: độ tin cậy 0-1 (0.9 = rất chắc chắn, 0.5 = nghi ngờ)
-   - characteristics: đặc điểm của vùng (màu sắc, hình dạng, kích thước)
-3. Trả về summary mô tả tổng quan tình trạng da
-
-Trả về JSON CHÍNH XÁC:
-{
-    "disease_areas": [
-        {
-            "label": "tên vùng",
-            "x_percent": 0.35,
-            "y_percent": 0.42,
-            "width_percent": 0.25,
-            "height_percent": 0.20,
-            "confidence": 0.92,
-            "characteristics": "màu đỏ, hình tròn, đường kính ~5mm"
-        }
-    ],
-    "summary": "tóm tắt tình trạng tổng thể",
-    "overall_confidence": 0.85,
-    "recommendation": "khuyến nghị dựa trên phân tích"
+function showImageWarning(callback) {
+    // Nếu đã chấp nhận trước đó thì không hiển thị lại
+    if (imageWarningAccepted) {
+        if (callback) callback();
+        return;
+    }
+    
+    // Hiển thị popup ngay trên upload-area
+    if (warningPopup) {
+        warningPopup.style.display = 'flex';
+        
+        // Xử lý nút xác nhận (chỉ gắn event 1 lần)
+        const confirmBtn = document.getElementById('confirmImageWarningBtn');
+        const handleConfirm = () => {
+            imageWarningAccepted = true;
+            warningPopup.style.display = 'none';
+            if (callback) callback();
+            confirmBtn.removeEventListener('click', handleConfirm);
+        };
+        confirmBtn.addEventListener('click', handleConfirm);
+    } else {
+        // Fallback nếu không tìm thấy popup
+        if (callback) callback();
+    }
 }
 
-Nếu không phát hiện vùng bất thường, trả về disease_areas là mảng rỗng.`;
+// Hàm đóng popup (nếu cần)
+function closeImageWarning() {
+    if (warningPopup) {
+        warningPopup.style.display = 'none';
+    }
+}
 
-            const messages = [
-                { role: "system", content: "Bạn là AI y tế chuyên phân tích ảnh da liễu. Trả về JSON chính xác." },
-                { role: "user", content: [
-                    { type: "text", text: prompt },
-                    { type: "image_url", image_url: { url: imageBase64 } }
-                ]}
-            ];
-            
-            const rawResponse = await callAI(messages, 0.4);
-            let clean = rawResponse.trim();
-            if (clean.startsWith("```json")) clean = clean.slice(7);
-            if (clean.startsWith("```")) clean = clean.slice(3);
-            if (clean.endsWith("```")) clean = clean.slice(0, -3);
-            const detection = JSON.parse(clean);
-            
-            return detection;
-        }
+// Ghi đè các hàm upload ảnh để hiển thị popup trước
+chooseFileBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(() => {
+        fileInput.click();
+    });
+};
 
-        // Vẽ bounding box với độ tin cậy khác nhau (màu sắc khác nhau)
-        async function drawEnhancedBoundingBoxes(imageBase64, areas, overallConfidence) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    
-                    areas.forEach((area, idx) => {
-                        // Màu sắc dựa trên độ tin cậy
-                        let color;
-                        if (area.confidence >= 0.8) color = '#ef4444';      // Đỏ - tin cậy cao
-                        else if (area.confidence >= 0.6) color = '#f59e0b';  // Cam - tin cậy trung bình
-                        else color = '#fbbf24';                               // Vàng - tin cậy thấp
-                        
-                        const x = area.x_percent * img.width;
-                        const y = area.y_percent * img.height;
-                        const width = area.width_percent * img.width;
-                        const height = area.height_percent * img.height;
-                        
-                        ctx.strokeStyle = color;
-                        ctx.lineWidth = 3;
-                        ctx.strokeRect(x, y, width, height);
-                        
-                        // Fill với độ trong suốt
-                        ctx.fillStyle = color + '33';
-                        ctx.fillRect(x, y, width, height);
-                        
-                        // Vẽ nhãn với độ tin cậy
-                        ctx.font = 'bold 12px "DM Sans"';
-                        const confidenceText = `${area.label} (${Math.round(area.confidence * 100)}%)`;
-                        const textWidth = ctx.measureText(confidenceText).width;
-                        ctx.fillStyle = color;
-                        ctx.fillRect(x, y - 22, textWidth + 16, 22);
-                        ctx.fillStyle = 'white';
-                        ctx.fillText(confidenceText, x + 8, y - 8);
-                    });
-                    
-                    resolve(canvas.toDataURL('image/jpeg', 0.9));
-                };
-                img.src = imageBase64;
-            });
-        }
-
-        // ========== CÁC HÀM HIỆN CÓ (GIỮ NGUYÊN) ==========
-        function escapeHtml(str) {
-            if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
-
-        function showToast(message, isError = false) {
-            const oldToast = document.querySelector('.custom-toast');
-            if (oldToast) oldToast.remove();
-            const toast = document.createElement('div');
-            toast.className = 'custom-toast';
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 30px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: ${isError ? '#ef4444' : '#10b981'};
-                color: white;
-                padding: 12px 24px;
-                border-radius: 50px;
-                z-index: 10000;
-                font-size: 14px;
-                font-weight: 500;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                max-width: 90%;
-                text-align: center;
-            `;
-            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
-            document.body.appendChild(toast);
-            setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 4000);
-        }
-
-        async function callAI(messages, temperature = 0.7) {
-            const payload = {
-                model: MODEL_NAME,
-                messages: messages,
-                temperature: temperature,
-                max_tokens: 2800,
-                top_p: 0.9,
-                stream: false
+cameraBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            const modalDiv = document.createElement('div');
+            modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+            video.width = 320;
+            video.height = 240;
+            videoContainer.appendChild(video);
+            const captureBtn = document.createElement('button');
+            captureBtn.innerText = 'Chụp ảnh';
+            captureBtn.className = 'btn btn-primary';
+            captureBtn.style.marginTop = '12px';
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'Hủy';
+            closeBtn.className = 'btn btn-outline';
+            closeBtn.style.marginLeft = '10px';
+            videoContainer.appendChild(captureBtn);
+            videoContainer.appendChild(closeBtn);
+            modalDiv.appendChild(videoContainer);
+            document.body.appendChild(modalDiv);
+            captureBtn.onclick = async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
             };
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${API_KEY}`
-                },
-                body: JSON.stringify(payload)
-            });
-            if (!response.ok) {
-                let errDetail = `HTTP ${response.status}`;
-                try { const errData = await response.json(); errDetail = errData.error?.message || errDetail; } catch(e) {}
-                throw new Error(errDetail);
+            closeBtn.onclick = () => {
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+        } catch (err) {
+            alert("Không thể truy cập camera: " + err.message);
+        }
+    });
+};
+
+// Xử lý khi kéo thả ảnh
+dropZone.ondrop = async (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        alert('Vui lòng thả file ảnh hợp lệ');
+    }
+};
+
+// Ghi đè file input change event
+fileInput.onchange = async (e) => {
+    if (e.target.files.length) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    }
+};
+
+        // ========== KIỂM TRA ĐĂNG NHẬP ==========
+        function checkAuth() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                return false;
             }
-            const data = await response.json();
-            return data.choices[0].message.content;
+            currentUserId = user.uid;
+            return true;
         }
 
-        async function getKnowledgeByType(type) {
-            try {
-                const snapshot = await db.collection('knowledge_base').where('type', '==', type).get();
-                let knowledgeText = '';
-                snapshot.forEach(doc => {
+        async function loadUserData() {
+            const user = auth.currentUser;
+            if (!user) return null;
+            
+            let fullName = localStorage.getItem('healthUserName');
+            let phone = localStorage.getItem('healthUserPhone');
+            let dob = localStorage.getItem('healthUserDob');
+            let gender = localStorage.getItem('healthUserGender');
+            let email = user.email;
+            
+            if (!fullName || fullName === user.email.split('@')[0]) {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
                     const data = doc.data();
-                    knowledgeText += data.answer || '';
-                });
-                return knowledgeText;
-            } catch (e) {
-                console.warn('Lỗi lấy knowledge từ Firestore:', e);
-                return '';
+                    fullName = data.fullName;
+                    phone = data.phone || '';
+                    dob = data.dob || '';
+                    gender = data.gender || '';
+                    email = data.email || user.email;
+                    localStorage.setItem('healthUserName', fullName);
+                    localStorage.setItem('healthUserPhone', phone);
+                    localStorage.setItem('healthUserDob', dob);
+                    localStorage.setItem('healthUserGender', gender);
+                    currentUserData = data;
+                } else {
+                    currentUserData = { fullName: user.email.split('@')[0], phone: '', dob: '', gender: '', email: user.email };
+                }
+            } else {
+                currentUserData = {
+                    fullName: fullName,
+                    phone: phone || '',
+                    dob: dob || '',
+                    gender: gender || '',
+                    email: email
+                };
+            }
+            return currentUserData;
+        }
+
+        function updateAuthUI() {
+            const user = auth.currentUser;
+            if (user) {
+                const displayName = currentUserData?.fullName || user.email.split('@')[0];
+                authContainer.innerHTML = `
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${escapeHtml(displayName)}</span>
+                    </div>
+                    <button class="auth-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span></span></button>
+                `;
+                document.getElementById('logoutBtn').onclick = async () => {
+                    await auth.signOut();
+                    localStorage.removeItem('healthUserId');
+                    localStorage.removeItem('healthUserEmail');
+                    localStorage.removeItem('healthUserName');
+                    localStorage.removeItem('healthUserPhone');
+                    localStorage.removeItem('healthUserDob');
+                    localStorage.removeItem('healthUserGender');
+                    window.location.href = 'login.html';
+                };
+            } else {
+                authContainer.innerHTML = `<button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i><span>Đăng nhập</span></button>`;
+                document.getElementById('loginBtn').onclick = () => {
+                    window.location.href = 'login.html';
+                };
             }
         }
 
+        // ========== NÉN ẢNH 720p ==========
         async function compressImageTo720p(dataUrl, maxWidth = 720, quality = 0.7) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -1695,6 +1518,68 @@ Nếu không phát hiện vùng bất thường, trả về disease_areas là m�
             });
         }
 
+function showRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    const modalBody = modal.querySelector('.modal-content');
+    
+    // Cập nhật nội dung modal
+    modalBody.innerHTML = `
+        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px;">⚠️ Thông báo</h3>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Hiện tại AI Check-in của EduHealth AI đang hỗ trợ chuyên sâu cho <strong>module mụn học đường</strong>. 
+            Với vấn đề bạn đang gặp, hệ thống chưa đủ cơ sở để đưa ra hỗ trợ check-in chuyên sâu một cách an toàn.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Để hỗ trợ bạn tốt hơn, bạn có thể chọn một trong các hướng sau:
+        </p>
+        <ul style="text-align: left; margin-bottom: 20px; padding-left: 20px; line-height: 1.8;">
+            <li><strong>(1)</strong> Xem thông tin phù hợp trong <strong>Thư viện sức khỏe</strong></li>
+            <li><strong>(2)</strong> Liên hệ <strong>CBYT / phụ huynh</strong> để được hỗ trợ thêm</li>
+            <li><strong>(3)</strong> Trò chuyện với <strong>EduHealth AI</strong> để được hướng dẫn bước tiếp theo</li>
+        </ul>
+        <p style="line-height: 1.6; margin-bottom: 20px; font-size: 13px; color: var(--text-dim);">
+            Nếu có dấu hiệu bất thường hoặc bạn đang lo lắng nhiều, hãy ưu tiên liên hệ người lớn hoặc cơ sở y tế.
+        </p>
+        <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">
+                <i class="fas fa-book-open"></i> Đến Thư viện sức khỏe
+            </a>
+            <a href="chatbox.html" class="btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #10b981, #3b82f6); padding: 10px 20px;">
+                <i class="fas fa-comment-dots"></i> Trò chuyện với AI
+            </a>
+            <button class="btn-outline" id="closeModalBtn" style="padding: 10px 20px;">Đóng</button>
+        </div>
+    `;
+    
+    modal.classList.add('active');
+    
+    // Gắn lại event cho nút đóng
+    const closeBtn = document.getElementById('closeModalBtn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('active');
+            resetToStep1();
+        };
+    }
+    
+    // Gắn event cho overlay
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            resetToStep1();
+        }
+    };
+}
+
+        document.getElementById('closeModalBtn').onclick = () => {
+            rejectModal.classList.remove('active');
+        };
+        rejectModal.onclick = (e) => {
+            if (e.target === rejectModal) rejectModal.classList.remove('active');
+        };
+
+        // ========== LẤY CÂU HỎI CHECKLIST TỪ FIRESTORE (ĐỂ THAM KHẢO) ==========
         async function loadChecklistQuestionsFromFirestore() {
             if (cachedChecklistQuestions.length > 0) {
                 return cachedChecklistQuestions;
@@ -1772,6 +1657,7 @@ Nếu không phát hiện vùng bất thường, trả về disease_areas là m�
             }
         }
 
+        // ========== KIỂM TRA TỪ CHỐI SONG SONG (ẢNH + MÔ TẢ) ==========
         async function checkImageRelevance(imageBase64, userSymptom) {
             const prompt = `Bạn là chuyên gia y tế. Hãy xác định xem ảnh này có liên quan đến vấn đề về da như mụn, phát ban, mẩn đỏ, vết thương, tổn thương da, hoặc các dấu hiệu bệnh ngoài da không.
             
@@ -1849,7 +1735,9 @@ Quy tắc:
             return { is_relevant: true, reason: "Cả ảnh và mô tả đều liên quan đến da liễu" };
         }
 
+        // ========== TẠO CHECKLIST (AI TỰ DO TẠO, NHƯNG CÓ THAM KHẢO DATABASE) ==========
         async function createChecklistFromAI(userSymptom, userDuration, hasImage) {
+            // Lấy câu hỏi từ Firestore để tham khảo
             const referenceQuestions = await loadChecklistQuestionsFromFirestore();
             const referenceText = referenceQuestions.map((q, idx) => `${idx + 1}. ${q}`).join('\n');
             
@@ -1867,7 +1755,7 @@ YÊU CẦU:
 1. Hãy tạo một checklist gồm các câu hỏi về triệu chứng (khoảng 15-25 câu)
 2. Bạn có thể THAM KHẢO các câu hỏi từ danh sách trên, nhưng cũng có thể TẠO CÂU HỎI MỚI nếu cần thiết
 3. Mỗi câu hỏi nên rõ ràng, dễ hiểu, tập trung vào các triệu chứng liên quan
-4. Phân loại câu hỏi thành các nhóm (category) phù hợp
+4. Phân loại câu hỏi thành các nhóm (category) phù hợp (ví dụ: Triệu chứng hô hấp, Tiêu hóa, Da liễu, Thần kinh, Sinh hoạt...)
 
 Trả về JSON theo format:
 {
@@ -1893,6 +1781,7 @@ Trả về JSON thuần túy, không có markdown.`;
             const result = JSON.parse(clean);
             let checklist = result.checklist || [];
             
+            // Đảm bảo mỗi item có đủ trường
             checklist = checklist.map((item, idx) => ({
                 id: item.id || idx + 1,
                 category: item.category || "📋 Triệu chứng cần đánh giá",
@@ -1907,6 +1796,339 @@ Trả về JSON thuần túy, không có markdown.`;
             return checklist;
         }
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(message, isError = false) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${isError ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-width: 90%;
+                text-align: center;
+            `;
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
+        }
+
+        // ========== GỌI API AI ==========
+        async function callAI(messages, temperature = 0.7) {
+            const payload = {
+                model: MODEL_NAME,
+                messages: messages,
+                temperature: temperature,
+                max_tokens: 2800,
+                top_p: 0.9,
+                stream: false
+            };
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                let errDetail = `HTTP ${response.status}`;
+                try { const errData = await response.json(); errDetail = errData.error?.message || errDetail; } catch(e) {}
+                throw new Error(errDetail);
+            }
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        // ========== LẤY KIẾN THỨC TỪ FIRESTORE ==========
+        async function getKnowledgeByType(type) {
+            try {
+                const snapshot = await db.collection('knowledge_base').where('type', '==', type).get();
+                let knowledgeText = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    knowledgeText += data.answer || '';
+                });
+                return knowledgeText;
+            } catch (e) {
+                console.warn('Lỗi lấy knowledge từ Firestore:', e);
+                return '';
+            }
+        }
+
+        // ========== VẼ BOUNDING BOX TRÊN ẢNH ==========
+        async function drawBoundingBoxes(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+                    
+                    areas.forEach((area, idx) => {
+                        const color = colors[idx % colors.length];
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(area.x, area.y, area.width, area.height);
+                        ctx.fillStyle = color + '33';
+                        ctx.fillRect(area.x, area.y, area.width, area.height);
+                        
+                        ctx.font = 'bold 14px "DM Sans"';
+                        ctx.fillStyle = color;
+                        ctx.fillRect(area.x, area.y - 22, area.label.length * 8 + 12, 22);
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(area.label, area.x + 6, area.y - 8);
+                    });
+                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.9));
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== AI PHÁT HIỆN VÙNG BỆNH ==========
+        async function detectDiseaseAreas(imageBase64, userSymptom) {
+            try {
+                const prompt = `Phân tích ảnh y tế này. Xác định các vùng bất thường trên da (mụn, phát ban, mẩn đỏ, tổn thương).
+Trả về JSON: {"disease_areas": [{"label": "tên vùng", "x_percent": 0.35, "y_percent": 0.42, "width_percent": 0.25, "height_percent": 0.20, "confidence": 0.92}], "summary": "tóm tắt"}
+Nếu không có, trả về mảng rỗng.`;
+
+                const messages = [
+                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                    { role: "user", content: [
+                        { type: "text", text: prompt },
+                        { type: "image_url", image_url: { url: imageBase64 } }
+                    ]}
+                ];
+                
+                const rawResponse = await callAI(messages, 0.4);
+                let clean = rawResponse.trim();
+                if (clean.startsWith("```json")) clean = clean.slice(7);
+                if (clean.startsWith("```")) clean = clean.slice(3);
+                if (clean.endsWith("```")) clean = clean.slice(0, -3);
+                const detection = JSON.parse(clean);
+                
+                if (!detection.disease_areas || detection.disease_areas.length === 0) {
+                    return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường" };
+                }
+                
+                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
+                const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
+                
+                return { imageBase64: highlightedImage, areas: areasInPixels, summary: detection.summary };
+            } catch (error) {
+                return { imageBase64: imageBase64, areas: [], summary: "Lỗi phân tích ảnh" };
+            }
+        }
+        
+        function convertPercentToPixels(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const width = img.width;
+                    const height = img.height;
+                    const pixelAreas = areas.map(area => ({
+                        label: area.label,
+                        x: area.x_percent * width,
+                        y: area.y_percent * height,
+                        width: area.width_percent * width,
+                        height: area.height_percent * height,
+                        confidence: area.confidence
+                    }));
+                    resolve(pixelAreas);
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== HIỂN THỊ ẢNH SO SÁNH ==========
+        function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas) {
+            let areasHtml = '';
+            if (areas && areas.length > 0) {
+                areasHtml = `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Vùng phát hiện:</strong><ul style="margin-top: 8px;">`;
+                areas.forEach(area => {
+                    areasHtml += `<li><span style="color:#ef4444;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%</li>`;
+                });
+                areasHtml += `</ul></div>`;
+            }
+            
+            imageAnalysisSection.innerHTML = `
+                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
+                    <h3><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI khoanh vùng</h3>
+                    <div class="image-comparison">
+                        <div class="image-comparison-item">
+                            <h4>Ảnh gốc</h4>
+                            <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
+                        </div>
+                        <div class="image-comparison-item">
+                            <h4>Vùng bệnh phát hiện</h4>
+                            <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
+                            ${detectionSummary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
+                        </div>
+                    </div>
+                    ${areasHtml}
+                    <div class="warning-box" style="margin-top:15px; font-size:12px;">
+                        <i class="fas fa-info-circle"></i> Việc khoanh vùng do AI thực hiện, có thể không hoàn toàn chính xác.
+                    </div>
+                </div>
+            `;
+            imageAnalysisSection.style.display = "block";
+        }
+
+        // ========== TẠO KẾT QUẢ THEO MẪU ==========
+        async function getAnalysisInNewFormat(userSymptom, userDuration, selectedSymptoms, hasImage, imageBase64 = null) {
+            const selectedText = selectedSymptoms.map(s => `- ${s}`).join("\n");
+            const hasImageText = hasImage ? "Có ảnh chụp" : "Không có ảnh";
+            
+            let diagnosisKnowledge = await getKnowledgeByType('diagnosis');
+            if (diagnosisKnowledge) {
+                diagnosisKnowledge = "\n\n=== KIẾN THỨC Y TẾ THAM KHẢO ===\n" + diagnosisKnowledge;
+            } else {
+                diagnosisKnowledge = "";
+            }
+            
+            const prompt = `Bạn là trợ lý y tế của EduHealth AI, hỗ trợ nhận biết sớm vấn đề sức khỏe cho HỌC SINH.
+
+THÔNG TIN:
+- Mô tả triệu chứng: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+- Triệu chứng đã chọn: ${selectedText || "không có"}
+- ${hasImageText}
+${diagnosisKnowledge}
+
+YÊU CẦU: Trả về JSON:
+{
+    "preliminary": "nhận biết sơ bộ (1-2 câu)",
+    "explanation": "giải thích ngắn gọn",
+    "warning_signs": ["dấu hiệu 1", "dấu hiệu 2", "dấu hiệu 3"],
+    "action_level": 1 hoặc 2 hoặc 3,
+    "action_text": "khuyến nghị cụ thể"
+}
+
+QUY TẮC ACTION_LEVEL:
+- Mức 1: Triệu chứng nhẹ, theo dõi tại nhà
+- Mức 2: Triệu chứng rõ, cần đi khám sớm
+- Mức 3: Triệu chứng nặng, cần đi khám ngay
+
+Trả về JSON thuần túy.`;
+
+            let messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }];
+            
+            if (hasImage && imageBase64) {
+                messages.push({ role: "user", content: [
+                    { type: "text", text: prompt },
+                    { type: "image_url", image_url: { url: imageBase64 } }
+                ]});
+            } else {
+                messages.push({ role: "user", content: prompt });
+            }
+            
+            const rawResponse = await callAI(messages, 0.5);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            let result = JSON.parse(clean);
+            
+            if (!result.warning_signs || !Array.isArray(result.warning_signs)) {
+                result.warning_signs = ["Theo dõi thêm triệu chứng", "Ghi nhận sự thay đổi"];
+            }
+            if (![1,2,3].includes(result.action_level)) result.action_level = 1;
+            
+            return result;
+        }
+
+        // ========== BƯỚC 1: KIỂM TRA DA LIỄU SONG SONG + TẠO CHECKLIST ==========
+        async function step1CreateChecklist() {
+            const userSymptom = symptomTextarea.value.trim();
+            const userDuration = durationInput.value.trim();
+            
+            if (!userSymptom) { 
+                alert("Vui lòng mô tả cảm giác của bạn để EduHealth AI hỗ trợ tốt hơn."); 
+                return; 
+            }
+            
+            if (isProcessing) return;
+            isProcessing = true;
+            step1Btn.disabled = true;
+            step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
+            
+            try {
+                // KIỂM TRA SONG SONG: ẢNH + MÔ TẢ có liên quan đến da liễu không
+                const relevanceResult = await checkDermatologyRelevanceParallel(currentImageBase64, userSymptom);
+                
+                if (!relevanceResult.is_relevant) {
+                    step1Container.style.display = "none";
+                    step2Container.style.display = "none";
+                    step3Container.style.display = "block";
+                    showRejectModal();
+                    isProcessing = false;
+                    step1Btn.disabled = false;
+                    step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+                    return;
+                }
+                
+                // TẠO CHECKLIST BẰNG AI (có tham khảo câu hỏi từ database)
+                const checklist = await createChecklistFromAI(userSymptom, userDuration, !!currentImageBase64);
+                
+                currentChecklistItems = checklist.map(item => ({ 
+                    id: item.id, 
+                    category: item.category, 
+                    text: item.text, 
+                    checked: false 
+                }));
+                
+                renderChecklistUI();
+                step1Container.style.display = "none";
+                step2Container.style.display = "block";
+                step3Container.style.display = "none";
+                
+            } catch (error) {
+                console.error(error);
+                showToast("Có lỗi xảy ra: " + error.message, true);
+                // Fallback: dùng câu hỏi mặc định từ database
+                const fallbackQuestions = await loadChecklistQuestionsFromFirestore();
+                const fallbackChecklist = fallbackQuestions.slice(0, 15).map((q, idx) => ({
+                    id: idx + 1,
+                    category: "📋 Triệu chứng cần đánh giá",
+                    text: q,
+                    checked: false
+                }));
+                currentChecklistItems = fallbackChecklist;
+                renderChecklistUI();
+                step1Container.style.display = "none";
+                step2Container.style.display = "block";
+                step3Container.style.display = "none";
+            } finally {
+                isProcessing = false;
+                step1Btn.disabled = false;
+                step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+            }
+        }
+        
         function renderChecklistUI() {
             if (!currentChecklistItems.length) {
                 checklistArea.innerHTML = '<div style="padding:20px; text-align:center;">Đang tạo checklist...</div>';
@@ -1939,300 +2161,7 @@ Trả về JSON thuần túy, không có markdown.`;
             });
         }
 
-        async function getAnalysisInNewFormat(userSymptom, userDuration, selectedSymptoms, hasImage, imageBase64 = null, qualityAssessment = null) {
-            const selectedText = selectedSymptoms.map(s => `- ${s}`).join("\n");
-            const hasImageText = hasImage ? "Có ảnh chụp" : "Không có ảnh";
-            
-            let diagnosisKnowledge = await getKnowledgeByType('diagnosis');
-            if (diagnosisKnowledge) {
-                diagnosisKnowledge = "\n\n=== KIẾN THỨC Y TẾ THAM KHẢO ===\n" + diagnosisKnowledge;
-            } else {
-                diagnosisKnowledge = "";
-            }
-            
-            let qualityContext = "";
-            if (qualityAssessment && hasImage) {
-                qualityContext = `
-\n=== ĐÁNH GIÁ CHẤT LƯỢNG ẢNH ===
-- Điểm chất lượng tổng thể: ${qualityAssessment.overallScore}/100 (${qualityAssessment.levelText})
-- Các vấn đề phát hiện: ${qualityAssessment.issues.join(', ') || 'Không có'}
-- Độ tin cậy của phân tích ảnh: ${qualityAssessment.overallScore >= 70 ? 'Cao' : (qualityAssessment.overallScore >= 50 ? 'Trung bình' : 'Thấp')}
-- Khuyến nghị về ảnh: ${qualityAssessment.suggestions.join('; ') || 'Ảnh đạt yêu cầu'}
-
-LƯU Ý QUAN TRỌNG: Nếu chất lượng ảnh thấp (điểm < 50), hãy cảnh báo người dùng rằng kết quả phân tích có thể không chính xác và khuyến khích chụp lại ảnh tốt hơn.`;
-            }
-            
-            const prompt = `Bạn là trợ lý y tế của EduHealth AI, hỗ trợ nhận biết sớm vấn đề sức khỏe cho HỌC SINH.
-
-THÔNG TIN:
-- Mô tả triệu chứng: "${userSymptom}"
-- Thời gian mắc: ${userDuration || "không rõ"}
-- Triệu chứng đã chọn: ${selectedText || "không có"}
-- ${hasImageText}
-${qualityContext}
-${diagnosisKnowledge}
-
-YÊU CẦU: Trả về JSON:
-{
-    "preliminary": "nhận biết sơ bộ (1-2 câu)",
-    "explanation": "giải thích ngắn gọn, bao gồm lý do tại sao đưa ra nhận định này",
-    "warning_signs": ["dấu hiệu 1", "dấu hiệu 2", "dấu hiệu 3"],
-    "action_level": 1 hoặc 2 hoặc 3,
-    "action_text": "khuyến nghị cụ thể",
-    "confidence_level": "cao/trung bình/thấp",
-    "limitations": "những hạn chế của phân tích này (nếu có)"
-}
-
-QUY TẮC ACTION_LEVEL:
-- Mức 1: Triệu chứng nhẹ, theo dõi tại nhà
-- Mức 2: Triệu chứng rõ, cần đi khám sớm
-- Mức 3: Triệu chứng nặng, cần đi khám ngay
-
-Trả về JSON thuần túy.`;
-
-            let messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }];
-            
-            if (hasImage && imageBase64 && qualityAssessment && qualityAssessment.overallScore >= 40) {
-                messages.push({ role: "user", content: [
-                    { type: "text", text: prompt },
-                    { type: "image_url", image_url: { url: imageBase64 } }
-                ]});
-            } else {
-                messages.push({ role: "user", content: prompt });
-            }
-            
-            const rawResponse = await callAI(messages, 0.5);
-            let clean = rawResponse.trim();
-            if (clean.startsWith("```json")) clean = clean.slice(7);
-            if (clean.startsWith("```")) clean = clean.slice(3);
-            if (clean.endsWith("```")) clean = clean.slice(0, -3);
-            let result = JSON.parse(clean);
-            
-            if (!result.warning_signs || !Array.isArray(result.warning_signs)) {
-                result.warning_signs = ["Theo dõi thêm triệu chứng", "Ghi nhận sự thay đổi"];
-            }
-            if (![1,2,3].includes(result.action_level)) result.action_level = 1;
-            if (!result.confidence_level) result.confidence_level = "trung bình";
-            
-            return result;
-        }
-
-        function displayComparisonImagesEnhanced(originalImage, highlightedImage, detectionResult, qualityAssessment) {
-            let areasHtml = '';
-            let totalConfidence = 0;
-            
-            if (detectionResult.disease_areas && detectionResult.disease_areas.length > 0) {
-                detectionResult.disease_areas.forEach((area, idx) => {
-                    totalConfidence += area.confidence;
-                    let confidenceClass = 'confidence-high';
-                    if (area.confidence < 0.6) confidenceClass = 'confidence-low';
-                    else if (area.confidence < 0.8) confidenceClass = 'confidence-medium';
-                    
-                    areasHtml += `<li><span style="color:${area.confidence >= 0.8 ? '#ef4444' : (area.confidence >= 0.6 ? '#f59e0b' : '#fbbf24')};">●</span> 
-                        <strong>${escapeHtml(area.label)}</strong> 
-                        <span class="confidence-badge ${confidenceClass}">${Math.round(area.confidence * 100)}% tin cậy</span>
-                        <br><small style="color: var(--text-dim);">${escapeHtml(area.characteristics || '')}</small>
-                    </li>`;
-                });
-            }
-            
-            const avgConfidence = detectionResult.disease_areas.length > 0 ? 
-                (totalConfidence / detectionResult.disease_areas.length * 100).toFixed(0) : 0;
-            
-            let qualityWarningHtml = '';
-            if (qualityAssessment && qualityAssessment.overallScore < 65) {
-                qualityWarningHtml = `
-                    <div class="warning-box" style="margin: 15px 0; background: rgba(245, 158, 11, 0.15);">
-                        <i class="fas fa-exclamation-triangle"></i> 
-                        <strong>⚠️ Lưu ý về chất lượng ảnh:</strong> ${qualityAssessment.levelText}
-                        <ul style="margin-top: 8px; margin-left: 20px;">
-                            ${qualityAssessment.issues.slice(0, 3).map(issue => `<li>${escapeHtml(issue)}</li>`).join('')}
-                        </ul>
-                        <small>💡 ${qualityAssessment.suggestions[0] || 'Hãy chụp lại ảnh rõ nét hơn để có kết quả chính xác.'}</small>
-                    </div>
-                `;
-            }
-            
-            imageAnalysisSection.innerHTML = `
-                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
-                    <h3><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI khoanh vùng thông minh</h3>
-                    ${qualityWarningHtml}
-                    <div class="image-comparison">
-                        <div class="image-comparison-item">
-                            <h4>Ảnh gốc</h4>
-                            <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
-                        </div>
-                        <div class="image-comparison-item">
-                            <h4>Vùng bệnh phát hiện <span class="confidence-badge ${avgConfidence >= 80 ? 'confidence-high' : (avgConfidence >= 60 ? 'confidence-medium' : 'confidence-low')}">Độ tin cậy ${avgConfidence}%</span></h4>
-                            <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
-                            ${detectionResult.summary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionResult.summary)}</div>` : ''}
-                        </div>
-                    </div>
-                    ${areasHtml ? `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Chi tiết các vùng phát hiện:</strong><ul style="margin-top: 8px;">${areasHtml}</ul></div>` : ''}
-                    ${detectionResult.recommendation ? `<div style="margin-top: 15px; padding: 12px; background: var(--card-bg); border-radius: 16px;"><strong><i class="fas fa-lightbulb"></i> Khuyến nghị:</strong><br>${escapeHtml(detectionResult.recommendation)}</div>` : ''}
-                    <div class="warning-box" style="margin-top:15px; font-size:12px;">
-                        <i class="fas fa-info-circle"></i> Việc khoanh vùng do AI thực hiện, có thể không hoàn toàn chính xác. 
-                        Màu sắc khung thể hiện độ tin cậy: <span style="color:#ef4444;">Đỏ (cao)</span> | <span style="color:#f59e0b;">Cam (trung bình)</span> | <span style="color:#fbbf24;">Vàng (thấp)</span>
-                    </div>
-                </div>
-            `;
-            imageAnalysisSection.style.display = "block";
-        }
-
-        function formatSimpleResult(analysisData, qualityAssessment = null) {
-            const preliminary = analysisData.preliminary || "Chưa có thông tin nhận biết sơ bộ";
-            const explanation = analysisData.explanation || "Đang phân tích thông tin bạn cung cấp.";
-            const warningSigns = Array.isArray(analysisData.warning_signs) && analysisData.warning_signs.length > 0 
-                ? analysisData.warning_signs 
-                : ["Theo dõi thêm các triệu chứng", "Ghi nhận sự thay đổi của cơ thể"];
-            const actionLevel = analysisData.action_level && [1,2,3].includes(analysisData.action_level) ? analysisData.action_level : 1;
-            const actionText = analysisData.action_text || "Hãy theo dõi thêm, báo cho phụ huynh và liên hệ với cán bộ y tế.";
-            const confidenceLevel = analysisData.confidence_level || "trung bình";
-            const limitations = analysisData.limitations || "";
-            
-            const levelTitles = { 1: "🟢 Mức 1 - Theo dõi", 2: "🟡 Mức 2 - Đi khám sớm", 3: "🔴 Mức 3 - Đi khám ngay" };
-            
-            let confidenceIcon = '📊';
-            let confidenceColor = '';
-            if (confidenceLevel === 'cao') { confidenceIcon = '✅'; confidenceColor = 'var(--success)'; }
-            else if (confidenceLevel === 'trung bình') { confidenceIcon = '⚠️'; confidenceColor = 'var(--warning)'; }
-            else { confidenceIcon = '❌'; confidenceColor = 'var(--danger)'; }
-            
-            let qualityNote = '';
-            if (qualityAssessment && qualityAssessment.overallScore < 65) {
-                qualityNote = `
-                    <div class="warning-box" style="background: rgba(245, 158, 11, 0.15); margin-bottom: 16px;">
-                        <i class="fas fa-camera"></i> <strong>Lưu ý về chất lượng ảnh:</strong> ${qualityAssessment.levelText}
-                        <br><small>💡 Khuyến nghị: ${qualityAssessment.suggestions[0] || 'Chụp lại ảnh rõ nét hơn để có kết quả chính xác.'}</small>
-                    </div>
-                `;
-            }
-            
-            return `
-                <div class="result-simple">
-                    ${qualityNote}
-                    
-                    <div style="background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary)); border-radius: 20px; padding: 20px; margin-bottom: 20px; color: white;">
-                        <h3 style="color: white; margin: 0 0 8px 0;"><i class="fas fa-clipboard-list"></i> Nhận biết sơ bộ</h3>
-                        <p style="margin: 0; font-size: 1.1rem;">${escapeHtml(preliminary)}</p>
-                        <div style="margin-top: 10px; font-size: 12px; opacity: 0.8;">
-                            <i class="fas fa-chart-line"></i> Độ tin cậy: ${confidenceLevel.toUpperCase()} ${confidenceIcon}
-                        </div>
-                    </div>
-                    
-                    <div class="analysis-card" style="background: var(--bg-surface);">
-                        <h3><i class="fas fa-lightbulb"></i> Giải thích chi tiết</h3>
-                        <p>${escapeHtml(explanation)}</p>
-                        ${limitations ? `<div style="margin-top: 12px; padding: 8px 12px; background: rgba(0,0,0,0.05); border-radius: 12px; font-size: 13px;"><i class="fas fa-info-circle"></i> <strong>Giới hạn của phân tích:</strong> ${escapeHtml(limitations)}</div>` : ''}
-                    </div>
-                    
-                    <div class="analysis-card" style="background: var(--bg-surface);">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu cần lưu ý</h3>
-                        <ul>${warningSigns.map(sign => `<li>${escapeHtml(sign)}</li>`).join('')}</ul>
-                    </div>
-                    
-                    <div class="level-card level-${actionLevel}">
-                        <div class="level-title">
-                            <i class="fas ${actionLevel === 1 ? 'fa-eye' : (actionLevel === 2 ? 'fa-stethoscope' : 'fa-ambulance')}"></i>
-                            ${levelTitles[actionLevel]}
-                        </div>
-                        <div class="level-desc">
-                            ${escapeHtml(actionText)}
-                        </div>
-                    </div>
-                    
-                    <div class="warning-box">
-                        <i class="fas fa-info-circle"></i> <strong>Lưu ý quan trọng:</strong> Đây là kết quả nhận biết bước đầu từ AI, không thay thế chẩn đoán của bác sĩ. 
-                        Nếu có dấu hiệu bất thường hoặc lo lắng, hãy liên hệ ngay với cán bộ y tế hoặc đến cơ sở y tế gần nhất.
-                    </div>
-                </div>
-            `;
-        }
-
-        // ========== BƯỚC 1: KIỂM TRA CHẤT LƯỢNG ẢNH + KIỂM TRA DA LIỄU + TẠO CHECKLIST ==========
-        async function step1CreateChecklist() {
-            const userSymptom = symptomTextarea.value.trim();
-            const userDuration = durationInput.value.trim();
-            
-            if (!userSymptom) { 
-                alert("Vui lòng mô tả cảm giác của bạn để EduHealth AI hỗ trợ tốt hơn."); 
-                return; 
-            }
-            
-            if (isProcessing) return;
-            isProcessing = true;
-            step1Btn.disabled = true;
-            step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
-            
-            try {
-                // BƯỚC 1.1: Kiểm tra chất lượng ảnh nếu có
-                let qualityAssessment = null;
-                if (currentImageBase64) {
-                    step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang kiểm tra chất lượng ảnh...';
-                    qualityAssessment = await comprehensiveImageQualityCheck(currentImageBase64, userSymptom);
-                    displayQualityAssessment(qualityAssessment);
-                    imageQualityAssessment = qualityAssessment;
-                    
-                    if (!qualityAssessment.isUsable) {
-                        showToast(`⚠️ ${qualityAssessment.levelText}. ${qualityAssessment.issues[0] || 'Vui lòng chụp lại ảnh rõ hơn.'}`, true);
-                        // Vẫn cho phép tiếp tục nhưng có cảnh báo
-                    }
-                }
-                
-                // BƯỚC 1.2: Kiểm tra song song ảnh + mô tả có liên quan đến da liễu không
-                step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang xác định vấn đề sức khỏe...';
-                const relevanceResult = await checkDermatologyRelevanceParallel(currentImageBase64, userSymptom);
-                
-                if (!relevanceResult.is_relevant) {
-                    step1Container.style.display = "none";
-                    step2Container.style.display = "none";
-                    step3Container.style.display = "block";
-                    showRejectModal();
-                    isProcessing = false;
-                    step1Btn.disabled = false;
-                    step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
-                    return;
-                }
-                
-                // BƯỚC 1.3: Tạo CHECKLIST bằng AI
-                step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo bảng câu hỏi...';
-                const checklist = await createChecklistFromAI(userSymptom, userDuration, !!currentImageBase64);
-                
-                currentChecklistItems = checklist.map(item => ({ 
-                    id: item.id, 
-                    category: item.category, 
-                    text: item.text, 
-                    checked: false 
-                }));
-                
-                renderChecklistUI();
-                step1Container.style.display = "none";
-                step2Container.style.display = "block";
-                step3Container.style.display = "none";
-                
-            } catch (error) {
-                console.error(error);
-                showToast("Có lỗi xảy ra: " + error.message, true);
-                const fallbackQuestions = await loadChecklistQuestionsFromFirestore();
-                const fallbackChecklist = fallbackQuestions.slice(0, 15).map((q, idx) => ({
-                    id: idx + 1,
-                    category: "📋 Triệu chứng cần đánh giá",
-                    text: q,
-                    checked: false
-                }));
-                currentChecklistItems = fallbackChecklist;
-                renderChecklistUI();
-                step1Container.style.display = "none";
-                step2Container.style.display = "block";
-                step3Container.style.display = "none";
-            } finally {
-                isProcessing = false;
-                step1Btn.disabled = false;
-                step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
-            }
-        }
-
-        // ========== BƯỚC 2: PHÂN TÍCH CHUYÊN SÂU ==========
+        // ========== BƯỚC 2: PHÂN TÍCH ==========
         async function step2FinalAnalysis() {
             const selectedItems = currentChecklistItems.filter(i => i.checked === true);
             const userDuration = durationInput.value.trim();
@@ -2241,76 +2170,37 @@ Trả về JSON thuần túy.`;
             if (isProcessing) return;
             isProcessing = true;
             step2Btn.disabled = true;
-            step2Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích chuyên sâu...';
+            step2Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
             
             step2Container.style.display = "none";
             step3Container.style.display = "block";
-            analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-brain"></i> EduHealth AI đang xem xét thông tin của bạn... (15-25s)</div>';
+            analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-brain"></i> EduHealth AI đang xem xét thông tin của bạn... (15-20s)</div>';
             chatButtonSection.style.display = "none";
             pdfButtonSection.style.display = "none";
             historySection.style.display = "none";
             imageAnalysisSection.style.display = "none";
-            if (confidenceExplanation) confidenceExplanation.style.display = "none";
             
             try {
-                // BƯỚC 2.1: Phân tích ảnh nâng cao (khoanh vùng với độ tin cậy)
-                if (currentImageBase64 && imageQualityAssessment && imageQualityAssessment.overallScore >= 40) {
-                    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng bệnh (phương pháp nâng cao)...</div>';
-                    
-                    const detectionResult = await detectDiseaseAreasEnhanced(currentImageBase64, userSymptom);
-                    diseaseAreas = detectionResult.disease_areas || [];
-                    
-                    if (diseaseAreas.length > 0) {
-                        highlightedImageBase64 = await drawEnhancedBoundingBoxes(currentImageBase64, diseaseAreas, detectionResult.overall_confidence);
-                        displayComparisonImagesEnhanced(currentImageBase64, highlightedImageBase64, detectionResult, imageQualityAssessment);
-                        
-                        // Hiển thị giải thích về độ tin cậy
-                        if (confidenceExplanation) {
-                            let confidenceHtml = `<div class="analysis-card" style="background: var(--bg-surface);">
-                                <h3><i class="fas fa-chart-line"></i> Về độ tin cậy của phân tích</h3>
-                                <p><strong>Chất lượng ảnh:</strong> ${imageQualityAssessment.levelText} (${imageQualityAssessment.overallScore}/100)</p>
-                                <p><strong>Phương pháp phát hiện:</strong> Kết hợp Laplacian Variance + Tenengrad + Vision AI</p>
-                                <p><strong>Lý do đánh giá:</strong> ${imageQualityAssessment.detailedAnalysis || 'Ảnh được phân tích bằng 3 phương pháp khác nhau để đảm bảo độ chính xác.'}</p>`;
-                            
-                            if (diseaseAreas.length > 0) {
-                                const avgConf = (diseaseAreas.reduce((s, a) => s + a.confidence, 0) / diseaseAreas.length * 100).toFixed(0);
-                                confidenceHtml += `<p><strong>Độ tin cậy trung bình của các vùng phát hiện:</strong> ${avgConf}%</p>`;
-                            }
-                            
-                            if (imageQualityAssessment.issues.length > 0) {
-                                confidenceHtml += `<div class="warning-box" style="margin-top: 12px;">
-                                    <i class="fas fa-exclamation-triangle"></i> <strong>Hạn chế của phân tích:</strong>
-                                    <ul style="margin-top: 8px;">${imageQualityAssessment.issues.slice(0, 3).map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
-                                </div>`;
-                            }
-                            
-                            confidenceHtml += `</div>`;
-                            confidenceExplanation.innerHTML = confidenceHtml;
-                            confidenceExplanation.style.display = "block";
-                        }
-                    } else {
-                        imageAnalysisSection.innerHTML = `<div class="warning-box" style="margin: 20px 0;">
-                            <i class="fas fa-info-circle"></i> Không phát hiện vùng bất thường rõ ràng trên ảnh.
-                            ${imageQualityAssessment && imageQualityAssessment.overallScore < 60 ? '<br><small>⚠️ Chất lượng ảnh có thể ảnh hưởng đến kết quả phát hiện.</small>' : ''}
-                        </div>`;
-                        imageAnalysisSection.style.display = "block";
-                    }
+                if (currentImageBase64) {
+                    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng...</div>';
+                    const detectionResult = await detectDiseaseAreas(currentImageBase64, userSymptom);
+                    highlightedImageBase64 = detectionResult.imageBase64;
+                    diseaseAreas = detectionResult.areas;
+                    displayComparisonImages(currentImageBase64, highlightedImageBase64, detectionResult.summary, diseaseAreas);
                 }
                 
-                // BƯỚC 2.2: Phân tích tổng hợp và đưa ra kết quả
-                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả và đưa ra khuyến nghị...</div>';
+                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả...</div>';
                 
                 const analysisData = await getAnalysisInNewFormat(
                     userSymptom, 
                     userDuration, 
                     selectedItems.map(i => i.text),
                     !!currentImageBase64,
-                    currentImageBase64,
-                    imageQualityAssessment
+                    currentImageBase64
                 );
                 
                 lastAnalysisResult = JSON.stringify(analysisData);
-                analysisResultDiv.innerHTML = formatSimpleResult(analysisData, imageQualityAssessment);
+                analysisResultDiv.innerHTML = formatSimpleResult(analysisData);
                 
                 const studentName = currentUserData?.fullName || (auth.currentUser?.email?.split('@')[0]) || 'Học sinh';
                 const studentPhone = currentUserData?.phone || localStorage.getItem('healthUserPhone') || '';
@@ -2333,47 +2223,41 @@ Trả về JSON thuần túy.`;
                     originalImageBase64: currentImageBase64 || null,
                     highlightedImageBase64: highlightedImageBase64 || null,
                     timestamp: new Date().toISOString(),
-                    formattedResult: analysisData,
-                    imageQuality: imageQualityAssessment ? {
-                        score: imageQualityAssessment.overallScore,
-                        level: imageQualityAssessment.level,
-                        issues: imageQualityAssessment.issues
-                    } : null,
-                    diseaseAreas: diseaseAreas
+                    formattedResult: analysisData
                 };
                 
                 await db.collection('checkin_records').add({
                     ...lastCheckinData,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
-                // Gửi thông báo Zalo
-                try {
-                    let levelText = '🟢 Mức 1 - Theo dõi';
-                    if (analysisData.action_level === 2) levelText = '🟡 Mức 2 - Đi khám sớm';
-                    else if (analysisData.action_level === 3) levelText = '🔴 Mức 3 - Đi khám ngay';
-                    
-                    const webhookData = {
-                        type: 'checkin',
-                        data: {
-                            id: lastCheckinData.checkinId,
-                            userName: lastCheckinData.userName || 'Học sinh',
-                            symptom: (userSymptom || '').substring(0, 150),
-                            level: levelText,
-                            confidence: analysisData.confidence_level || 'trung bình',
-                            timestamp: new Date().toLocaleString('vi-VN')
-                        }
-                    };
-                    
-                    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(webhookData)
-                    });
-                } catch (webhookError) {
-                    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
-                }
-                
+// ========== GỬI THÔNG BÁO ĐẾN ZALO (NHÓM CỐ ĐỊNH) ==========
+try {
+    // Xác định mức độ
+    let levelText = '🟢 Mức 1 - Theo dõi';
+    if (analysisData.action_level === 2) levelText = '🟡 Mức 2 - Đi khám sớm';
+    else if (analysisData.action_level === 3) levelText = '🔴 Mức 3 - Đi khám ngay';
+    
+    const webhookData = {
+        type: 'checkin',
+        data: {
+            id: lastCheckinData.checkinId,
+            userName: lastCheckinData.userName || 'Học sinh',
+            symptom: (userSymptom || '').substring(0, 150),
+            level: levelText,
+            timestamp: new Date().toLocaleString('vi-VN')
+        }
+    };
+    
+    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookData)
+    });
+    console.log('✅ Đã gửi thông báo check-in đến Zalo');
+} catch (webhookError) {
+    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
+}
+// ========== KẾT THÚC ==========
                 pdfButtonSection.style.display = "flex";
                 chatButtonSection.style.display = "flex";
                 await loadUserChatHistory();
@@ -2381,12 +2265,7 @@ Trả về JSON thuần túy.`;
                 
             } catch (error) {
                 console.error(error);
-                analysisResultDiv.innerHTML = `<div style="color: var(--danger); padding: 20px; text-align: center;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                    <h3>⚠️ Có lỗi xảy ra</h3>
-                    <p>${error.message}</p>
-                    <button class="btn btn-outline" onclick="location.reload()" style="margin-top: 20px;">Thử lại</button>
-                </div>`;
+                analysisResultDiv.innerHTML = `<div style="color: var(--danger); padding: 20px; text-align: center;">⚠️ Có lỗi xảy ra: ${error.message}. Vui lòng thử lại.</div>`;
             } finally {
                 isProcessing = false;
                 step2Btn.disabled = false;
@@ -2394,9 +2273,55 @@ Trả về JSON thuần túy.`;
             }
         }
 
-        function showRejectModal() {
-            const modal = document.getElementById('rejectModal');
-            modal.classList.add('active');
+        function formatSimpleResult(analysisData) {
+            const preliminary = analysisData.preliminary || "Chưa có thông tin nhận biết sơ bộ";
+            const explanation = analysisData.explanation || "Đang phân tích thông tin bạn cung cấp.";
+            const warningSigns = Array.isArray(analysisData.warning_signs) && analysisData.warning_signs.length > 0 
+                ? analysisData.warning_signs 
+                : ["Theo dõi thêm các triệu chứng", "Ghi nhận sự thay đổi của cơ thể"];
+            const actionLevel = analysisData.action_level && [1,2,3].includes(analysisData.action_level) ? analysisData.action_level : 1;
+            const actionText = analysisData.action_text || "Hãy theo dõi thêm, báo cho phụ huynh và liên hệ với cán bộ y tế.";
+            
+            const levelTitles = { 1: "🟢 Mức 1 - Theo dõi", 2: "🟡 Mức 2 - Đi khám sớm", 3: "🔴 Mức 3 - Đi khám ngay" };
+            
+            let levelDesc = "";
+            if (actionLevel === 1) levelDesc = "Theo dõi, báo phụ huynh và liên hệ với cán bộ y tế để được tư vấn thêm";
+            else if (actionLevel === 2) levelDesc = "Đi khám sớm tại cơ sở y tế gần nhất";
+            else levelDesc = "Đi khám ngay lập tức tại cơ sở y tế";
+            
+            return `
+                <div class="result-simple">
+                    <div style="background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary)); border-radius: 20px; padding: 20px; margin-bottom: 20px; color: white;">
+                        <h3 style="color: white; margin: 0 0 8px 0;"><i class="fas fa-clipboard-list"></i> Nhận biết sơ bộ</h3>
+                        <p style="margin: 0; font-size: 1.1rem;">${escapeHtml(preliminary)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-lightbulb"></i> Giải thích ngắn gọn</h3>
+                        <p>${escapeHtml(explanation)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu cần lưu ý</h3>
+                        <ul>${warningSigns.map(sign => `<li>${escapeHtml(sign)}</li>`).join('')}</ul>
+                    </div>
+                    
+                    <div class="level-card level-${actionLevel}">
+                        <div class="level-title">
+                            <i class="fas ${actionLevel === 1 ? 'fa-eye' : (actionLevel === 2 ? 'fa-stethoscope' : 'fa-ambulance')}"></i>
+                            ${levelTitles[actionLevel]}
+                        </div>
+                        <div class="level-desc">
+                            <strong>${levelDesc}</strong><br><br>
+                            ${escapeHtml(actionText)}
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Đây là kết quả nhận biết bước đầu từ AI, không thay thế chẩn đoán của bác sĩ.
+                    </div>
+                </div>
+            `;
         }
 
         // ========== LỊCH SỬ CHAT ==========
@@ -2426,7 +2351,7 @@ Trả về JSON thuần túy.`;
             let resultMessage = "";
             if (lastCheckinData.formattedResult) {
                 const fr = lastCheckinData.formattedResult;
-                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Ngày sinh: ${lastCheckinData.userDob || 'Chưa cập nhật'}\n- Giới tính: ${lastCheckinData.userGender || 'Chưa cập nhật'}\n- SĐT: ${lastCheckinData.userPhone || 'Chưa cập nhật'}\n- Email: ${lastCheckinData.userEmail || 'Chưa cập nhật'}\n- Mô tả: ${symptomSummary}\n- Thời gian mắc: ${durationSummary || "Không cung cấp"}\n\n📊 **Kết quả nhận biết:**\n\n**🔍 Nhận biết sơ bộ:** ${fr.preliminary}\n\n**💡 Giải thích:** ${fr.explanation}\n\n**⚠️ Dấu hiệu cần lưu ý:**\n${fr.warning_signs.map(s => `- ${s}`).join('\n')}\n\n**🎯 Khuyến nghị:** ${fr.action_text}\n\n**📈 Độ tin cậy:** ${fr.confidence_level || 'trung bình'}`;
+                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Ngày sinh: ${lastCheckinData.userDob || 'Chưa cập nhật'}\n- Giới tính: ${lastCheckinData.userGender || 'Chưa cập nhật'}\n- SĐT: ${lastCheckinData.userPhone || 'Chưa cập nhật'}\n- Email: ${lastCheckinData.userEmail || 'Chưa cập nhật'}\n- Mô tả: ${symptomSummary}\n- Thời gian mắc: ${durationSummary || "Không cung cấp"}\n\n📊 **Kết quả nhận biết:**\n\n**🔍 Nhận biết sơ bộ:** ${fr.preliminary}\n\n**💡 Giải thích:** ${fr.explanation}\n\n**⚠️ Dấu hiệu cần lưu ý:**\n${fr.warning_signs.map(s => `- ${s}`).join('\n')}\n\n**🎯 Khuyến nghị:** ${fr.action_text}`;
             } else {
                 resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Mô tả: ${symptomSummary}\n\n📊 Kết quả: ${lastAnalysisResult || "Đã có kết quả"}`;
             }
@@ -2443,8 +2368,7 @@ Trả về JSON thuần túy.`;
                         dob: lastCheckinData.userDob,
                         gender: lastCheckinData.userGender,
                         email: lastCheckinData.userEmail,
-                        analysisResult: lastAnalysisResult,
-                        imageQualityScore: lastCheckinData.imageQuality?.score || null
+                        analysisResult: lastAnalysisResult
                     },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
                     lastMessage: "Đã gửi kết quả nhận biết", 
@@ -2484,7 +2408,6 @@ Trả về JSON thuần túy.`;
                 imageComparisonHtml = `
                     <div style="margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 16px;">
                         <h3 style="color: #2563eb;">🖼️ Phân tích ảnh</h3>
-                        ${data.imageQuality ? `<p><strong>Chất lượng ảnh:</strong> ${data.imageQuality.level} (${data.imageQuality.score}/100)</p>` : ''}
                         <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
                             <div style="flex: 1; min-width: 200px; text-align: center;">
                                 <p><strong>Ảnh gốc</strong></p>
@@ -2495,11 +2418,6 @@ Trả về JSON thuần túy.`;
                                 <img src="${highlightedImg}" style="max-width: 100%; max-height: 250px; border-radius: 12px;">
                             </div>
                         </div>
-                        ${data.diseaseAreas && data.diseaseAreas.length > 0 ? `
-                        <div style="margin-top: 15px;">
-                            <strong>Các vùng phát hiện:</strong>
-                            <ul>${data.diseaseAreas.map(area => `<li>${area.label} (độ tin cậy ${Math.round(area.confidence * 100)}%)</li>`).join('')}</ul>
-                        </div>` : ''}
                     </div>
                 `;
             }
@@ -2514,7 +2432,6 @@ Trả về JSON thuần túy.`;
                         <div style="background: linear-gradient(135deg, #3b82f6, #f472b6); border-radius: 16px; padding: 20px; color: white;">
                             <h3 style="color: white; margin: 0 0 8px 0;">🔍 Nhận biết sơ bộ</h3>
                             <p style="margin: 0;">${escapeHtml(fr.preliminary || '')}</p>
-                            <div style="margin-top: 8px; font-size: 12px;">Độ tin cậy: ${fr.confidence_level || 'trung bình'}</div>
                         </div>
                         
                         <h3 style="margin-top: 20px; color: #3b82f6;">💡 Giải thích</h3>
@@ -2543,8 +2460,6 @@ Trả về JSON thuần túy.`;
                 .warning { background: #fef5e7; padding: 12px; border-radius: 8px; margin-top: 20px; }
                 .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #718096; }
                 img { max-width: 100%; height: auto; }
-                ul, ol { margin: 8px 0 8px 20px; }
-                li { margin: 4px 0; }
             </style>
             </head>
             <body>
@@ -2568,8 +2483,8 @@ Trả về JSON thuần túy.`;
                 </div>
                 ${imageComparisonHtml}
                 ${formattedResult}
-                <div class="warning"><strong>⚠️ Lưu ý:</strong> Kết quả từ AI, không thay thế bác sĩ. Độ chính xác phụ thuộc vào chất lượng thông tin cung cấp.</div>
-                <div class="footer">© 2026 EduHealth AI - Hệ thống hỗ trợ sức khỏe học đường</div>
+                <div class="warning"><strong>⚠️ Lưu ý:</strong> Kết quả từ AI, không thay thế bác sĩ.</div>
+                <div class="footer">© 2026 EduHealth AI</div>
             </body>
             </html>`;
         }
@@ -2682,91 +2597,6 @@ Trả về JSON thuần túy.`;
         }
 
         // ========== SỰ KIỆN UPLOAD ẢNH ==========
-        let imageWarningAccepted = false;
-        const warningPopup = document.getElementById('imageWarningPopup');
-
-        function showImageWarning(callback) {
-            if (imageWarningAccepted) {
-                if (callback) callback();
-                return;
-            }
-            
-            if (warningPopup) {
-                warningPopup.style.display = 'flex';
-                const confirmBtn = document.getElementById('confirmImageWarningBtn');
-                const handleConfirm = () => {
-                    imageWarningAccepted = true;
-                    warningPopup.style.display = 'none';
-                    if (callback) callback();
-                    confirmBtn.removeEventListener('click', handleConfirm);
-                };
-                confirmBtn.addEventListener('click', handleConfirm);
-            } else {
-                if (callback) callback();
-            }
-        }
-
-        function closeImageWarning() {
-            if (warningPopup) {
-                warningPopup.style.display = 'none';
-            }
-        }
-
-        chooseFileBtn.onclick = (e) => {
-            e.preventDefault();
-            showImageWarning(() => {
-                fileInput.click();
-            });
-        };
-
-        cameraBtn.onclick = (e) => {
-            e.preventDefault();
-            showImageWarning(async () => {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    const video = document.createElement('video');
-                    video.srcObject = stream;
-                    video.autoplay = true;
-                    const modalDiv = document.createElement('div');
-                    modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
-                    const videoContainer = document.createElement('div');
-                    videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
-                    video.width = 320;
-                    video.height = 240;
-                    videoContainer.appendChild(video);
-                    const captureBtn = document.createElement('button');
-                    captureBtn.innerText = 'Chụp ảnh';
-                    captureBtn.className = 'btn btn-primary';
-                    captureBtn.style.marginTop = '12px';
-                    const closeBtn = document.createElement('button');
-                    closeBtn.innerText = 'Hủy';
-                    closeBtn.className = 'btn btn-outline';
-                    closeBtn.style.marginLeft = '10px';
-                    videoContainer.appendChild(captureBtn);
-                    videoContainer.appendChild(closeBtn);
-                    modalDiv.appendChild(videoContainer);
-                    document.body.appendChild(modalDiv);
-                    captureBtn.onclick = async () => {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        canvas.getContext('2d').drawImage(video, 0, 0);
-                        currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
-                        currentImageBase64 = await compressImageTo720p(currentImageBase64);
-                        imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                        stream.getTracks().forEach(track => track.stop());
-                        document.body.removeChild(modalDiv);
-                    };
-                    closeBtn.onclick = () => {
-                        stream.getTracks().forEach(track => track.stop());
-                        document.body.removeChild(modalDiv);
-                    };
-                } catch (err) {
-                    alert("Không thể truy cập camera: " + err.message);
-                }
-            });
-        };
-
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', async (e) => {
@@ -2774,29 +2604,71 @@ Trả về JSON thuần túy.`;
             dropZone.classList.remove('drag-over');
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
-                showImageWarning(async () => {
-                    const reader = new FileReader();
-                    reader.onload = async (ev) => {
-                        currentImageBase64 = ev.target.result;
-                        currentImageBase64 = await compressImageTo720p(currentImageBase64);
-                        imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                    };
-                    reader.readAsDataURL(file);
-                });
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
             } else alert('Vui lòng thả file ảnh hợp lệ');
         });
         
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', async (e) => {
             if (e.target.files.length) {
-                showImageWarning(async () => {
-                    const reader = new FileReader();
-                    reader.onload = async (ev) => {
-                        currentImageBase64 = ev.target.result;
-                        currentImageBase64 = await compressImageTo720p(currentImageBase64);
-                        imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
-                });
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                const modalDiv = document.createElement('div');
+                modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+                const videoContainer = document.createElement('div');
+                videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+                video.width = 320;
+                video.height = 240;
+                videoContainer.appendChild(video);
+                const captureBtn = document.createElement('button');
+                captureBtn.innerText = 'Chụp ảnh';
+                captureBtn.className = 'btn btn-primary';
+                captureBtn.style.marginTop = '12px';
+                const closeBtn = document.createElement('button');
+                closeBtn.innerText = 'Hủy';
+                closeBtn.className = 'btn btn-outline';
+                closeBtn.style.marginLeft = '10px';
+                videoContainer.appendChild(captureBtn);
+                videoContainer.appendChild(closeBtn);
+                modalDiv.appendChild(videoContainer);
+                document.body.appendChild(modalDiv);
+                captureBtn.onclick = async () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+                closeBtn.onclick = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+            } catch (err) {
+                alert("Không thể truy cập camera: " + err.message);
             }
         });
 
@@ -2821,10 +2693,7 @@ Trả về JSON thuần túy.`;
             lastCheckinData = null;
             diseaseAreas = [];
             highlightedImageBase64 = null;
-            imageQualityAssessment = null;
             imagePreviewDiv.innerHTML = '';
-            if (qualityIndicator) qualityIndicator.style.display = 'none';
-            if (confidenceExplanation) confidenceExplanation.style.display = 'none';
             symptomTextarea.value = "";
             if (durationInput) durationInput.value = "";
             fileInput.value = '';
@@ -2845,179 +2714,53 @@ Trả về JSON thuần túy.`;
         resetBtn.addEventListener('click', resetToStep1);
         
         // ========== KHỞI TẠO APP ==========
-        let privacyAccepted = false;
-        const privacyModal = document.getElementById('privacyModal');
-        const privacyCheckboxes = document.querySelectorAll('.privacy-chk');
-        const privacyConfirmBtn = document.getElementById('privacyConfirmBtn');
-        const requiredHint = document.getElementById('requiredHint');
+// ========== KHỞI TẠO POPUP THÔNG BÁO DEMO ==========
+let demoNoticeShown = false;
 
-        function checkAllCheckboxesChecked() {
-            let allChecked = true;
-            privacyCheckboxes.forEach(checkbox => {
-                if (!checkbox.checked) allChecked = false;
-            });
-            return allChecked;
+function showDemoNotice() {
+    if (demoNoticeShown) return;
+    
+    const demoModal = document.getElementById('demoNoticeModal');
+    if (!demoModal) return;
+    
+    demoModal.classList.add('active');
+    
+    const closeBtn = document.getElementById('closeDemoNoticeBtn');
+    const handleClose = () => {
+        demoModal.classList.remove('active');
+        demoNoticeShown = true;
+        closeBtn.removeEventListener('click', handleClose);
+    };
+    
+    closeBtn.addEventListener('click', handleClose);
+    
+    // Đóng modal khi click ra ngoài
+    demoModal.onclick = (e) => {
+        if (e.target === demoModal) {
+            demoModal.classList.remove('active');
+            demoNoticeShown = true;
         }
+    };
+}
 
-        function updateConfirmButton() {
-            const allChecked = checkAllCheckboxesChecked();
-            if (allChecked) {
-                privacyConfirmBtn.disabled = false;
-                if (requiredHint) {
-                    requiredHint.style.opacity = '0.5';
-                    requiredHint.innerHTML = '<i class="fas fa-check-circle"></i> Đã xác nhận đầy đủ';
-                }
-            } else {
-                privacyConfirmBtn.disabled = true;
-                if (requiredHint) {
-                    requiredHint.style.opacity = '1';
-                    requiredHint.innerHTML = '<i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục';
-                }
-            }
-        }
-
-        privacyCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateConfirmButton);
-            const parentItem = checkbox.closest('.privacy-item');
-            if (parentItem) {
-                parentItem.addEventListener('click', (e) => {
-                    if (e.target !== checkbox && e.target.tagName !== 'INPUT') {
-                        checkbox.checked = !checkbox.checked;
-                        updateConfirmButton();
-                    }
-                });
-            }
-        });
-
-        privacyConfirmBtn.addEventListener('click', () => {
-            if (checkAllCheckboxesChecked()) {
-                privacyAccepted = true;
-                privacyModal.classList.remove('active');
-                localStorage.setItem('privacyAccepted', 'true');
-                localStorage.setItem('privacyAcceptedDate', new Date().toISOString());
-                showToast('Cảm ơn bạn đã đọc kỹ thông tin!', false);
-            } else {
-                showToast('Vui lòng tick vào tất cả các mục trước khi tiếp tục', true);
-            }
-        });
-
-        function hasUserAcceptedPrivacy() {
-            const accepted = localStorage.getItem('privacyAccepted');
-            const acceptedDate = localStorage.getItem('privacyAcceptedDate');
-            if (!accepted || accepted !== 'true') return false;
-            if (acceptedDate) {
-                const date = new Date(acceptedDate);
-                const now = new Date();
-                const daysDiff = (now - date) / (1000 * 60 * 60 * 24);
-                if (daysDiff > 30) {
-                    localStorage.removeItem('privacyAccepted');
-                    localStorage.removeItem('privacyAcceptedDate');
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        function checkAuth() {
-            const user = auth.currentUser;
-            if (!user) {
-                window.location.href = 'login.html';
-                return false;
-            }
-            currentUserId = user.uid;
-            return true;
-        }
-
-        async function loadUserData() {
-            const user = auth.currentUser;
-            if (!user) return null;
-            
-            let fullName = localStorage.getItem('healthUserName');
-            let phone = localStorage.getItem('healthUserPhone');
-            let dob = localStorage.getItem('healthUserDob');
-            let gender = localStorage.getItem('healthUserGender');
-            let email = user.email;
-            
-            if (!fullName || fullName === user.email.split('@')[0]) {
-                const doc = await db.collection('users').doc(user.uid).get();
-                if (doc.exists) {
-                    const data = doc.data();
-                    fullName = data.fullName;
-                    phone = data.phone || '';
-                    dob = data.dob || '';
-                    gender = data.gender || '';
-                    email = data.email || user.email;
-                    localStorage.setItem('healthUserName', fullName);
-                    localStorage.setItem('healthUserPhone', phone);
-                    localStorage.setItem('healthUserDob', dob);
-                    localStorage.setItem('healthUserGender', gender);
-                    currentUserData = data;
-                } else {
-                    currentUserData = { fullName: user.email.split('@')[0], phone: '', dob: '', gender: '', email: user.email };
-                }
-            } else {
-                currentUserData = {
-                    fullName: fullName,
-                    phone: phone || '',
-                    dob: dob || '',
-                    gender: gender || '',
-                    email: email
-                };
-            }
-            return currentUserData;
-        }
-
-        function updateAuthUI() {
-            const user = auth.currentUser;
-            if (user) {
-                const displayName = currentUserData?.fullName || user.email.split('@')[0];
-                authContainer.innerHTML = `
-                    <div class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <span>${escapeHtml(displayName)}</span>
-                    </div>
-                    <button class="auth-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span></span></button>
-                `;
-                document.getElementById('logoutBtn').onclick = async () => {
-                    await auth.signOut();
-                    localStorage.removeItem('healthUserId');
-                    localStorage.removeItem('healthUserEmail');
-                    localStorage.removeItem('healthUserName');
-                    localStorage.removeItem('healthUserPhone');
-                    localStorage.removeItem('healthUserDob');
-                    localStorage.removeItem('healthUserGender');
-                    window.location.href = 'login.html';
-                };
-            } else {
-                authContainer.innerHTML = `<button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i><span>Đăng nhập</span></button>`;
-                document.getElementById('loginBtn').onclick = () => {
-                    window.location.href = 'login.html';
-                };
-            }
-        }
-
-        async function initApp() {
-            if (!checkAuth()) return;
-            await loadUserData();
-            await initKnowledgeBase();
-            updateAuthUI();
-            
-            if (!hasUserAcceptedPrivacy()) {
-                step1Container.style.display = "none";
-                step2Container.style.display = "none";
-                step3Container.style.display = "none";
-                privacyModal.classList.add('active');
-                const waitForPrivacy = setInterval(() => {
-                    if (privacyAccepted) {
-                        clearInterval(waitForPrivacy);
-                        resetToStep1();
-                    }
-                }, 200);
-            } else {
-                privacyAccepted = true;
-                resetToStep1();
-            }
-        }
+// ========== KHỞI TẠO APP ==========
+async function initApp() {
+    if (!checkAuth()) return;
+    await loadUserData();
+    await initKnowledgeBase();
+    updateAuthUI();
+    resetToStep1();
+    
+    // === HIỂN THỊ POPUP THÔNG BÁO DEMO ===
+    setTimeout(() => {
+        showDemoNotice();
+    }, 300);
+    
+    // === HIỂN THỊ POPUP CẢNH BÁO ẢNH ===
+    setTimeout(() => {
+        showImageWarning(() => {});
+    }, 600);
+}
         
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -3027,7 +2770,7 @@ Trả về JSON thuần túy.`;
             }
         });
         
-        // Theme toggle
+        // ========== CHẾ ĐỘ TỐI/SÁNG ==========
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
         function setTheme(theme) { 
@@ -3041,7 +2784,7 @@ Trả về JSON thuần túy.`;
         setTheme(savedTheme === 'dark' ? 'dark' : 'light');
         themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
         
-        // Mobile menu
+        // ========== MOBILE MENU ==========
         const menuToggle = document.getElementById('menuToggleBtn');
         const mobilePanel = document.getElementById('mobileMenuPanel');
         if (menuToggle) { 
@@ -3057,17 +2800,130 @@ Trả về JSON thuần túy.`;
                 } 
             }); 
         }
+// ========== PRIVACY MODAL LOGIC ==========
+let privacyAccepted = false;
+const privacyModal = document.getElementById('privacyModal');
+const privacyCheckboxes = document.querySelectorAll('.privacy-chk');
+const privacyConfirmBtn = document.getElementById('privacyConfirmBtn');
+const requiredHint = document.getElementById('requiredHint');
+
+// Hàm kiểm tra tất cả checkbox đã được tick chưa
+function checkAllCheckboxesChecked() {
+    let allChecked = true;
+    privacyCheckboxes.forEach(checkbox => {
+        if (!checkbox.checked) {
+            allChecked = false;
+        }
+    });
+    return allChecked;
+}
+
+// Hàm cập nhật trạng thái nút
+function updateConfirmButton() {
+    const allChecked = checkAllCheckboxesChecked();
+    if (allChecked) {
+        privacyConfirmBtn.disabled = false;
+        if (requiredHint) {
+            requiredHint.style.opacity = '0.5';
+            requiredHint.innerHTML = '<i class="fas fa-check-circle"></i> Đã xác nhận đầy đủ';
+        }
+    } else {
+        privacyConfirmBtn.disabled = true;
+        if (requiredHint) {
+            requiredHint.style.opacity = '1';
+            requiredHint.innerHTML = '<i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục';
+        }
+    }
+}
+
+// Gắn sự kiện cho từng checkbox
+privacyCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateConfirmButton);
+    
+    // Click vào cả item cũng toggle checkbox
+    const parentItem = checkbox.closest('.privacy-item');
+    if (parentItem) {
+        parentItem.addEventListener('click', (e) => {
+            // Không toggle nếu click trực tiếp vào checkbox (đã xử lý riêng)
+            if (e.target !== checkbox && e.target.tagName !== 'INPUT') {
+                checkbox.checked = !checkbox.checked;
+                updateConfirmButton();
+            }
+        });
+    }
+});
+
+// Xử lý khi bấm nút xác nhận
+privacyConfirmBtn.addEventListener('click', () => {
+    if (checkAllCheckboxesChecked()) {
+        privacyAccepted = true;
+        privacyModal.classList.remove('active');
         
-        document.getElementById('closeModalBtn').onclick = () => {
-            rejectModal.classList.remove('active');
-            resetToStep1();
-        };
-        rejectModal.onclick = (e) => {
-            if (e.target === rejectModal) {
-                rejectModal.classList.remove('active');
+        // Lưu trạng thái đã xác nhận vào localStorage
+        localStorage.setItem('privacyAccepted', 'true');
+        localStorage.setItem('privacyAcceptedDate', new Date().toISOString());
+        
+        // Hiển thị thông báo đã xác nhận
+        showToast('Cảm ơn bạn đã đọc kỹ thông tin!', false);
+    } else {
+        showToast('Vui lòng tick vào tất cả các mục trước khi tiếp tục', true);
+    }
+});
+
+// Kiểm tra xem đã xác nhận trước đó chưa (trong phiên này hoặc trong 30 ngày)
+function hasUserAcceptedPrivacy() {
+    const accepted = localStorage.getItem('privacyAccepted');
+    const acceptedDate = localStorage.getItem('privacyAcceptedDate');
+    
+    if (!accepted || accepted !== 'true') {
+        return false;
+    }
+    
+    // Nếu đã xác nhận quá 30 ngày thì yêu cầu xác nhận lại
+    if (acceptedDate) {
+        const date = new Date(acceptedDate);
+        const now = new Date();
+        const daysDiff = (now - date) / (1000 * 60 * 60 * 24);
+        if (daysDiff > 30) {
+            localStorage.removeItem('privacyAccepted');
+            localStorage.removeItem('privacyAcceptedDate');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Sửa lại hàm initApp để hiển thị modal nếu chưa xác nhận
+// Tìm hàm initApp và thay đổi phần hiển thị modal
+async function initApp() {
+    if (!checkAuth()) return;
+    await loadUserData();
+    await initKnowledgeBase();
+    updateAuthUI();
+    
+    // Kiểm tra xem đã xác nhận privacy chưa
+    if (!hasUserAcceptedPrivacy()) {
+        // Ẩn các container chính khi chưa xác nhận
+        step1Container.style.display = "none";
+        step2Container.style.display = "none";
+        step3Container.style.display = "none";
+        
+        // Hiển thị modal
+        privacyModal.classList.add('active');
+        
+        // Đợi xác nhận xong mới reset UI
+        const waitForPrivacy = setInterval(() => {
+            if (privacyAccepted) {
+                clearInterval(waitForPrivacy);
                 resetToStep1();
             }
-        };
+        }, 200);
+    } else {
+        privacyAccepted = true;
+        resetToStep1();
+    }
+}
     </script>
 </body>
 </html>
