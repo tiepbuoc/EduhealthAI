@@ -402,7 +402,6 @@
             border: 1px solid var(--border-light);
         }
 
-        /* Tin nhắn lưu trữ (offline) có màu sắc khác biệt */
         .message.offline {
             background: var(--offline-message-bg);
             border: 2px solid var(--offline-message-border);
@@ -836,7 +835,7 @@
         let isSendingAI = false;
         let aiEnabledCache = true;
         
-        // ========== RATE LIMITING ==========
+        // ========== RATE LIMITING (chỉ áp dụng cho tin nhắn online) ==========
         let rateLimitStore = {
             lastSubmitTime: 0,
             submitCount: 0,
@@ -844,20 +843,11 @@
         };
         
         // ========== ANTI-BOT / ANTI-SPAM ==========
-        // Lưu lịch sử tin nhắn để phát hiện spam pattern
         let messageHistory = [];
         let userTypingStartTime = null;
         let honeypotTriggered = false;
         
-        // Honeypot field (ẩn, chỉ bot mới điền)
-        let honeypotValue = '';
-        
-        // Time trap: đo thời gian từ lúc focus đến lúc gửi
-        document.getElementById('messageInput')?.addEventListener('focus', () => {
-            userTypingStartTime = Date.now();
-        });
-        
-        // 1. Phát hiện lặp từ với ngưỡng 30% (chính xác)
+        // 1. Phát hiện lặp từ với ngưỡng 30%
         function detectRepeatedWords(text) {
             if (!text || text.length < 10) return { isSpam: false, ratio: 0 };
             
@@ -876,7 +866,6 @@
             }
             
             const ratio = maxCount / words.length;
-            // Ngưỡng 30% (0.3) - chính xác theo yêu cầu
             return {
                 isSpam: ratio > 0.3,
                 ratio: ratio,
@@ -945,7 +934,6 @@
         // 5. Phát hiện spam pattern (lặp lại nội dung giống nhau)
         function detectDuplicateSpam(text) {
             const now = Date.now();
-            // Lọc tin nhắn trong 30 giây gần đây
             const recentMessages = messageHistory.filter(m => now - m.timestamp < 30000);
             
             let duplicateCount = 0;
@@ -962,12 +950,11 @@
             return { isSpam: false };
         }
         
-        // 6. Time trap: phát hiện bot gửi quá nhanh
+        // 6. Time trap - CHỈ ÁP DỤNG CHO ONLINE
         function detectBotTypingSpeed() {
             if (userTypingStartTime === null) return { isSpam: false };
             
             const typingDuration = Date.now() - userTypingStartTime;
-            // Nếu gửi tin nhắn trong vòng 1 giây sau khi focus -> có thể là bot
             if (typingDuration < 1000) {
                 return { isSpam: true, reason: 'Phát hiện hành vi bot (gửi tin nhắn quá nhanh)' };
             }
@@ -975,33 +962,13 @@
             return { isSpam: false };
         }
         
-        // 7. Honeypot (ẩn)
-        function setupHoneypot() {
-            // Tạo input ẩn trong form (chỉ bot mới thấy và điền)
-            const honeypotInput = document.createElement('input');
-            honeypotInput.type = 'text';
-            honeypotInput.id = 'honeypot';
-            honeypotInput.style.display = 'none';
-            honeypotInput.name = 'website';
-            honeypotInput.autocomplete = 'off';
-            document.querySelector('.input-area')?.appendChild(honeypotInput);
-            
-            // Kiểm tra trước khi gửi
-            const honeypot = document.getElementById('honeypot');
-            if (honeypot && honeypot.value !== '') {
-                honeypotTriggered = true;
-            }
-        }
-        
-        // 8. Phát hiện copy-paste spam
+        // 7. Phát hiện copy-paste spam
         function detectCopyPasteSpam(text) {
-            // Phát hiện dấu hiệu copy-paste từ web (nhiều link, formatting lạ)
             const linkCount = (text.match(/https?:\/\/[^\s]+/g) || []).length;
             if (linkCount > 3) {
                 return { isSpam: true, reason: 'Tin nhắn chứa quá nhiều đường dẫn' };
             }
             
-            // Phát hiện toàn bộ chữ in hoa
             const upperCount = (text.match(/[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯ]/g) || []).length;
             if (upperCount > 0 && upperCount / text.length > 0.7 && text.length > 20) {
                 return { isSpam: true, reason: 'Tin nhắn viết hoa quá mức' };
@@ -1010,7 +977,7 @@
             return { isSpam: false };
         }
         
-        // 9. Rate limiting
+        // 8. Rate limiting - CHỈ ÁP DỤNG CHO ONLINE
         function checkRateLimit() {
             const now = Date.now();
             
@@ -1030,8 +997,8 @@
             return { allowed: true, reason: null };
         }
         
-        // Validation Gate tổng hợp
-        function validateMessage(text) {
+        // VALIDATION GATE - có tham số isOnline để quyết định áp dụng rate limit và time trap
+        function validateMessage(text, isOnline = true) {
             const errors = [];
             
             if (!text || text.trim().length === 0) {
@@ -1041,67 +1008,69 @@
             
             const cleanedText = text.trim();
             
-            // Honeypot check
+            // Honeypot check (luôn áp dụng)
             if (honeypotTriggered) {
                 errors.push('Phát hiện hành vi bot');
                 honeypotTriggered = false;
             }
             
-            // Time trap check
-            const timeTrap = detectBotTypingSpeed();
-            if (timeTrap.isSpam) {
-                errors.push(timeTrap.reason);
-            }
-            
-            // Lặp từ với ngưỡng 30%
+            // Lặp từ với ngưỡng 30% (luôn áp dụng)
             const repeatedWords = detectRepeatedWords(cleanedText);
             if (repeatedWords.isSpam) {
                 errors.push(`Tin nhắn bị phát hiện spam: từ "${repeatedWords.mostRepeatedWord}" lặp lại ${repeatedWords.count}/${repeatedWords.totalWords} lần (${Math.round(repeatedWords.ratio * 100)}% > 30%)`);
             }
             
-            // Ký tự lặp
+            // Ký tự lặp (luôn áp dụng)
             const repeatedChars = detectRepeatedChars(cleanedText);
             if (repeatedChars.isSpam) {
                 errors.push('Tin nhắn chứa quá nhiều ký tự lặp lại');
             }
             
-            // Gibberish
+            // Gibberish (luôn áp dụng)
             const gibberish = detectGibberish(cleanedText);
             if (gibberish.isSpam) {
                 errors.push(gibberish.reason);
             }
             
-            // Spam content
+            // Spam content (luôn áp dụng)
             const spamContent = detectSpamContent(cleanedText);
             if (spamContent.isSpam) {
                 errors.push(spamContent.reason);
             }
             
-            // Duplicate spam
+            // Duplicate spam (luôn áp dụng)
             const duplicateSpam = detectDuplicateSpam(cleanedText);
             if (duplicateSpam.isSpam) {
                 errors.push(duplicateSpam.reason);
             }
             
-            // Copy-paste spam
+            // Copy-paste spam (luôn áp dụng)
             const copyPasteSpam = detectCopyPasteSpam(cleanedText);
             if (copyPasteSpam.isSpam) {
                 errors.push(copyPasteSpam.reason);
             }
             
-            // Rate limit
-            const rateLimit = checkRateLimit();
-            if (!rateLimit.allowed) {
-                errors.push(rateLimit.reason);
+            // === CHỈ ÁP DỤNG KHI ONLINE ===
+            if (isOnline) {
+                // Time trap
+                const timeTrap = detectBotTypingSpeed();
+                if (timeTrap.isSpam) {
+                    errors.push(timeTrap.reason);
+                }
+                
+                // Rate limit
+                const rateLimit = checkRateLimit();
+                if (!rateLimit.allowed) {
+                    errors.push(rateLimit.reason);
+                }
             }
             
-            // Lưu vào lịch sử nếu hợp lệ
-            if (errors.length === 0) {
+            // Lưu vào lịch sử nếu hợp lệ (chỉ lưu khi online để tránh trùng lặp)
+            if (errors.length === 0 && isOnline) {
                 messageHistory.push({
                     text: cleanedText,
                     timestamp: Date.now()
                 });
-                // Giữ lịch sử trong 2 phút
                 messageHistory = messageHistory.filter(m => Date.now() - m.timestamp < 120000);
                 
                 rateLimitStore.submitCount++;
@@ -1120,7 +1089,6 @@
         
         // ========== OFFLINE QUEUE (LocalStorage) ==========
         const OFFLINE_QUEUE_KEY = 'eduhealth_offline_messages';
-        // Key để đánh dấu tin nhắn đã được hiển thị trong UI
         const DISPLAYED_OFFLINE_KEY = 'eduhealth_displayed_offline';
         
         function getOfflineQueue() {
@@ -1143,7 +1111,6 @@
             });
             saveOfflineQueue(queue);
             
-            // Hiển thị tin nhắn offline trong UI với màu sắc đặc biệt
             displayOfflineMessage(messageData);
             
             showToast('📴 Mất kết nối mạng! Tin nhắn đã được lưu tạm thời và sẽ gửi khi có mạng.', false);
@@ -1155,7 +1122,6 @@
             queue = queue.filter(item => item.id !== queueId);
             saveOfflineQueue(queue);
             
-            // Xóa tin nhắn offline khỏi UI (đánh dấu đã gửi)
             const offlineMsgElement = document.querySelector(`.message[data-offline-id="${queueId}"]`);
             if (offlineMsgElement) {
                 offlineMsgElement.style.opacity = '0.5';
@@ -1170,7 +1136,6 @@
         function displayOfflineMessage(messageData) {
             const container = document.getElementById('messagesArea');
             
-            // Kiểm tra xem tin nhắn này đã được hiển thị chưa
             const displayedIds = JSON.parse(localStorage.getItem(DISPLAYED_OFFLINE_KEY) || '[]');
             if (displayedIds.includes(messageData.id)) return;
             
@@ -1179,19 +1144,16 @@
             messageDiv.setAttribute('data-offline-id', messageData.id);
             messageDiv.setAttribute('data-message-id', messageData.id);
             
-            // Sender
             const senderDiv = document.createElement('div');
             senderDiv.className = 'message-sender';
             senderDiv.innerHTML = '<i class="fas fa-user"></i> Bạn <span style="background:#ff8c00; padding:2px 8px; border-radius:20px; font-size:10px; margin-left:8px;">📱 Chờ gửi</span>';
             messageDiv.appendChild(senderDiv);
             
-            // Text
             const textDiv = document.createElement('div');
             textDiv.className = 'message-text';
             textDiv.innerHTML = formatMarkdownToHtml(messageData.text || '');
             messageDiv.appendChild(textDiv);
             
-            // Image nếu có
             if (messageData.imageData) {
                 const img = document.createElement('img');
                 img.src = messageData.imageData;
@@ -1200,13 +1162,11 @@
                 messageDiv.appendChild(img);
             }
             
-            // Time
             const timeDiv = document.createElement('div');
             timeDiv.className = 'message-time';
             timeDiv.textContent = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
             messageDiv.appendChild(timeDiv);
             
-            // Offline note
             const noteDiv = document.createElement('div');
             noteDiv.className = 'offline-note';
             noteDiv.innerHTML = '<i class="fas fa-clock"></i> Sẽ gửi khi có mạng';
@@ -1215,18 +1175,13 @@
             container.appendChild(messageDiv);
             scrollToBottom();
             
-            // Đánh dấu đã hiển thị
             displayedIds.push(messageData.id);
             localStorage.setItem(DISPLAYED_OFFLINE_KEY, JSON.stringify(displayedIds));
         }
         
         function clearDisplayedOfflineMarkers() {
-            // Chỉ xóa khi reload trang (giữ lại trong session)
-            const displayedIds = JSON.parse(localStorage.getItem(DISPLAYED_OFFLINE_KEY) || '[]');
-            if (displayedIds.length > 0) {
-                // Không xóa ngay, chỉ đánh dấu để không hiển thị lại
-                console.log(`Đã có ${displayedIds.length} tin nhắn offline được hiển thị trước đó`);
-            }
+            // Giữ nguyên để không hiển thị lại khi reload
+            console.log('Đã xóa markers offline cũ');
         }
         
         function updateOfflineBadge() {
@@ -1754,20 +1709,18 @@ Trả lời bằng tiếng Việt, dễ hiểu:`;
                 });
         }
         
-        // ========== TẠO CUỘC TRÒ CHUYỆN MỚI (có chống spam) ==========
+        // ========== TẠO CUỘC TRÒ CHUYỆN MỚI ==========
         let lastCreateChatTime = 0;
         
         async function createNewChat() {
             if (!currentUserId) return null;
             
-            // Chống spam tạo cuộc trò chuyện (tối đa 1 lần/5 giây)
             const now = Date.now();
             if (now - lastCreateChatTime < 5000) {
                 showToast('Vui lòng đợi 5 giây trước khi tạo cuộc trò chuyện mới', true);
                 return null;
             }
             
-            // Giới hạn số lượng cuộc trò chuyện tối đa 20
             if (allChats.length >= 20) {
                 showToast('Bạn đã có quá nhiều cuộc trò chuyện. Vui lòng xóa bớt trước khi tạo mới.', true);
                 return null;
@@ -1832,7 +1785,10 @@ Trả lời bằng tiếng Việt, dễ hiểu:`;
         async function sendMessageAndCallAI(text, imageData = null) {
             if ((!text && !imageData) || !currentChatId) return;
             
-            const validation = validateMessage(text);
+            const isOnline = navigator.onLine;
+            
+            // VALIDATION - truyền isOnline để quyết định áp dụng rate limit và time trap
+            const validation = validateMessage(text, isOnline);
             if (!validation.valid) {
                 showToast(validation.errors.join('\n'), true);
                 return;
@@ -1840,7 +1796,6 @@ Trả lời bằng tiếng Việt, dễ hiểu:`;
             
             const sanitizedText = validation.sanitizedText;
             const isAIEnabled = await checkAIEnabled();
-            const isOnline = navigator.onLine;
             
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
@@ -1974,6 +1929,25 @@ Trả lời bằng tiếng Việt, dễ hiểu:`;
             alert(message);
         };
         
+        // Setup honeypot
+        function setupHoneypot() {
+            const honeypotInput = document.createElement('input');
+            honeypotInput.type = 'text';
+            honeypotInput.id = 'honeypot';
+            honeypotInput.style.display = 'none';
+            honeypotInput.name = 'website';
+            honeypotInput.autocomplete = 'off';
+            document.querySelector('.input-area')?.appendChild(honeypotInput);
+            
+            setInterval(() => {
+                const honeypot = document.getElementById('honeypot');
+                if (honeypot && honeypot.value !== '') {
+                    honeypotTriggered = true;
+                    honeypot.value = '';
+                }
+            }, 100);
+        }
+        
         const menuToggle = document.getElementById('menuToggleBtn');
         const sidebar = document.getElementById('chatSidebar');
         const overlay = document.getElementById('overlay');
@@ -2093,6 +2067,13 @@ Trả lời bằng tiếng Việt, dễ hiểu:`;
                 }
             });
         }
+        
+        // Focus event để bắt đầu đo thời gian typing (chỉ cho online)
+        document.getElementById('messageInput')?.addEventListener('focus', () => {
+            if (navigator.onLine) {
+                userTypingStartTime = Date.now();
+            }
+        });
     </script>
 </body>
 </html>
