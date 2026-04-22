@@ -1326,16 +1326,14 @@ function closeImageWarning() {
 }
 
 // Ghi đè các hàm upload ảnh để hiển thị popup trước
-chooseFileBtn.onclick = (e) => {
+chooseFileBtn.onclick = (e) {
     e.preventDefault();
-    showImageWarning(() => {
-        fileInput.click();
-    });
+    fileInput.click();
 };
 
 cameraBtn.onclick = (e) => {
     e.preventDefault();
-    showImageWarning(async () => {
+    (async () => {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
             const video = document.createElement('video');
@@ -1387,15 +1385,13 @@ dropZone.ondrop = async (e) => {
     dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-        showImageWarning(async () => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                currentImageBase64 = ev.target.result;
-                currentImageBase64 = await compressImageTo720p(currentImageBase64);
-                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-            };
-            reader.readAsDataURL(file);
-        });
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+            currentImageBase64 = ev.target.result;
+            currentImageBase64 = await compressImageTo720p(currentImageBase64);
+            imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
     } else {
         alert('Vui lòng thả file ảnh hợp lệ');
     }
@@ -1404,15 +1400,13 @@ dropZone.ondrop = async (e) => {
 // Ghi đè file input change event
 fileInput.onchange = async (e) => {
     if (e.target.files.length) {
-        showImageWarning(async () => {
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                currentImageBase64 = ev.target.result;
-                currentImageBase64 = await compressImageTo720p(currentImageBase64);
-                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        });
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+            currentImageBase64 = ev.target.result;
+            currentImageBase64 = await compressImageTo720p(currentImageBase64);
+            imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
     }
 };
 
