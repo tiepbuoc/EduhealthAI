@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -310,6 +311,7 @@
         }
 
         .upload-area {
+            position: relative;
             border: 2px dashed var(--border-light);
             border-radius: 28px;
             padding: 28px 16px;
@@ -681,7 +683,100 @@
         }
         .modal-content p { margin: 16px 0; }
         .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        
 
+.upload-warning-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeInScale 0.25s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.warning-popup-content {
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 24px 28px;
+    max-width: 450px;
+    width: 85%;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-light);
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.warning-popup-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+}
+
+.warning-popup-content h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--warning);
+}
+
+.warning-popup-content p {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+}
+
+.warning-popup-btn {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.warning-popup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+}
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .menu-toggle { display: flex; }
@@ -694,6 +789,218 @@
             .auth-btn span { display: none; }
             .auth-btn { padding: 8px 12px; }
         }
+/* Demo notice popup - có thể tùy chỉnh thêm nếu muốn */
+#demoNoticeModal .modal-content {
+    background: var(--card-bg);
+    border: 2px solid var(--blue-primary);
+}
+
+#demoNoticeModal h3 {
+    background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+/* Privacy Modal Styles */
+.privacy-modal-content {
+    max-width: 550px;
+    text-align: left;
+}
+
+.privacy-checklist {
+    margin: 20px 0;
+    background: var(--bg-surface);
+    border-radius: 20px;
+    padding: 16px;
+    border: 1px solid var(--border-light);
+}
+
+.privacy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.privacy-item:hover {
+    background: var(--tag-bg);
+}
+
+.privacy-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.privacy-item label {
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--text-mid);
+    flex: 1;
+}
+
+.privacy-item label strong {
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.privacy-item label small {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 4px;
+}
+
+.privacy-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#privacyConfirmBtn {
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+#privacyConfirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.required-hint {
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+/* Privacy Modal Styles */
+.privacy-modal-content {
+    max-width: 550px;
+    width: 90%;
+    text-align: left;
+    max-height: 85vh; /* Giới hạn chiều cao tối đa 85% viewport */
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Bỏ padding để checklist chiếm toàn bộ */
+    overflow: hidden; /* Ẩn overflow bên ngoài */
+}
+
+/* Phần header của modal (cố định) */
+.privacy-modal-header {
+    padding: 24px 24px 0 24px;
+    flex-shrink: 0; /* Không co lại */
+}
+
+/* Phần checklist (có thanh cuộn) */
+.privacy-checklist {
+    margin: 0;
+    background: var(--bg-surface);
+    border-radius: 0;
+    padding: 16px 24px;
+    border: none;
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    overflow-y: auto; /* Thanh cuộn dọc */
+    flex: 1; /* Chiếm phần không gian còn lại */
+    max-height: 50vh; /* Chiều cao tối đa 50% viewport */
+}
+
+/* Phần footer của modal (cố định) */
+.privacy-modal-footer {
+    padding: 20px 24px 24px 24px;
+    flex-shrink: 0; /* Không co lại */
+    background: var(--card-bg);
+    border-radius: 0 0 32px 32px;
+}
+
+.privacy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 16px 0;
+    padding: 8px;
+    border-radius: 12px;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.privacy-item:hover {
+    background: var(--tag-bg);
+}
+
+.privacy-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.privacy-item label {
+    font-size: 14px;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--text-mid);
+    flex: 1;
+}
+
+.privacy-item label strong {
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.privacy-item label small {
+    font-size: 12px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 4px;
+}
+
+.privacy-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#privacyConfirmBtn {
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+#privacyConfirmBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.required-hint {
+    font-size: 12px;
+    color: var(--danger);
+    text-align: center;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
     </style>
 </head>
 <body>
@@ -707,7 +1014,9 @@
             <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
             <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
             <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
+            <a href="EPH.html" class="nav-link" style="background: linear-gradient(135deg, #f59e0b, #ec489a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+                <i class="fas fa-gamepad" style="color: #f59e0b;"></i> EduPlay Health
+            </a>
         </div>
         <div class="nav-right">
             <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
@@ -721,7 +1030,7 @@
             <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
             <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
             <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="minigame.html" class="nav-link-mobile"><i class="fas fa-brain"></i> Minigame</a>
+            <a href="EPH.html" class="nav-link-mobile"><i class="fas fa-gamepad"></i> EduPlay Health</a>
         </div>
     </div>
     <div class="container">
@@ -729,7 +1038,82 @@
             <h1 class="page-title"><i class="fas fa-stethoscope"></i> Check-in sức khỏe cùng EduHealth AI</h1>
             <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
         </div>
+<!-- PRIVACY & DEMO MODAL - BẮT BUỘC TICK HẾT -->
+<div id="privacyModal" class="modal-overlay" style="z-index: 2002;">
+    <div class="modal-content privacy-modal-content">
+        <div class="privacy-modal-header">
+            <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 48px; margin-bottom: 8px;">🔒</div>
+                <h3 style="font-family: 'Fraunces', serif; font-size: 22px; background: var(--grad-blue-pink); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0;">
+                    Thông tin về dữ liệu của bạn
+                </h3>
+                <p style="font-size: 13px; color: var(--text-dim); margin-top: 8px;">Vui lòng đọc kỹ và xác nhận để tiếp tục</p>
+            </div>
+        </div>
 
+        <div class="privacy-checklist">
+            <div class="privacy-item" data-item="0">
+                <input type="checkbox" id="privacyChk1" class="privacy-chk">
+                <label for="privacyChk1">
+                    <strong>📋 Dữ liệu nào được nhập?</strong>
+                    Mô tả triệu chứng, ảnh (tự nguyện cung cấp), checklist triệu chứng.
+                    <small>Ảnh sẽ được nén trước khi lưu để bảo vệ quyền riêng tư.</small>
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="1">
+                <input type="checkbox" id="privacyChk2" class="privacy-chk">
+                <label for="privacyChk2">
+                    <strong>🎯 Mục đích sử dụng</strong>
+                    Hỗ trợ check-in sức khỏe ban đầu, nhận biết sớm vấn đề. <strong>Không thay thế chẩn đoán y tế.</strong>
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="2">
+                <input type="checkbox" id="privacyChk3" class="privacy-chk">
+                <label for="privacyChk3">
+                    <strong>🏢 Chủ thể xử lý dữ liệu</strong>
+                    Đội dự án EduHealth - Đơn vị vận hành hệ thống chăm sóc sức khỏe học đường.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="3">
+                <input type="checkbox" id="privacyChk4" class="privacy-chk">
+                <label for="privacyChk4">
+                    <strong>💾 Lưu trữ dữ liệu</strong>
+                    Dữ liệu được lưu trên Firebase (đám mây) của dự án, thời gian lưu tối đa <strong>12 tháng</strong> hoặc cho đến khi bạn yêu cầu xóa.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="4">
+                <input type="checkbox" id="privacyChk5" class="privacy-chk">
+                <label for="privacyChk5">
+                    <strong>⚖️ Quyền của bạn</strong>
+                    Bạn có quyền: xem lại dữ liệu đã cung cấp, rút lại đồng ý, yêu cầu xóa dữ liệu cá nhân bất kỳ lúc nào.
+                </label>
+            </div>
+            
+            <div class="privacy-item" data-item="5">
+                <input type="checkbox" id="privacyChk6" class="privacy-chk">
+                <label for="privacyChk6">
+                    <strong>📞 Liên hệ hỗ trợ / Xóa dữ liệu</strong>
+                    Email: <strong>eduhealthai08@gmail.com</strong> 
+                </label>
+            </div>
+        </div>
+        
+        <div class="privacy-modal-footer">
+            <div class="privacy-footer">
+                <button id="privacyConfirmBtn" class="btn-primary" disabled style="padding: 12px 32px; border-radius: 50px;">
+                    <i class="fas fa-check-circle"></i> Tôi đã hiểu và đồng ý
+                </button>
+                <div class="required-hint" id="requiredHint">
+                    <i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
         <div id="step1Container" class="card">
             <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
@@ -742,6 +1126,18 @@
                     <button class="btn btn-outline" id="cameraBtn"><i class="fas fa-camera"></i> Chụp ảnh</button>
                 </div>
                 <div class="image-preview" id="imagePreview"></div>
+                <!-- Popup cảnh báo khi upload ảnh -->
+<div id="imageWarningPopup" class="upload-warning-popup" style="display: none;">
+    <div class="warning-popup-content">
+        <div class="warning-popup-icon">⚠️</div>
+        <h4>Lưu ý về hình ảnh</h4>
+        <p>Vui lòng <strong>không tải ảnh chứa khuôn mặt hoặc thông tin nhận diện cá nhân</strong> trong bản demo.</p>
+        <button id="confirmImageWarningBtn" class="warning-popup-btn">
+            Tôi đã hiểu
+        </button>
+    </div>
+</div>
+
             </div>
             
             <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này <span style="color: var(--danger);">*</span>:</label>
@@ -819,11 +1215,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+<script>
 
-    <script>
         // ========== CẤU HÌNH ==========
         const firebaseConfig = {
-            apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
+            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
             projectId: "eduhealth-4bcab",
             storageBucket: "eduhealth-4bcab.firebasestorage.app",
@@ -832,6 +1229,18 @@
             measurementId: "G-GSP46EVLYG"
         };
         firebase.initializeApp(firebaseConfig);
+
+        // === TH�M �O?N CODE M?I ===
+        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+          new firebase.appCheck.ReCaptchaEnterpriseProvider(
+            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+          ),
+          true
+        );
+        // ===============================
+
         const auth = firebase.auth();
         const db = firebase.firestore();
 
@@ -879,6 +1288,134 @@
         const imageAnalysisSection = document.getElementById('imageAnalysisSection');
         const authContainer = document.getElementById('authContainer');
         const rejectModal = document.getElementById('rejectModal');
+
+// ========== POPUP CẢNH BÁO ẢNH TRÊN UPLOAD-AREA ==========
+let imageWarningAccepted = false;
+const warningPopup = document.getElementById('imageWarningPopup');
+
+function showImageWarning(callback) {
+    // Nếu đã chấp nhận trước đó thì không hiển thị lại
+    if (imageWarningAccepted) {
+        if (callback) callback();
+        return;
+    }
+    
+    // Hiển thị popup ngay trên upload-area
+    if (warningPopup) {
+        warningPopup.style.display = 'flex';
+        
+        // Xử lý nút xác nhận (chỉ gắn event 1 lần)
+        const confirmBtn = document.getElementById('confirmImageWarningBtn');
+        const handleConfirm = () => {
+            imageWarningAccepted = true;
+            warningPopup.style.display = 'none';
+            if (callback) callback();
+            confirmBtn.removeEventListener('click', handleConfirm);
+        };
+        confirmBtn.addEventListener('click', handleConfirm);
+    } else {
+        // Fallback nếu không tìm thấy popup
+        if (callback) callback();
+    }
+}
+
+// Hàm đóng popup (nếu cần)
+function closeImageWarning() {
+    if (warningPopup) {
+        warningPopup.style.display = 'none';
+    }
+}
+
+// Ghi đè các hàm upload ảnh để hiển thị popup trước
+chooseFileBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(() => {
+        fileInput.click();
+    });
+};
+
+cameraBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            const modalDiv = document.createElement('div');
+            modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+            video.width = 320;
+            video.height = 240;
+            videoContainer.appendChild(video);
+            const captureBtn = document.createElement('button');
+            captureBtn.innerText = 'Chụp ảnh';
+            captureBtn.className = 'btn btn-primary';
+            captureBtn.style.marginTop = '12px';
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'Hủy';
+            closeBtn.className = 'btn btn-outline';
+            closeBtn.style.marginLeft = '10px';
+            videoContainer.appendChild(captureBtn);
+            videoContainer.appendChild(closeBtn);
+            modalDiv.appendChild(videoContainer);
+            document.body.appendChild(modalDiv);
+            captureBtn.onclick = async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+            closeBtn.onclick = () => {
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+        } catch (err) {
+            alert("Không thể truy cập camera: " + err.message);
+        }
+    });
+};
+
+// Xử lý khi kéo thả ảnh
+dropZone.ondrop = async (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        alert('Vui lòng thả file ảnh hợp lệ');
+    }
+};
+
+// Ghi đè file input change event
+fileInput.onchange = async (e) => {
+    if (e.target.files.length) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    }
+};
 
         // ========== KIỂM TRA ĐĂNG NHẬP ==========
         function checkAuth() {
@@ -981,9 +1518,59 @@
             });
         }
 
-        function showRejectModal() {
-            rejectModal.classList.add('active');
+function showRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    const modalBody = modal.querySelector('.modal-content');
+    
+    // Cập nhật nội dung modal
+    modalBody.innerHTML = `
+        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px;">⚠️ Thông báo</h3>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Hiện tại AI Check-in của EduHealth AI đang hỗ trợ chuyên sâu cho <strong>module mụn học đường</strong>. 
+            Với vấn đề bạn đang gặp, hệ thống chưa đủ cơ sở để đưa ra hỗ trợ check-in chuyên sâu một cách an toàn.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Để hỗ trợ bạn tốt hơn, bạn có thể chọn một trong các hướng sau:
+        </p>
+        <ul style="text-align: left; margin-bottom: 20px; padding-left: 20px; line-height: 1.8;">
+            <li><strong>(1)</strong> Xem thông tin phù hợp trong <strong>Thư viện sức khỏe</strong></li>
+            <li><strong>(2)</strong> Liên hệ <strong>CBYT / phụ huynh</strong> để được hỗ trợ thêm</li>
+            <li><strong>(3)</strong> Trò chuyện với <strong>EduHealth AI</strong> để được hướng dẫn bước tiếp theo</li>
+        </ul>
+        <p style="line-height: 1.6; margin-bottom: 20px; font-size: 13px; color: var(--text-dim);">
+            Nếu có dấu hiệu bất thường hoặc bạn đang lo lắng nhiều, hãy ưu tiên liên hệ người lớn hoặc cơ sở y tế.
+        </p>
+        <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">
+                <i class="fas fa-book-open"></i> Đến Thư viện sức khỏe
+            </a>
+            <a href="chatbox.html" class="btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #10b981, #3b82f6); padding: 10px 20px;">
+                <i class="fas fa-comment-dots"></i> Trò chuyện với AI
+            </a>
+            <button class="btn-outline" id="closeModalBtn" style="padding: 10px 20px;">Đóng</button>
+        </div>
+    `;
+    
+    modal.classList.add('active');
+    
+    // Gắn lại event cho nút đóng
+    const closeBtn = document.getElementById('closeModalBtn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('active');
+            resetToStep1();
+        };
+    }
+    
+    // Gắn event cho overlay
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            resetToStep1();
         }
+    };
+}
 
         document.getElementById('closeModalBtn').onclick = () => {
             rejectModal.classList.remove('active');
@@ -2100,13 +2687,53 @@ Trả về JSON thuần túy.`;
         resetBtn.addEventListener('click', resetToStep1);
         
         // ========== KHỞI TẠO APP ==========
-        async function initApp() {
-            if (!checkAuth()) return;
-            await loadUserData();
-            await initKnowledgeBase();
-            updateAuthUI();
-            resetToStep1();
+// ========== KHỞI TẠO POPUP THÔNG BÁO DEMO ==========
+let demoNoticeShown = false;
+
+function showDemoNotice() {
+    if (demoNoticeShown) return;
+    
+    const demoModal = document.getElementById('demoNoticeModal');
+    if (!demoModal) return;
+    
+    demoModal.classList.add('active');
+    
+    const closeBtn = document.getElementById('closeDemoNoticeBtn');
+    const handleClose = () => {
+        demoModal.classList.remove('active');
+        demoNoticeShown = true;
+        closeBtn.removeEventListener('click', handleClose);
+    };
+    
+    closeBtn.addEventListener('click', handleClose);
+    
+    // Đóng modal khi click ra ngoài
+    demoModal.onclick = (e) => {
+        if (e.target === demoModal) {
+            demoModal.classList.remove('active');
+            demoNoticeShown = true;
         }
+    };
+}
+
+// ========== KHỞI TẠO APP ==========
+async function initApp() {
+    if (!checkAuth()) return;
+    await loadUserData();
+    await initKnowledgeBase();
+    updateAuthUI();
+    resetToStep1();
+    
+    // === HIỂN THỊ POPUP THÔNG BÁO DEMO ===
+    setTimeout(() => {
+        showDemoNotice();
+    }, 300);
+    
+    // === HIỂN THỊ POPUP CẢNH BÁO ẢNH ===
+    setTimeout(() => {
+        showImageWarning(() => {});
+    }, 600);
+}
         
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -2146,6 +2773,130 @@ Trả về JSON thuần túy.`;
                 } 
             }); 
         }
+// ========== PRIVACY MODAL LOGIC ==========
+let privacyAccepted = false;
+const privacyModal = document.getElementById('privacyModal');
+const privacyCheckboxes = document.querySelectorAll('.privacy-chk');
+const privacyConfirmBtn = document.getElementById('privacyConfirmBtn');
+const requiredHint = document.getElementById('requiredHint');
+
+// Hàm kiểm tra tất cả checkbox đã được tick chưa
+function checkAllCheckboxesChecked() {
+    let allChecked = true;
+    privacyCheckboxes.forEach(checkbox => {
+        if (!checkbox.checked) {
+            allChecked = false;
+        }
+    });
+    return allChecked;
+}
+
+// Hàm cập nhật trạng thái nút
+function updateConfirmButton() {
+    const allChecked = checkAllCheckboxesChecked();
+    if (allChecked) {
+        privacyConfirmBtn.disabled = false;
+        if (requiredHint) {
+            requiredHint.style.opacity = '0.5';
+            requiredHint.innerHTML = '<i class="fas fa-check-circle"></i> Đã xác nhận đầy đủ';
+        }
+    } else {
+        privacyConfirmBtn.disabled = true;
+        if (requiredHint) {
+            requiredHint.style.opacity = '1';
+            requiredHint.innerHTML = '<i class="fas fa-info-circle"></i> Vui lòng tick vào tất cả các mục trên để tiếp tục';
+        }
+    }
+}
+
+// Gắn sự kiện cho từng checkbox
+privacyCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', updateConfirmButton);
+    
+    // Click vào cả item cũng toggle checkbox
+    const parentItem = checkbox.closest('.privacy-item');
+    if (parentItem) {
+        parentItem.addEventListener('click', (e) => {
+            // Không toggle nếu click trực tiếp vào checkbox (đã xử lý riêng)
+            if (e.target !== checkbox && e.target.tagName !== 'INPUT') {
+                checkbox.checked = !checkbox.checked;
+                updateConfirmButton();
+            }
+        });
+    }
+});
+
+// Xử lý khi bấm nút xác nhận
+privacyConfirmBtn.addEventListener('click', () => {
+    if (checkAllCheckboxesChecked()) {
+        privacyAccepted = true;
+        privacyModal.classList.remove('active');
+        
+        // Lưu trạng thái đã xác nhận vào localStorage
+        localStorage.setItem('privacyAccepted', 'true');
+        localStorage.setItem('privacyAcceptedDate', new Date().toISOString());
+        
+        // Hiển thị thông báo đã xác nhận
+        showToast('Cảm ơn bạn đã đọc kỹ thông tin!', false);
+    } else {
+        showToast('Vui lòng tick vào tất cả các mục trước khi tiếp tục', true);
+    }
+});
+
+// Kiểm tra xem đã xác nhận trước đó chưa (trong phiên này hoặc trong 30 ngày)
+function hasUserAcceptedPrivacy() {
+    const accepted = localStorage.getItem('privacyAccepted');
+    const acceptedDate = localStorage.getItem('privacyAcceptedDate');
+    
+    if (!accepted || accepted !== 'true') {
+        return false;
+    }
+    
+    // Nếu đã xác nhận quá 30 ngày thì yêu cầu xác nhận lại
+    if (acceptedDate) {
+        const date = new Date(acceptedDate);
+        const now = new Date();
+        const daysDiff = (now - date) / (1000 * 60 * 60 * 24);
+        if (daysDiff > 30) {
+            localStorage.removeItem('privacyAccepted');
+            localStorage.removeItem('privacyAcceptedDate');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Sửa lại hàm initApp để hiển thị modal nếu chưa xác nhận
+// Tìm hàm initApp và thay đổi phần hiển thị modal
+async function initApp() {
+    if (!checkAuth()) return;
+    await loadUserData();
+    await initKnowledgeBase();
+    updateAuthUI();
+    
+    // Kiểm tra xem đã xác nhận privacy chưa
+    if (!hasUserAcceptedPrivacy()) {
+        // Ẩn các container chính khi chưa xác nhận
+        step1Container.style.display = "none";
+        step2Container.style.display = "none";
+        step3Container.style.display = "none";
+        
+        // Hiển thị modal
+        privacyModal.classList.add('active');
+        
+        // Đợi xác nhận xong mới reset UI
+        const waitForPrivacy = setInterval(() => {
+            if (privacyAccepted) {
+                clearInterval(waitForPrivacy);
+                resetToStep1();
+            }
+        }, 200);
+    } else {
+        privacyAccepted = true;
+        resetToStep1();
+    }
+}
     </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Quản trị hệ thống - EduHealth AI</title>
@@ -1446,7 +1446,9 @@
             <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
             <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
             <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
-            <a href="minigame.html" class="nav-link"><i class="fas fa-brain"></i> Minigame</a>
+            <a href="EPH.html" class="nav-link" style="background: linear-gradient(135deg, #f59e0b, #ec489a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+                <i class="fas fa-gamepad" style="color: #f59e0b;"></i> EduPlay Health
+            </a>
         </div>
         <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
     </nav>
@@ -1474,6 +1476,9 @@
             </button>
             <button class="tab-btn" onclick="switchTab('news')">
                 <i class="fas fa-newspaper"></i> Bản tin y tế
+            </button>
+            <button class="tab-btn" onclick="window.location.href='admin-kh.html'">
+                <i class="fas fa-chalkboard-user"></i> Quản lý khóa học
             </button>
         </div>
 
@@ -1963,9 +1968,11 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+<script>
         const firebaseConfig = {
-            apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
+            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
             projectId: "eduhealth-4bcab",
             storageBucket: "eduhealth-4bcab.firebasestorage.app",
@@ -1975,9 +1982,57 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
 
-        let locations = [];
+  // === TH�M �O?N CODE M?I ===
+  // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+  const appCheck = firebase.appCheck();
+  appCheck.activate(
+    new firebase.appCheck.ReCaptchaEnterpriseProvider(
+      '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+    ),
+    true
+  );
+  // ===============================
+
+const db = firebase.firestore();
+const auth = firebase.auth();  // THÊM DÒNG NÀY
+
+// ========== KIỂM TRA QUYỀN ADMIN ==========
+const ADMIN_EMAIL = "admin@eduhealth-ai.com";
+
+// Ẩn nội dung trang cho đến khi xác thực xong
+document.body.style.display = "none";
+
+// Kiểm tra trạng thái đăng nhập và quyền admin
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+    
+    if (user.email !== ADMIN_EMAIL) {
+        await auth.signOut();
+        localStorage.removeItem('healthUserId');
+        localStorage.removeItem('healthUserEmail');
+        localStorage.removeItem('healthUserName');
+        alert("Bạn không có quyền truy cập trang quản trị!");
+        window.location.href = "index.html";
+        return;
+    }
+    
+    document.body.style.display = "block";
+    
+    loadLocations();
+    loadPostsForApproval();
+    loadHandbook();
+    loadNews();
+    loadKnowledge();
+    initNewsEditor();
+    initLocationMap();
+});
+
+let locations = [];
+
         let pendingPosts = [];
         let approvedPosts = [];
         let handbookPosts = [];
@@ -3635,3 +3690,4 @@
     </script>
 </body>
 </html>
+
