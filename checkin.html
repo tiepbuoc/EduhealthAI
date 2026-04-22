@@ -3495,5 +3495,30 @@ async function initApp() {
     }
 }
     </script>
+    <script>
+// FORCE SHOW IMAGE WARNING POPUP IMMEDIATELY WHEN PAGE LOADS
+(function() {
+    // Đảm bảo DOM đã tải xong
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var popup = document.getElementById('imageWarningPopup');
+                if (popup) {
+                    popup.style.display = 'flex';
+                    console.log('Popup đã được hiển thị tự động!');
+                }
+            }, 200);
+        });
+    } else {
+        setTimeout(function() {
+            var popup = document.getElementById('imageWarningPopup');
+            if (popup) {
+                popup.style.display = 'flex';
+                console.log('Popup đã được hiển thị tự động!');
+            }
+        }, 200);
+    }
+})();
+</script>
 </body>
 </html>
