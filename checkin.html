@@ -3495,28 +3495,41 @@ async function initApp() {
     }
 }
     </script>
-    <script>
+<script>
 // FORCE SHOW IMAGE WARNING POPUP IMMEDIATELY WHEN PAGE LOADS
 (function() {
+    function showAndSetupPopup() {
+        var popup = document.getElementById('imageWarningPopup');
+        var confirmBtn = document.getElementById('confirmImageWarningBtn');
+        
+        if (popup && confirmBtn) {
+            // Hiển thị popup
+            popup.style.display = 'flex';
+            console.log('Popup đã được hiển thị tự động!');
+            
+            // Xóa event cũ để tránh trùng lặp
+            var newConfirmBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            
+            // Gắn event đóng popup
+            newConfirmBtn.addEventListener('click', function() {
+                popup.style.display = 'none';
+                console.log('Popup đã được đóng');
+                // Lưu lại trạng thái đã xác nhận
+                localStorage.setItem('imageWarningAccepted', 'true');
+            });
+        } else {
+            console.log('Không tìm thấy popup hoặc nút confirm');
+        }
+    }
+    
     // Đảm bảo DOM đã tải xong
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                var popup = document.getElementById('imageWarningPopup');
-                if (popup) {
-                    popup.style.display = 'flex';
-                    console.log('Popup đã được hiển thị tự động!');
-                }
-            }, 200);
+            setTimeout(showAndSetupPopup, 300);
         });
     } else {
-        setTimeout(function() {
-            var popup = document.getElementById('imageWarningPopup');
-            if (popup) {
-                popup.style.display = 'flex';
-                console.log('Popup đã được hiển thị tự động!');
-            }
-        }, 200);
+        setTimeout(showAndSetupPopup, 300);
     }
 })();
 </script>
