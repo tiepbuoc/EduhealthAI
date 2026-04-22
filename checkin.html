@@ -2230,7 +2230,34 @@ Trả về JSON thuần túy.`;
                     ...lastCheckinData,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
-                
+// ========== GỬI THÔNG BÁO ĐẾN ZALO (NHÓM CỐ ĐỊNH) ==========
+try {
+    // Xác định mức độ
+    let levelText = '🟢 Mức 1 - Theo dõi';
+    if (analysisData.action_level === 2) levelText = '🟡 Mức 2 - Đi khám sớm';
+    else if (analysisData.action_level === 3) levelText = '🔴 Mức 3 - Đi khám ngay';
+    
+    const webhookData = {
+        type: 'checkin',
+        data: {
+            id: lastCheckinData.checkinId,
+            userName: lastCheckinData.userName || 'Học sinh',
+            symptom: (userSymptom || '').substring(0, 150),
+            level: levelText,
+            timestamp: new Date().toLocaleString('vi-VN')
+        }
+    };
+    
+    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(webhookData)
+    });
+    console.log('✅ Đã gửi thông báo check-in đến Zalo');
+} catch (webhookError) {
+    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
+}
+// ========== KẾT THÚC ==========
                 pdfButtonSection.style.display = "flex";
                 chatButtonSection.style.display = "flex";
                 await loadUserChatHistory();
