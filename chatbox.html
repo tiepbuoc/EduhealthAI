@@ -1,4 +1,3 @@
-<!-- chatbox.html -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -588,7 +587,6 @@
             background: rgba(0,0,0,0.5);
             z-index: 98;
         }
-
         .overlay.active {
             display: block;
         }
@@ -602,12 +600,31 @@
             margin-left: 10px;
         }
 
-        .health-card {
-            background: linear-gradient(135deg, var(--bg-surface), var(--card-bg));
-            border-radius: 20px;
-            padding: 16px;
-            margin: 8px 0;
-            border: 1px solid var(--border-light);
+        /* Offline queue badge */
+        .offline-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--warning);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+        }
+
+        .offline-badge i {
+            font-size: 14px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         @media (max-width: 768px) {
@@ -709,11 +726,17 @@
         <img id="modalImage" src="">
     </div>
 
+    <!-- Offline queue badge -->
+    <div id="offlineBadge" class="offline-badge" style="display: none;" onclick="showOfflineQueue()">
+        <i class="fas fa-clock"></i>
+        <span id="offlineCount">0</span> tin nhắn chờ gửi
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
-<script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
             authDomain: "eduhealth-4bcab.firebaseapp.com",
@@ -726,16 +749,14 @@
         
         firebase.initializeApp(firebaseConfig);
 
-        // === TH�M �O?N CODE M?I ===
-        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+        // App Check
         const appCheck = firebase.appCheck();
         appCheck.activate(
-          new firebase.appCheck.ReCaptchaEnterpriseProvider(
-            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
-          ),
-          true
+            new firebase.appCheck.ReCaptchaEnterpriseProvider(
+                '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+            ),
+            true
         );
-        // ===============================
 
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -752,6 +773,344 @@
         let isSendingAI = false;
         let aiEnabledCache = true;
         
+        // ========== RATE LIMITING ==========
+        let rateLimitStore = {
+            lastSubmitTime: 0,
+            submitCount: 0,
+            resetTime: Date.now()
+        };
+        
+        // ========== OFFLINE QUEUE (LocalStorage) ==========
+        const OFFLINE_QUEUE_KEY = 'eduhealth_offline_messages';
+        
+        function getOfflineQueue() {
+            const stored = localStorage.getItem(OFFLINE_QUEUE_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+        
+        function saveOfflineQueue(queue) {
+            localStorage.setItem(OFFLINE_QUEUE_KEY, JSON.stringify(queue));
+            updateOfflineBadge();
+        }
+        
+        function addToOfflineQueue(messageData) {
+            const queue = getOfflineQueue();
+            queue.push({
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 8),
+                ...messageData,
+                createdAt: Date.now(),
+                retryCount: 0
+            });
+            saveOfflineQueue(queue);
+            showToast('📴 Mất kết nối mạng! Tin nhắn sẽ được gửi khi có mạng.', false);
+            return true;
+        }
+        
+        function removeFromOfflineQueue(queueId) {
+            let queue = getOfflineQueue();
+            queue = queue.filter(item => item.id !== queueId);
+            saveOfflineQueue(queue);
+        }
+        
+        function updateOfflineBadge() {
+            const queue = getOfflineQueue();
+            const count = queue.length;
+            const badge = document.getElementById('offlineBadge');
+            const countSpan = document.getElementById('offlineCount');
+            
+            if (count > 0) {
+                badge.style.display = 'flex';
+                countSpan.textContent = count;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        async function processOfflineQueue() {
+            const queue = getOfflineQueue();
+            if (queue.length === 0) return;
+            
+            console.log(`🔄 Đang xử lý ${queue.length} tin nhắn trong hàng đợi...`);
+            
+            for (const item of queue) {
+                try {
+                    const isAIEnabled = await checkAIEnabledForChat(item.chatId);
+                    
+                    // Gửi tin nhắn lên Firebase
+                    const messageData = {
+                        text: item.text,
+                        senderId: item.senderId,
+                        senderName: item.senderName,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    if (item.imageData) messageData.imageData = item.imageData;
+                    
+                    await db.collection('health_chats').doc(item.chatId).collection('messages').add(messageData);
+                    
+                    // Cập nhật lastMessage
+                    await db.collection('health_chats').doc(item.chatId).update({
+                        lastMessage: item.text.substring(0, 100),
+                        lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Nếu AI được bật, gọi AI respond
+                    if (isAIEnabled && !item.isAICalled) {
+                        await callAIAndRespondForMessage(item.chatId, item.text, item.messageId);
+                    }
+                    
+                    // Xóa khỏi queue sau khi thành công
+                    removeFromOfflineQueue(item.id);
+                    console.log(`✅ Đã gửi thành công tin nhắn ${item.id}`);
+                    
+                } catch (error) {
+                    console.error(`❌ Lỗi gửi tin nhắn ${item.id}:`, error);
+                    item.retryCount++;
+                    if (item.retryCount >= 3) {
+                        console.warn(`⚠️ Bỏ tin nhắn ${item.id} sau ${item.retryCount} lần thử`);
+                        removeFromOfflineQueue(item.id);
+                        showToast(`⚠️ Không thể gửi tin nhắn: ${item.text.substring(0, 50)}...`, true);
+                    } else {
+                        // Cập nhật lại queue với retryCount mới
+                        const currentQueue = getOfflineQueue();
+                        const updatedQueue = currentQueue.map(q => 
+                            q.id === item.id ? { ...q, retryCount: item.retryCount } : q
+                        );
+                        saveOfflineQueue(updatedQueue);
+                    }
+                }
+            }
+            
+            updateOfflineBadge();
+        }
+        
+        async function checkAIEnabledForChat(chatId) {
+            try {
+                const doc = await db.collection('health_chats').doc(chatId).get();
+                if (doc.exists) {
+                    return doc.data().aiEnabled !== false;
+                }
+            } catch (error) {
+                console.error('Error checking AI status:', error);
+            }
+            return true;
+        }
+        
+        async function callAIAndRespondForMessage(chatId, userMessageText, responseToMessageId) {
+            try {
+                const chatKnowledge = await loadChatKnowledge();
+                
+                const systemPrompt = `Bạn là trợ lý của EduHealth AI, chuyên hỗ trợ nhận biết sớm các vấn đề sức khỏe học đường. Hãy trả lời tin nhắn của người dùng một cách thân thiện và hữu ích.
+
+KIẾN THỨC CHUYÊN MÔN:
+${chatKnowledge}
+
+HƯỚNG DẪN:
+1. Nếu câu hỏi KHÔNG LIÊN QUAN đến sức khỏe, hãy trả lời: "Xin lỗi, EduHealth AI chuyên hỗ trợ các câu hỏi về sức khỏe. Vui lòng đặt câu hỏi liên quan để được hỗ trợ tốt nhất."
+2. Trả lời bằng tiếng Việt, dễ hiểu, thân thiện.
+3. Có thể sử dụng markdown nhẹ (**, *, #, -) để trình bày rõ ràng.
+
+Tin nhắn người dùng: ${userMessageText}
+
+Trả lời:`;
+                
+                const messages = [
+                    { role: "system", content: "Bạn là trợ lý y tế thân thiện của EduHealth AI." },
+                    { role: "user", content: systemPrompt }
+                ];
+                
+                const aiText = await callShopAIKey(messages, 0.6);
+                
+                await db.collection('health_chats').doc(chatId).collection('messages').add({
+                    text: aiText,
+                    senderId: 'ai',
+                    senderName: 'EduHealth AI',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    isAI: true,
+                    inResponseTo: responseToMessageId
+                });
+                
+            } catch (error) {
+                console.error('AI response error:', error);
+                await db.collection('health_chats').doc(chatId).collection('messages').add({
+                    text: 'Xin lỗi, EduHealth AI đang gặp sự cố. Vui lòng thử lại sau hoặc đợi cộng tác viên hỗ trợ nhé!',
+                    senderId: 'ai',
+                    senderName: 'EduHealth AI',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    isAI: true,
+                    isError: true
+                });
+            }
+        }
+        
+        // ========== VALIDATION GATE - CHỐNG SPAM ==========
+        
+        // 1. Phát hiện lặp từ >30% độ dài câu
+        function detectRepeatedWords(text) {
+            if (!text || text.length < 10) return { isSpam: false, ratio: 0 };
+            
+            const words = text.toLowerCase().split(/\s+/);
+            const wordCount = {};
+            let maxCount = 0;
+            let mostRepeatedWord = '';
+            
+            for (const word of words) {
+                if (word.length < 2) continue; // Bỏ qua từ quá ngắn
+                wordCount[word] = (wordCount[word] || 0) + 1;
+                if (wordCount[word] > maxCount) {
+                    maxCount = wordCount[word];
+                    mostRepeatedWord = word;
+                }
+            }
+            
+            const ratio = maxCount / words.length;
+            return {
+                isSpam: ratio > 0.3,
+                ratio: ratio,
+                mostRepeatedWord: mostRepeatedWord,
+                count: maxCount,
+                totalWords: words.length
+            };
+        }
+        
+        // 2. Phát hiện ký tự lặp lại (aaaaa, !!!!!)
+        function detectRepeatedChars(text) {
+            const patterns = [
+                /(.)\1{8,}/,           // Cùng 1 ký tự lặp >8 lần: "aaaaaaaaa"
+                /[!?]{5,}/,             // Nhiều dấu chấm than/hỏi: "!!!!!"
+                /[~`@#$%^&*]{4,}/       // Nhiều ký tự đặc biệt
+            ];
+            
+            for (const pattern of patterns) {
+                if (pattern.test(text)) {
+                    return { isSpam: true, pattern: pattern.toString() };
+                }
+            }
+            return { isSpam: false };
+        }
+        
+        // 3. Phát hiện tin nhắn quá ngắn hoặc vô nghĩa
+        function detectGibberish(text) {
+            const cleaned = text.trim();
+            
+            if (cleaned.length < 3) {
+                return { isSpam: true, reason: 'Tin nhắn quá ngắn' };
+            }
+            
+            if (cleaned.length > 2000) {
+                return { isSpam: true, reason: 'Tin nhắn quá dài (tối đa 2000 ký tự)' };
+            }
+            
+            // Chỉ toàn số hoặc ký tự đặc biệt
+            if (/^[\d\s\W]+$/.test(cleaned)) {
+                return { isSpam: true, reason: 'Tin nhắn chỉ gồm số hoặc ký tự đặc biệt' };
+            }
+            
+            return { isSpam: false };
+        }
+        
+        // 4. Phát hiện nội dung không liên quan đến sức khỏe (cơ bản)
+        function detectIrrelevantContent(text) {
+            const lowerText = text.toLowerCase();
+            
+            // Từ khóa spam phổ biến
+            const spamKeywords = [
+                'quảng cáo', 'bán', 'mua', 'giá rẻ', 'khuyến mãi', 'giftcode',
+                'lừa đảo', 'tiền', 'usdt', 'bitcoin', 'crypto', 'nạp thẻ',
+                'sex', 'phim sex', 'nóng', '18+', 'bạo lực'
+            ];
+            
+            for (const keyword of spamKeywords) {
+                if (lowerText.includes(keyword)) {
+                    return { isSpam: true, reason: `Tin nhắn chứa từ khóa không phù hợp: "${keyword}"` };
+                }
+            }
+            
+            return { isSpam: false };
+        }
+        
+        // 5. Rate limiting (5 tin nhắn/phút)
+        function checkRateLimit() {
+            const now = Date.now();
+            
+            // Reset mỗi 60 giây
+            if (now - rateLimitStore.resetTime > 60000) {
+                rateLimitStore.submitCount = 0;
+                rateLimitStore.resetTime = now;
+            }
+            
+            // Tối đa 5 tin nhắn/phút
+            if (rateLimitStore.submitCount >= 5) {
+                return { 
+                    allowed: false, 
+                    reason: 'Bạn đã gửi quá nhiều tin nhắn. Vui lòng đợi 1 phút.' 
+                };
+            }
+            
+            // Tối thiểu 2 giây giữa các tin nhắn
+            if (now - rateLimitStore.lastSubmitTime < 2000 && rateLimitStore.submitCount > 0) {
+                return { 
+                    allowed: false, 
+                    reason: 'Vui lòng đợi 2 giây trước khi gửi tin nhắn tiếp theo.' 
+                };
+            }
+            
+            rateLimitStore.submitCount++;
+            rateLimitStore.lastSubmitTime = now;
+            
+            return { allowed: true, reason: null };
+        }
+        
+        // Validation Gate tổng hợp
+        function validateMessage(text) {
+            const errors = [];
+            
+            // 1. Kiểm tra rỗng
+            if (!text || text.trim().length === 0) {
+                errors.push('Vui lòng nhập nội dung tin nhắn');
+                return { valid: false, errors, sanitizedText: text };
+            }
+            
+            const cleanedText = text.trim();
+            
+            // 2. Phát hiện lặp từ
+            const repeatedWords = detectRepeatedWords(cleanedText);
+            if (repeatedWords.isSpam) {
+                errors.push(`Tin nhắn bị phát hiện spam: từ "${repeatedWords.mostRepeatedWord}" lặp lại ${repeatedWords.count}/${repeatedWords.totalWords} lần (${Math.round(repeatedWords.ratio * 100)}%)`);
+            }
+            
+            // 3. Phát hiện ký tự lặp
+            const repeatedChars = detectRepeatedChars(cleanedText);
+            if (repeatedChars.isSpam) {
+                errors.push('Tin nhắn chứa quá nhiều ký tự lặp lại');
+            }
+            
+            // 4. Phát hiện gibberish
+            const gibberish = detectGibberish(cleanedText);
+            if (gibberish.isSpam) {
+                errors.push(gibberish.reason);
+            }
+            
+            // 5. Phát hiện nội dung không phù hợp
+            const irrelevant = detectIrrelevantContent(cleanedText);
+            if (irrelevant.isSpam) {
+                errors.push(irrelevant.reason);
+            }
+            
+            // 6. Rate limiting
+            const rateLimit = checkRateLimit();
+            if (!rateLimit.allowed) {
+                errors.push(rateLimit.reason);
+            }
+            
+            return {
+                valid: errors.length === 0,
+                errors: errors,
+                sanitizedText: cleanedText
+            };
+        }
+        
+        // ========== CÁC HÀM HIỆN CÓ (giữ nguyên) ==========
+        
         function getCurrentUser() {
             const user = auth.currentUser;
             if (!user) return null;
@@ -766,7 +1125,7 @@
             let knowledgeText = '';
             snapshot.forEach(doc => {
                 const data = doc.data();
-                knowledgeText += `\n--- ${data.question} ---\n${data.answer}\n`;
+                knowledgeText += `\n--- ${data.question || 'Kiến thức'} ---\n${data.answer}\n`;
             });
             return knowledgeText || 'Không có kiến thức cụ thể. Hãy trả lời dựa trên hiểu biết chung về sức khỏe.';
         }
@@ -796,96 +1155,53 @@
             });
         }
         
-        // Hàm xử lý markdown đầy đủ
         function formatMarkdownToHtml(text) {
             if (!text) return "";
-            
             let html = text;
-            
-            // Headers
             html = html.replace(/^### (.*?)$/gm, '<h4>$1</h4>');
             html = html.replace(/^## (.*?)$/gm, '<h3>$1</h3>');
             html = html.replace(/^# (.*?)$/gm, '<h2>$1</h2>');
-            
-            // Bold và Italic
             html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
             html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
             html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-            
-            // Horizontal rule
             html = html.replace(/^---$/gm, '<hr>');
             html = html.replace(/^\*\*\*$/gm, '<hr>');
-            
-            // Blockquote
             html = html.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
-            
-            // Code inline
             html = html.replace(/`(.*?)`/g, '<code>$1</code>');
             
-            // Danh sách không thứ tự
             let inUl = false;
             const lines = html.split('\n');
             const processedLines = [];
-            
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
                 const bulletMatch = line.match(/^[\*\-]\s+(.*)$/);
                 const numberMatch = line.match(/^\d+\.\s+(.*)$/);
-                
                 if (bulletMatch) {
-                    if (!inUl) {
-                        processedLines.push('<ul>');
-                        inUl = true;
-                    }
+                    if (!inUl) { processedLines.push('<ul>'); inUl = true; }
                     processedLines.push(`<li>${bulletMatch[1]}</li>`);
                 } else if (numberMatch) {
-                    if (inUl) {
-                        processedLines.push('</ul>');
-                        inUl = false;
-                    }
-                    if (!processedLines.includes('<ol>') || processedLines[processedLines.length-1] !== '<ol>') {
-                        processedLines.push('<ol>');
-                    }
+                    if (inUl) { processedLines.push('</ul>'); inUl = false; }
                     processedLines.push(`<li>${numberMatch[1]}</li>`);
                 } else {
-                    if (inUl) {
-                        processedLines.push('</ul>');
-                        inUl = false;
-                    }
-                    if (processedLines[processedLines.length-1] === '<ol>') {
-                        processedLines.push('</ol>');
-                    }
+                    if (inUl) { processedLines.push('</ul>'); inUl = false; }
                     processedLines.push(line);
                 }
             }
             if (inUl) processedLines.push('</ul>');
-            if (processedLines[processedLines.length-1] === '<ol>') processedLines.push('</ol>');
-            
             html = processedLines.join('\n');
-            
-            // Xuống dòng
             html = html.replace(/\n\n/g, '</p><p>');
             html = html.replace(/\n/g, '<br>');
             html = '<div class="message-text-content">' + html + '</div>';
-            
-            // Dọn dẹp
             html = html.replace(/<p><\/p>/g, '');
             html = html.replace(/<p><br><\/p>/g, '');
-            html = html.replace(/<\/h2><br>/g, '</h2>');
-            html = html.replace(/<\/h3><br>/g, '</h3>');
-            html = html.replace(/<\/h4><br>/g, '</h4>');
-            
             return html;
         }
         
         function displayMessage(message) {
             const container = document.getElementById('messagesArea');
-            
-            if (document.querySelector(`[data-message-id="${message.id}"]`)) {
-                return;
-            }
+            if (document.querySelector(`[data-message-id="${message.id}"]`)) return;
             
             const messageDiv = document.createElement('div');
             messageDiv.setAttribute('data-message-id', message.id);
@@ -1028,7 +1344,6 @@
         
         async function callAIAndRespond(userMessageId, userMessageText) {
             const isAIEnabled = await checkAIEnabled();
-            
             if (!isAIEnabled) {
                 console.log('AI đã được tạm dừng bởi quản trị viên');
                 return;
@@ -1073,7 +1388,6 @@
 LỊCH SỬ TRÒ CHUYỆN (gần nhất):
 ${chatHistory.join('\n')}
 
-THÔNG TIN NGƯỜI DÙNG:
 ${userInfoText}
 
 KIẾN THỨC CHUYÊN MÔN:
@@ -1241,86 +1555,126 @@ Trả lời:`;
                 });
         }
         
+        // ========== HÀM GỬI TIN NHẮN CHÍNH (CÓ VALIDATION + OFFLINE SUPPORT) ==========
+        
         async function sendMessageAndCallAI(text, imageData = null) {
             if ((!text && !imageData) || !currentChatId) return;
             
+            // 🔒 BƯỚC 1: VALIDATION GATE - Kiểm tra spam
+            const validation = validateMessage(text);
+            if (!validation.valid) {
+                showToast(validation.errors.join('\n'), true);
+                return;
+            }
+            
+            const sanitizedText = validation.sanitizedText;
+            
+            // 🔒 BƯỚC 2: KIỂM TRA AI STATUS
             const isAIEnabled = await checkAIEnabled();
             
-            if (!isAIEnabled) {
-                try {
-                    const messageData = {
-                        senderId: currentUserId,
-                        senderName: getCurrentUser()?.displayName || 'Bạn',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    };
-                    if (text) messageData.text = text;
-                    if (imageData) messageData.imageData = imageData;
-                    
-                    await db.collection('health_chats').doc(currentChatId).collection('messages').add(messageData);
-                    await db.collection('health_chats').doc(currentChatId).update({
-                        lastMessage: text || 'Đã gửi hình ảnh',
-                        lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } catch (error) {
-                    console.error('Send message error:', error);
-                    alert('Có lỗi xảy ra, vui lòng thử lại');
-                }
-                return;
-            }
-            
-            if (isSendingAI) {
-                alert('EduHealth AI đang xử lý tin nhắn trước, vui lòng đợi...');
-                return;
-            }
+            // 🔒 BƯỚC 3: KIỂM TRA MẠNG
+            const isOnline = navigator.onLine;
             
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
             
             try {
                 const messageData = {
+                    text: sanitizedText,
+                    senderId: currentUserId,
+                    senderName: getCurrentUser()?.displayName || 'Bạn',
+                };
+                if (imageData) messageData.imageData = imageData;
+                
+                // Nếu OFFLINE -> Lưu vào LocalStorage queue
+                if (!isOnline) {
+                    addToOfflineQueue({
+                        chatId: currentChatId,
+                        text: sanitizedText,
+                        imageData: imageData,
+                        senderId: currentUserId,
+                        senderName: getCurrentUser()?.displayName || 'Bạn',
+                        timestamp: Date.now(),
+                        isAICalled: false,
+                        messageId: 'offline_' + Date.now()
+                    });
+                    
+                    // Hiển thị tin nhắn tạm thời trong UI
+                    const tempMessage = {
+                        id: 'temp_' + Date.now(),
+                        text: sanitizedText,
+                        imageData: imageData,
+                        senderId: currentUserId,
+                        senderName: getCurrentUser()?.displayName || 'Bạn',
+                        timestamp: { toDate: () => new Date() }
+                    };
+                    displayMessage(tempMessage);
+                    
+                    showToast('📴 AI và quản trị viên sẽ sớm nhận được tin nhắn của bạn khi kết nối mạng được khôi phục', false);
+                    
+                    sendBtn.disabled = false;
+                    return;
+                }
+                
+                // ONLINE: Gửi tin nhắn lên Firebase
+                const finalMessageData = {
+                    text: sanitizedText,
                     senderId: currentUserId,
                     senderName: getCurrentUser()?.displayName || 'Bạn',
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 };
+                if (imageData) finalMessageData.imageData = imageData;
                 
-                if (text) messageData.text = text;
-                if (imageData) messageData.imageData = imageData;
-                
-                const docRef = await db.collection('health_chats').doc(currentChatId).collection('messages').add(messageData);
+                const docRef = await db.collection('health_chats').doc(currentChatId).collection('messages').add(finalMessageData);
                 const userMessageId = docRef.id;
-                const userMessageText = text || '[Đã gửi hình ảnh]';
-// ========== GỬI THÔNG BÁO ĐẾN ZALO (NHÓM CỐ ĐỊNH) ==========
-try {
-    const webhookData = {
-        type: 'chat',
-        data: {
-            chatId: currentChatId,
-            userName: getCurrentUser()?.displayName || 'Học sinh',
-            messageText: text || '[Đã gửi hình ảnh]',
-            timestamp: new Date().toLocaleString('vi-VN')
-        }
-    };
-    
-    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(webhookData)
-    });
-    console.log('✅ Đã gửi thông báo Zalo');
-} catch (webhookError) {
-    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
-}
-// ========== KẾT THÚC ==========
+                
+                // Cập nhật lastMessage
                 await db.collection('health_chats').doc(currentChatId).update({
-                    lastMessage: text || 'Đã gửi hình ảnh',
+                    lastMessage: sanitizedText.substring(0, 100),
                     lastMessageTime: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                await callAIAndRespond(userMessageId, userMessageText);
+                // Gửi thông báo Zalo
+                try {
+                    const webhookData = {
+                        type: 'chat',
+                        data: {
+                            chatId: currentChatId,
+                            userName: getCurrentUser()?.displayName || 'Học sinh',
+                            messageText: sanitizedText.substring(0, 200),
+                            timestamp: new Date().toLocaleString('vi-VN')
+                        }
+                    };
+                    await fetch('https://asia-557664.phoaify.com/webhook/firebase-notify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(webhookData)
+                    });
+                } catch (webhookError) {
+                    console.log('⚠️ Không gửi được thông báo Zalo:', webhookError);
+                }
+                
+                // Gọi AI nếu được bật
+                if (isAIEnabled) {
+                    await callAIAndRespond(userMessageId, sanitizedText);
+                }
                 
             } catch (error) {
                 console.error('Send message error:', error);
-                alert('Có lỗi xảy ra, vui lòng thử lại');
+                
+                // Nếu lỗi (có thể do mạng), lưu vào queue
+                addToOfflineQueue({
+                    chatId: currentChatId,
+                    text: sanitizedText,
+                    imageData: imageData,
+                    senderId: currentUserId,
+                    senderName: getCurrentUser()?.displayName || 'Bạn',
+                    timestamp: Date.now(),
+                    isAICalled: false,
+                    messageId: 'offline_' + Date.now()
+                });
+                
+                showToast('⚠️ Lỗi gửi tin nhắn. Tin nhắn đã được lưu và sẽ gửi lại sau.', true);
             } finally {
                 sendBtn.disabled = false;
             }
@@ -1343,6 +1697,33 @@ try {
             });
             
             return chatId;
+        }
+        
+        function showToast(message, isError = false) {
+            const existingToast = document.querySelector('.custom-toast');
+            if (existingToast) existingToast.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${isError ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                z-index: 10000;
+                font-size: 14px;
+                max-width: 90%;
+                text-align: center;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+            `;
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
         }
         
         document.getElementById('sendBtn').onclick = () => {
@@ -1376,6 +1757,19 @@ try {
             window.location.href = 'index.html';
         };
         
+        window.showOfflineQueue = function() {
+            const queue = getOfflineQueue();
+            if (queue.length === 0) {
+                showToast('Không có tin nhắn nào trong hàng đợi', false);
+                return;
+            }
+            let message = `📋 ${queue.length} tin nhắn đang chờ gửi:\n`;
+            queue.forEach((item, idx) => {
+                message += `${idx + 1}. ${item.text.substring(0, 40)}...\n`;
+            });
+            alert(message);
+        };
+        
         const menuToggle = document.getElementById('menuToggleBtn');
         const sidebar = document.getElementById('chatSidebar');
         const overlay = document.getElementById('overlay');
@@ -1395,10 +1789,21 @@ try {
             overlay.addEventListener('click', closeSidebar);
         }
         
+        // Lắng nghe sự kiện online/offline
+        window.addEventListener('online', () => {
+            console.log('🌐 Đã kết nối mạng! Đang xử lý hàng đợi...');
+            showToast('🌐 Đã kết nối mạng. Đang gửi tin nhắn đang chờ...', false);
+            processOfflineQueue();
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('📴 Mất kết nối mạng!');
+            showToast('📴 Mất kết nối mạng. Tin nhắn sẽ được lưu và gửi sau.', true);
+        });
+        
         const urlParams = new URLSearchParams(window.location.search);
         const initialChatId = urlParams.get('chatId');
         
-        // Check authentication
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = 'login.html';
@@ -1407,7 +1812,6 @@ try {
             
             currentUserId = user.uid;
             
-            // Load user info from localStorage or Firestore
             let userName = localStorage.getItem('healthUserName');
             if (!userName) {
                 const userDoc = await db.collection('users').doc(user.uid).get();
@@ -1440,6 +1844,11 @@ try {
                     await loadUserChats();
                     await selectChat(newChatId);
                 }
+            }
+            
+            // Xử lý hàng đợi khi đăng nhập xong
+            if (navigator.onLine) {
+                await processOfflineQueue();
             }
         });
         
@@ -1481,4 +1890,3 @@ try {
     </script>
 </body>
 </html>
-
