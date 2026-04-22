@@ -2103,7 +2103,12 @@ Hãy trả về JSON chính xác, không thêm text ngoài.`;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0);
                     
-                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']; if (!Array.isArray(areas)) areas = [];
+                    
+                    // Ensure areas is an array
+                    if (!Array.isArray(areas)) {
+                        areas = [];
+                    }
                     
                     areas.forEach((area, idx) => {
                         const color = colors[idx % colors.length];
@@ -2150,12 +2155,13 @@ Hãy trả về JSON chính xác, không thêm text ngoài.`;
                 const algorithmMarkedBase64 = await drawAlgorithmBoxes(imageBase64, algorithmRegions);
                 const refinedResult = await callAIRefinement(imageBase64, algorithmMarkedBase64, algorithmRegions);
                 
-                const finalAreas = refinedResult.refined_areas || [];
-                const highlightedImage = await drawBoundingBoxes(imageBase64, convertPercentToPixels(imageBase64, finalAreas));
+                const finalAreas = Array.isArray(refinedResult.refined_areas) ? refinedResult.refined_areas : [];
+                const pixelAreas = await convertPercentToPixels(imageBase64, finalAreas);
+                const highlightedImage = await drawBoundingBoxes(imageBase64, pixelAreas);
                 
                 return { 
                     imageBase64: highlightedImage, 
-                    areas: convertPercentToPixels(imageBase64, finalAreas), 
+                    areas: pixelAreas, 
                     summary: refinedResult.summary || "Đã phân tích vùng bệnh da" 
                 };
             } catch (error) {
@@ -2183,7 +2189,7 @@ Nếu không có, trả về mảng rỗng.`;
                     return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường" };
                 }
                 
-                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
+                const diseaseAreas = Array.isArray(detection.disease_areas) ? detection.disease_areas : []; const areasInPixels = await convertPercentToPixels(imageBase64, diseaseAreas);
                 const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
                 
                 return { imageBase64: highlightedImage, areas: areasInPixels, summary: detection.summary };
