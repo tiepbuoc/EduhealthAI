@@ -5,219 +5,273 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Skin Disease Detection - Demo Test</title>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: #0f172a;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
             padding: 20px;
-            color: #e2e8f0;
+            color: #eee;
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
         }
-        .row {
-            display: flex;
-            gap: 24px;
-            flex-wrap: wrap;
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
         }
-        .col {
-            flex: 1;
-            min-width: 300px;
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
-        .card {
-            background: #1e293b;
-            border-radius: 24px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border: 1px solid #334155;
+        .panel {
+            background: #16213e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #0f3460;
         }
-        .card h3 {
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: #f472b6;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .panel h3 {
+            margin-bottom: 15px;
+            color: #e94560;
+            font-size: 18px;
         }
         .upload-area {
-            border: 2px dashed #475569;
-            border-radius: 20px;
-            padding: 40px;
+            border: 2px dashed #0f3460;
+            border-radius: 12px;
+            padding: 30px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            background: #0f172a;
+            transition: all 0.3s;
+            margin-bottom: 20px;
         }
         .upload-area:hover {
-            border-color: #3b82f6;
-            background: #1e293b;
+            border-color: #e94560;
+            background: rgba(233, 69, 96, 0.1);
+        }
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            margin-top: 10px;
         }
         button {
-            background: linear-gradient(135deg, #3b82f6, #ec489a);
+            background: #e94560;
             border: none;
             padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 600;
+            border-radius: 8px;
             color: white;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 16px;
+            margin: 10px 5px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #ff6b6b;
+            transform: translateY(-1px);
         }
         button:disabled {
-            opacity: 0.5;
+            background: #555;
             cursor: not-allowed;
         }
-        img {
-            max-width: 100%;
-            border-radius: 16px;
-            margin-top: 16px;
-        }
-        .analysis-result {
-            background: #0f172a;
-            border-radius: 20px;
+        .result-area {
+            background: #0f3460;
+            border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
-            border-left: 4px solid;
+            max-height: 500px;
+            overflow-y: auto;
         }
-        .result-clear { border-left-color: #10b981; }
-        .result-warning { border-left-color: #f59e0b; }
-        .result-danger { border-left-color: #ef4444; }
+        .detection-box {
+            position: relative;
+            display: inline-block;
+        }
+        .canvas-wrapper {
+            position: relative;
+            display: inline-block;
+        }
         .comparison {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin: 20px 0;
+            justify-content: center;
         }
         .comparison-item {
             flex: 1;
+            min-width: 250px;
             text-align: center;
         }
         .comparison-item img {
-            max-height: 300px;
-            object-fit: contain;
+            max-width: 100%;
+            border-radius: 12px;
+            border: 2px solid #0f3460;
+        }
+        .log-area {
+            background: #0a0f1f;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #1a1a3e;
+            color: #8bc34a;
+        }
+        .log-error {
+            color: #ff6b6b;
+        }
+        .log-info {
+            color: #64b5f6;
         }
         .badge {
+            display: inline-block;
+            background: #e94560;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px;
+        }
+        .area-list {
+            margin-top: 15px;
+            padding: 10px;
+            background: #0a0f1f;
+            border-radius: 8px;
+        }
+        .area-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: #16213e;
+            border-radius: 6px;
+            border-left: 4px solid #e94560;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            background: #0a0f1f;
+            border: 1px solid #0f3460;
+            color: white;
+            font-family: monospace;
+            margin-top: 10px;
+            resize: vertical;
+        }
+        .status {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
+            margin-left: 10px;
         }
-        .badge-success { background: #10b98120; color: #10b981; }
-        .badge-warning { background: #f59e0b20; color: #f59e0b; }
-        .badge-danger { background: #ef444420; color: #ef4444; }
-        .log-area {
-            background: #0f172a;
-            border-radius: 16px;
-            padding: 16px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            border-top-color: transparent;
-            animation: spin 0.6s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        hr { border-color: #334155; margin: 16px 0; }
-        pre { white-space: pre-wrap; font-size: 12px; margin: 0; }
+        .status.success { background: #2ecc71; }
+        .status.warning { background: #f39c12; }
+        .status.error { background: #e74c3c; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="card">
-        <h3>🔬 AI Skin Disease Detection - Multi-Algorithm + Vision AI</h3>
-        <p>Tải ảnh vùng da bất thường (mụn, phát ban, viêm da, vết thương). Hệ thống sẽ:</p>
-        <ul>
-            <li>✅ Kiểm tra chất lượng ảnh (Laplacian + Vision AI)</li>
-            <li>✅ Phát hiện vùng bệnh bằng Vision AI (khoanh vùng chính xác)</li>
-            <li>✅ Phân tích triệu chứng và đưa ra khuyến nghị y tế</li>
-            <li>✅ Hiển thị ảnh gốc và ảnh đã khoanh vùng cạnh nhau</li>
-        </ul>
-    </div>
+    <h1>🔬 AI Skin Disease Detection - Multi-Algorithm + Vision AI</h1>
+    <p style="margin-bottom: 20px; color: #aaa;">Phân tích ảnh da liễu | Khoanh vùng bệnh | Giải thích bằng AI</p>
 
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <h3>📸 Tải ảnh lên</h3>
-                <div id="dropZone" class="upload-area">
-                    <div>📤 Kéo thả ảnh vào đây hoặc click để chọn</div>
-                    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display:none">
-                </div>
-                <button id="analyzeBtn" disabled>🔍 Phân tích ảnh</button>
-                <div id="previewContainer"></div>
+    <div class="demo-grid">
+        <!-- Left Panel: Input -->
+        <div class="panel">
+            <h3>📸 Nhập ảnh da liễu</h3>
+            <div class="upload-area" id="dropZone">
+                <div>📁 Click hoặc kéo thả ảnh vào đây</div>
+                <div style="font-size: 12px; margin-top: 8px;">Hỗ trợ: JPG, PNG, JPEG</div>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+            </div>
+            <div id="previewContainer" style="text-align: center;"></div>
+            
+            <div style="margin-top: 15px;">
+                <label>🎯 Hoặc nhập URL ảnh:</label>
+                <input type="text" id="imageUrl" placeholder="https://example.com/skin-image.jpg" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; background: #0a0f1f; border: 1px solid #0f3460; color: white;">
+                <button id="loadUrlBtn" style="margin-top: 8px; width: 100%;">📥 Tải ảnh từ URL</button>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <label>📝 Mô tả triệu chứng (tùy chọn, giúp AI phân tích chính xác hơn):</label>
+                <textarea id="symptomDesc" rows="3" placeholder="VD: Da nổi mụn đỏ, ngứa, có mủ ở vùng má và cằm..."></textarea>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button id="analyzeBtn" style="flex: 1;">🚀 BẮT ĐẦU PHÂN TÍCH (AI + KHOANH VÙNG)</button>
+                <button id="clearBtn" style="flex: 0.3; background: #333;">🗑️ Xóa</button>
             </div>
         </div>
-        <div class="col">
-            <div class="card">
-                <h3>📊 Kết quả phân tích</h3>
-                <div id="resultContainer">
-                    <div style="color: #64748b; text-align: center; padding: 40px;">Chưa có ảnh để phân tích</div>
-                </div>
-            </div>
+
+        <!-- Right Panel: Results -->
+        <div class="panel">
+            <h3>📊 KẾT QUẢ PHÂN TÍCH</h3>
+            <div id="comparisonResult" class="comparison"></div>
+            <div id="analysisText" class="result-area" style="display: none;"></div>
+            <div id="areasList" class="area-list" style="display: none;"></div>
         </div>
     </div>
 
-    <div class="card">
-        <h3>📋 Log chi tiết xử lý</h3>
-        <div id="logArea" class="log-area"></div>
+    <!-- Log Panel -->
+    <div class="panel" style="margin-top: 20px;">
+        <h3>📋 LOG XỬ LÝ</h3>
+        <div class="log-area" id="logArea">
+            <div class="log-entry log-info">🟢 Hệ thống sẵn sàng. Chờ tải ảnh...</div>
+        </div>
     </div>
 </div>
 
 <script>
-    // ==================== CẤU HÌNH API ====================
+    // ========== CONFIGURATION ==========
     const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
     const BASE_URL = "https://api.shopaikey.com/v1";
     const API_URL = BASE_URL + "/chat/completions";
     const MODEL_NAME = "gpt-5.4-nano";
 
-    // ==================== BIẾN TOÀN CỤC ====================
-    let currentImageBase64 = null;
-    let originalImageBase64 = null;
-    let highlightedImageBase64 = null;
-    let diseaseAreas = [];
-
-    // DOM elements
+    // ========== DOM Elements ==========
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
-    const analyzeBtn = document.getElementById('analyzeBtn');
     const previewContainer = document.getElementById('previewContainer');
-    const resultContainer = document.getElementById('resultContainer');
+    const imageUrlInput = document.getElementById('imageUrl');
+    const loadUrlBtn = document.getElementById('loadUrlBtn');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const comparisonResult = document.getElementById('comparisonResult');
+    const analysisTextDiv = document.getElementById('analysisText');
+    const areasListDiv = document.getElementById('areasList');
     const logArea = document.getElementById('logArea');
+    const symptomDesc = document.getElementById('symptomDesc');
 
-    // ==================== LOGGING ====================
+    let currentImageBase64 = null;
+    let originalImageSrc = null;
+
+    // ========== Logging ==========
     function addLog(message, type = 'info') {
-        const logEntry = document.createElement('div');
+        const logDiv = document.createElement('div');
+        logDiv.className = `log-entry log-${type}`;
         const time = new Date().toLocaleTimeString();
-        const colors = { info: '#3b82f6', success: '#10b981', warning: '#f59e0b', error: '#ef4444' };
-        logEntry.style.color = colors[type] || colors.info;
-        logEntry.style.borderBottom = '1px solid #334155';
-        logEntry.style.padding = '6px 0';
-        logEntry.innerHTML = `<span style="color:#64748b">[${time}]</span> ${message}`;
-        logArea.appendChild(logEntry);
-        logArea.scrollTop = logArea.scrollHeight;
-        console.log(`[${type}]`, message);
+        logDiv.innerHTML = `[${time}] ${message}`;
+        logArea.appendChild(logDiv);
+        logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // ==================== GỌI API AI ====================
-    async function callAI(messages, temperature = 0.3) {
+    // ========== Gọi API AI (Vision + Text) ==========
+    async function callAI(messages, temperature = 0.5) {
         const payload = {
             model: MODEL_NAME,
             messages: messages,
             temperature: temperature,
             max_tokens: 2000,
-            top_p: 0.9
+            top_p: 0.9,
+            stream: false
         };
-        
-        addLog(`📡 Gọi API AI (model: ${MODEL_NAME})...`, 'info');
+
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -226,144 +280,138 @@
             },
             body: JSON.stringify(payload)
         });
-        
+
         if (!response.ok) {
-            let errMsg = `HTTP ${response.status}`;
-            try { const err = await response.json(); errMsg = err.error?.message || errMsg; } catch(e) {}
-            throw new Error(errMsg);
+            let errDetail = `HTTP ${response.status}`;
+            try { const errData = await response.json(); errDetail = errData.error?.message || errDetail; } catch(e) {}
+            throw new Error(errDetail);
         }
-        
+
         const data = await response.json();
-        addLog(`✅ API phản hồi thành công`, 'success');
         return data.choices[0].message.content;
     }
 
-    // ==================== NÉN ẢNH (720p) ====================
-    function compressImageTo720p(dataUrl, maxWidth = 720, quality = 0.8) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height = (height * maxWidth) / width;
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', quality));
+    // ========== NÉN ẢNH (giữ nguyên chất lượng cho phân tích) ==========
+    async function compressImageToBase64(file, maxWidth = 1024) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
             };
-            img.src = dataUrl;
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
         });
     }
 
-    // ==================== BƯỚC 1: KIỂM TRA CHẤT LƯỢNG ẢNH (Laplacian + AI) ====================
-    async function quickBlurCheck(imageBase64) {
-        return new Promise((resolve) => {
+    function urlToBase64(url) {
+        return new Promise((resolve, reject) => {
             const img = new Image();
+            img.crossOrigin = "Anonymous";
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = img.width;
                 canvas.height = img.height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
-                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                
-                // Tính Laplacian variance đơn giản
-                let sum = 0;
-                const data = imageData.data;
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i+1];
-                    const b = data[i+2];
-                    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-                    sum += gray;
-                }
-                const mean = sum / (data.length / 4);
-                let variance = 0;
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i+1];
-                    const b = data[i+2];
-                    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-                    variance += Math.pow(gray - mean, 2);
-                }
-                variance = variance / (data.length / 4);
-                
-                const isBlurry = variance < 300;
-                addLog(`📊 Laplacian variance: ${Math.round(variance)} (ngưỡng mờ < 300)`, isBlurry ? 'warning' : 'success');
-                resolve({ isBlurry, variance });
+                resolve(canvas.toDataURL('image/jpeg', 0.85));
             };
-            img.src = imageBase64;
+            img.onerror = reject;
+            img.src = url;
         });
     }
 
-    async function aiQualityCheck(imageBase64) {
-        const prompt = `Bạn là chuyên gia đánh giá chất lượng ảnh y tế. Phân tích ảnh da liễu này và trả về JSON:
-{
-    "is_clear": boolean (ảnh có đủ rõ để phân tích không?),
-    "is_relevant": boolean (có liên quan đến da liễu không?),
-    "has_personal_info": boolean (có khuôn mặt hoặc thông tin cá nhân không?),
-    "quality_score": 0-10,
-    "blur_reason": "nguyên nhân mờ (nếu có)",
-    "suggestion": "hướng dẫn cải thiện"
-}`;
-
-        const messages = [
-            { role: "system", content: "Bạn là AI đánh giá chất lượng ảnh y tế. Chỉ trả về JSON hợp lệ." },
-            { role: "user", content: [
-                { type: "text", text: prompt },
-                { type: "image_url", image_url: { url: imageBase64 } }
-            ]}
-        ];
-        
-        const raw = await callAI(messages, 0.2);
-        let clean = raw.trim();
-        clean = clean.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-        return JSON.parse(clean);
+    // ========== HIỂN THỊ PREVIEW ==========
+    function displayPreview(base64) {
+        previewContainer.innerHTML = `<img src="${base64}" class="image-preview" style="max-width:100%; max-height:300px; border-radius:12px;">`;
+        currentImageBase64 = base64;
+        originalImageSrc = base64;
+        addLog("✅ Ảnh đã được tải và nén thành công", "success");
     }
 
-    // ==================== BƯỚC 2: PHÁT HIỆN VÙNG BỆNH VÀ KHOANH VÙNG ====================
-    async function detectDiseaseAreas(imageBase64) {
-        const prompt = `Phân tích ảnh da liễu này. Xác định các vùng bất thường trên da (mụn, phát ban, mẩn đỏ, tổn thương, viêm da, nốt ruồi bất thường...).
+    // ========== PHÂN TÍCH ẢNH + KHOANH VÙNG (MULTI-ALGORITHM + AI VISION) ==========
+    async function analyzeSkinImage(imageBase64, userSymptom = "") {
+        addLog("🔬 Bắt đầu phân tích ảnh da liễu với AI Vision...", "info");
+        
+        // PROMPT TỐI ƯU CHO VIỆC KHOANH VÙNG CHÍNH XÁC
+        const prompt = `Bạn là chuyên gia da liễu AI. Hãy phân tích ảnh da liễu này THẬT CHI TIẾT và CHÍNH XÁC.
+
+THÔNG TIN THÊM TỪ NGƯỜI DÙNG: "${userSymptom || "Không có mô tả thêm"}"
+
+YÊU CẦU PHÂN TÍCH:
+1. Xác định TẤT CẢ các vùng da bất thường (mụn, phát ban, mẩn đỏ, vết thương, tổn thương, nốt sần, mảng bám, vảy nến, v.v.)
+2. Với MỖI vùng, cung cấp:
+   - Tọa độ trung tâm (x_percent, y_percent từ 0-1)
+   - Kích thước vùng (width_percent, height_percent từ 0-1)
+   - Nhãn mô tả vùng (bằng tiếng Việt, rõ ràng)
+   - Mức độ nghiêm trọng (1: nhẹ, 2: trung bình, 3: nặng)
+   - Độ tin cậy (confidence 0-1)
+
+3. Tổng hợp kết quả:
+   - preliminary: Nhận định tổng quan (1-2 câu)
+   - explanation: Giải thích chi tiết về các vùng bất thường
+   - diagnosis: Chẩn đoán khả năng cao nhất
+   - warning_level: 1 (theo dõi), 2 (đi khám sớm), 3 (đi khám ngay)
+   - recommendation: Khuyến nghị cụ thể
+
 Trả về JSON CHÍNH XÁC theo format:
 {
     "disease_areas": [
-        {"label": "tên bệnh/vùng (tiếng Việt)", "x_percent": 0.35, "y_percent": 0.42, "width_percent": 0.25, "height_percent": 0.20, "confidence": 0.92},
-        ...
+        {
+            "label": "tên vùng bệnh",
+            "x_percent": 0.35,
+            "y_percent": 0.42,
+            "width_percent": 0.25,
+            "height_percent": 0.20,
+            "severity": 2,
+            "confidence": 0.92
+        }
     ],
-    "summary": "tóm tắt ngắn gọn về tình trạng da (1-2 câu)",
-    "severity": "nhẹ/vừa/nặng"
+    "preliminary": "Nhận định tổng quan...",
+    "explanation": "Giải thích chi tiết...",
+    "diagnosis": "Chẩn đoán...",
+    "warning_level": 2,
+    "recommendation": "Khuyến nghị..."
 }
-Nếu không phát hiện vùng bất thường, trả về mảng rỗng.`;
+
+QUAN TRỌNG: Chỉ trả về JSON, không có text thừa. Nếu không phát hiện vùng bất thường, trả về disease_areas = [] và giải thích phù hợp.`;
 
         const messages = [
-            { role: "system", content: "Bạn là chuyên gia da liễu AI. Chỉ trả về JSON hợp lệ. Tọa độ từ 0-1." },
+            { role: "system", content: "Bạn là AI da liễu chuyên nghiệp. Phân tích ảnh chính xác đến từng chi tiết. Chỉ trả về JSON." },
             { role: "user", content: [
                 { type: "text", text: prompt },
                 { type: "image_url", image_url: { url: imageBase64 } }
             ]}
         ];
+
+        const rawResponse = await callAI(messages, 0.4);
+        let clean = rawResponse.trim();
+        if (clean.startsWith("```json")) clean = clean.slice(7);
+        if (clean.startsWith("```")) clean = clean.slice(3);
+        if (clean.endsWith("```")) clean = clean.slice(0, -3);
         
-        const raw = await callAI(messages, 0.4);
-        let clean = raw.trim();
-        clean = clean.replace(/```json\n?/g, '').replace(/```\n?/g, '');
         const result = JSON.parse(clean);
-        
-        addLog(`🎯 Phát hiện ${result.disease_areas?.length || 0} vùng bệnh`, 'success');
-        if (result.disease_areas?.length) {
-            result.disease_areas.forEach((area, i) => {
-                addLog(`   - Vùng ${i+1}: ${area.label} (độ tin cậy ${Math.round(area.confidence*100)}%)`, 'info');
-            });
-        }
+        addLog(`✅ AI đã phát hiện ${result.disease_areas?.length || 0} vùng bất thường`, "success");
         return result;
     }
 
-    // Vẽ bounding box lên ảnh
-    function drawBoundingBoxes(imageBase64, areas) {
+    // ========== VẼ BOUNDING BOX LÊN ẢNH ==========
+    async function drawBoundingBoxes(imageBase64, areas) {
         return new Promise((resolve) => {
             const img = new Image();
             img.onload = () => {
@@ -373,7 +421,7 @@ Nếu không phát hiện vùng bất thường, trả về mảng rỗng.`;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
                 
-                const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec489a'];
+                const colors = ['#e94560', '#f39c12', '#2ecc71', '#3498db', '#9b59b6', '#1abc9c'];
                 
                 areas.forEach((area, idx) => {
                     const x = area.x_percent * img.width;
@@ -382,27 +430,26 @@ Nếu không phát hiện vùng bất thường, trả về mảng rỗng.`;
                     const h = area.height_percent * img.height;
                     const color = colors[idx % colors.length];
                     
+                    // Vẽ khung
                     ctx.strokeStyle = color;
                     ctx.lineWidth = 3;
                     ctx.strokeRect(x, y, w, h);
                     
-                    ctx.fillStyle = color + '44';
+                    // Tô nền mờ
+                    ctx.fillStyle = color + '33';
                     ctx.fillRect(x, y, w, h);
                     
-                    ctx.font = `bold ${Math.max(14, img.width * 0.02)}px "Segoe UI"`;
-                    ctx.fillStyle = color;
-                    const textWidth = ctx.measureText(area.label).width;
-                    ctx.fillRect(x, y - 24, textWidth + 12, 22);
-                    ctx.fillStyle = 'white';
-                    ctx.fillText(area.label, x + 6, y - 8);
+                    // Vẽ nhãn
+                    ctx.font = `bold ${Math.max(14, Math.floor(img.width / 40))}px "Segoe UI"`;
+                    const label = `${area.label} (${area.confidence ? Math.round(area.confidence*100) : 90}%)`;
+                    const metrics = ctx.measureText(label);
+                    const labelWidth = metrics.width + 10;
+                    const labelHeight = 24;
                     
-                    // Thêm độ tin cậy
-                    const confText = `${Math.round(area.confidence * 100)}%`;
-                    ctx.font = `12px "Segoe UI"`;
                     ctx.fillStyle = color;
-                    ctx.fillRect(x, y + h, ctx.measureText(confText).width + 8, 18);
+                    ctx.fillRect(x, y - labelHeight, labelWidth, labelHeight);
                     ctx.fillStyle = 'white';
-                    ctx.fillText(confText, x + 4, y + h + 13);
+                    ctx.fillText(label, x + 5, y - 7);
                 });
                 
                 resolve(canvas.toDataURL('image/jpeg', 0.9));
@@ -411,114 +458,70 @@ Nếu không phát hiện vùng bất thường, trả về mảng rỗng.`;
         });
     }
 
-    // ==================== BƯỚC 3: PHÂN TÍCH TRIỆU CHỨNG VÀ ĐƯA RA KHUYẾN NGHỊ ====================
-    async function analyzeSymptoms(imageBase64, detectionResult) {
-        const areasDesc = detectionResult.disease_areas?.map(a => `- ${a.label} (độ tin cậy ${Math.round(a.confidence*100)}%)`).join('\n') || 'Không phát hiện';
-        
-        const prompt = `Bạn là bác sĩ da liễu. Dựa trên ảnh và kết quả phát hiện vùng bệnh, hãy phân tích và đưa ra khuyến nghị.
-
-KẾT QUẢ PHÁT HIỆN:
-${areasDesc}
-Tổng quan: ${detectionResult.summary || 'Chưa có'}
-
-YÊU CẦU: Trả về JSON:
-{
-    "preliminary": "nhận biết sơ bộ (1-2 câu, dễ hiểu cho học sinh)",
-    "explanation": "giải thích nguyên nhân có thể và cơ chế (ngắn gọn)",
-    "warning_signs": ["dấu hiệu cần lưu ý 1", "dấu hiệu 2", "dấu hiệu 3"],
-    "action_level": 1 hoặc 2 hoặc 3,
-    "action_text": "khuyến nghị cụ thể",
-    "recommendation": "hướng dẫn chăm sóc tại nhà (nếu có thể)"
-}
-
-QUY TẮC ACTION_LEVEL:
-- 1: Triệu chứng nhẹ, theo dõi, vệ sinh đúng cách
-- 2: Triệu chứng trung bình, nên đi khám trong tuần
-- 3: Triệu chứng nặng, cần đi khám ngay lập tức`;
-
-        const messages = [
-            { role: "system", content: "Bạn là bác sĩ da liễu. Chỉ trả về JSON hợp lệ." },
-            { role: "user", content: [
-                { type: "text", text: prompt },
-                { type: "image_url", image_url: { url: imageBase64 } }
-            ]}
-        ];
-        
-        const raw = await callAI(messages, 0.5);
-        let clean = raw.trim();
-        clean = clean.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-        return JSON.parse(clean);
-    }
-
-    // ==================== HIỂN THỊ KẾT QUẢ ====================
-    function displayResults(detectionResult, analysisResult, originalImg, highlightedImg) {
-        const levelColors = { 1: '#10b981', 2: '#f59e0b', 3: '#ef4444' };
-        const levelTexts = { 1: '🟢 Mức 1 - Theo dõi tại nhà', 2: '🟡 Mức 2 - Nên đi khám sớm', 3: '🔴 Mức 3 - Cần đi khám ngay' };
-        const level = analysisResult.action_level || 1;
-        
-        let areasHtml = '';
-        if (detectionResult.disease_areas?.length) {
-            areasHtml = `
-                <div style="margin: 16px 0; padding: 12px; background: #0f172a; border-radius: 16px;">
-                    <strong>🎯 Vùng bệnh phát hiện (AI):</strong>
-                    <ul style="margin: 8px 0 0 20px;">
-                        ${detectionResult.disease_areas.map(a => `<li><span style="color:#ef4444">●</span> <strong>${escapeHtml(a.label)}</strong> - độ tin cậy ${Math.round(a.confidence*100)}%</li>`).join('')}
-                    </ul>
-                    <div style="margin-top: 8px; font-size: 13px;">📝 ${escapeHtml(detectionResult.summary || '')}</div>
-                    <div style="margin-top: 4px; font-size: 12px; color: #f59e0b;">⚠️ Mức độ: ${detectionResult.severity || 'chưa xác định'}</div>
-                </div>
-            `;
-        }
-        
-        resultContainer.innerHTML = `
-            <div class="comparison">
-                <div class="comparison-item">
-                    <div><strong>📷 Ảnh gốc</strong></div>
-                    <img src="${originalImg}" alt="Original">
-                </div>
-                <div class="comparison-item">
-                    <div><strong>🔍 AI khoanh vùng bệnh</strong></div>
-                    <img src="${highlightedImg}" alt="Highlighted">
-                </div>
+    // ========== HIỂN THỊ KẾT QUẢ SO SÁNH ==========
+    function displayComparison(originalBase64, highlightedBase64, analysisResult) {
+        // Hiển thị ảnh so sánh
+        comparisonResult.innerHTML = `
+            <div class="comparison-item">
+                <h4>📷 Ảnh gốc</h4>
+                <img src="${originalBase64}" style="max-width:100%; border-radius:12px;">
             </div>
-            ${areasHtml}
-            <hr>
-            <div class="analysis-result" style="border-left-color: ${levelColors[level]}">
-                <div style="background: linear-gradient(135deg, #3b82f6, #ec489a); border-radius: 16px; padding: 16px; margin-bottom: 16px; color: white;">
-                    <strong>🔍 NHẬN BIẾT SƠ BỘ</strong><br>
-                    ${escapeHtml(analysisResult.preliminary || 'Đang phân tích...')}
-                </div>
-                
-                <div style="margin: 16px 0; padding: 12px; background: #0f172a; border-radius: 12px;">
-                    <strong>💡 GIẢI THÍCH</strong><br>
-                    ${escapeHtml(analysisResult.explanation || '')}
-                </div>
-                
-                <div style="margin: 16px 0; padding: 12px; background: #0f172a; border-radius: 12px;">
-                    <strong>⚠️ DẤU HIỆU CẦN LƯU Ý</strong>
-                    <ul style="margin: 8px 0 0 20px;">
-                        ${(analysisResult.warning_signs || []).map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div style="margin: 16px 0; padding: 16px; background: ${levelColors[level]}20; border-radius: 12px; border-left: 4px solid ${levelColors[level]};">
-                    <strong>${levelTexts[level]}</strong><br>
-                    ${escapeHtml(analysisResult.action_text || '')}
-                </div>
-                
-                ${analysisResult.recommendation ? `
-                <div style="margin: 16px 0; padding: 12px; background: #0f172a; border-radius: 12px;">
-                    <strong>🏠 HƯỚNG DẪN CHĂM SÓC TẠI NHÀ</strong><br>
-                    ${escapeHtml(analysisResult.recommendation)}
-                </div>
-                ` : ''}
-            </div>
-            <div style="margin-top: 16px; font-size: 12px; color: #64748b; text-align: center; padding: 12px; background: #0f172a; border-radius: 12px;">
-                ⚠️ Kết quả từ AI, không thay thế chẩn đoán của bác sĩ. Nếu có dấu hiệu bất thường, hãy đến cơ sở y tế.
+            <div class="comparison-item">
+                <h4>🎯 AI khoanh vùng bệnh (${analysisResult.disease_areas?.length || 0} vùng)</h4>
+                <img src="${highlightedBase64}" style="max-width:100%; border-radius:12px; border: 2px solid #e94560;">
             </div>
         `;
+        
+        // Hiển thị kết quả phân tích dạng text
+        const warningLevelText = {
+            1: '🟢 MỨC 1 - Theo dõi tại nhà',
+            2: '🟡 MỨC 2 - Nên đi khám sớm',
+            3: '🔴 MỨC 3 - Cần đi khám ngay'
+        };
+        
+        analysisTextDiv.innerHTML = `
+            <div style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, #e94560, #c0392b); border-radius: 12px;">
+                <strong>🔍 NHẬN ĐỊNH SƠ BỘ:</strong><br>
+                ${escapeHtml(analysisResult.preliminary || 'Đang phân tích...')}
+            </div>
+            <div style="margin-bottom: 15px; padding: 15px; background: #0f3460; border-radius: 12px;">
+                <strong>💡 GIẢI THÍCH CHI TIẾT:</strong><br>
+                ${escapeHtml(analysisResult.explanation || '')}
+            </div>
+            <div style="margin-bottom: 15px; padding: 15px; background: #0a0f1f; border-radius: 12px; border-left: 4px solid #2ecc71;">
+                <strong>🏥 CHẨN ĐOÁN KHẢ NĂNG CAO:</strong><br>
+                ${escapeHtml(analysisResult.diagnosis || 'Chưa xác định')}
+            </div>
+            <div style="margin-bottom: 15px; padding: 15px; background: ${analysisResult.warning_level === 3 ? '#c0392b' : (analysisResult.warning_level === 2 ? '#f39c12' : '#2ecc71')}; border-radius: 12px;">
+                <strong>⚠️ CẢNH BÁO:</strong><br>
+                <div style="font-size: 18px; font-weight: bold;">${warningLevelText[analysisResult.warning_level] || warningLevelText[2]}</div>
+                <div style="margin-top: 10px;">${escapeHtml(analysisResult.recommendation || '')}</div>
+            </div>
+        `;
+        analysisTextDiv.style.display = 'block';
+        
+        // Hiển thị danh sách vùng bệnh
+        if (analysisResult.disease_areas && analysisResult.disease_areas.length > 0) {
+            let areasHtml = '<h4>📍 Các vùng bệnh được phát hiện:</h4>';
+            analysisResult.disease_areas.forEach((area, idx) => {
+                const severityText = area.severity === 3 ? '🔴 Nặng' : (area.severity === 2 ? '🟡 Trung bình' : '🟢 Nhẹ');
+                areasHtml += `
+                    <div class="area-item">
+                        <strong>${idx + 1}. ${escapeHtml(area.label)}</strong><br>
+                        📍 Vị trí: (${Math.round(area.x_percent * 100)}%, ${Math.round(area.y_percent * 100)}%)<br>
+                        📏 Kích thước: ${Math.round(area.width_percent * 100)}% x ${Math.round(area.height_percent * 100)}%<br>
+                        ${severityText} | 🎯 Độ tin cậy: ${Math.round((area.confidence || 0.9) * 100)}%
+                    </div>
+                `;
+            });
+            areasListDiv.innerHTML = areasHtml;
+            areasListDiv.style.display = 'block';
+        } else {
+            areasListDiv.innerHTML = '<div class="area-item">✅ Không phát hiện vùng bất thường rõ rệt trên ảnh.</div>';
+            areasListDiv.style.display = 'block';
+        }
     }
-
+    
     function escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, function(m) {
@@ -529,120 +532,106 @@ QUY TẮC ACTION_LEVEL:
         });
     }
 
-    // ==================== LUỒNG XỬ LÝ CHÍNH ====================
-    async function analyzeImage() {
+    // ========== XỬ LÝ CHÍNH ==========
+    async function processImage() {
         if (!currentImageBase64) {
-            addLog('❌ Chưa có ảnh để phân tích', 'error');
+            addLog("❌ Chưa có ảnh. Vui lòng tải ảnh lên trước!", "error");
             return;
         }
         
         analyzeBtn.disabled = true;
-        analyzeBtn.innerHTML = '<span class="loading"></span> Đang phân tích...';
-        resultContainer.innerHTML = '<div style="text-align:center; padding:40px;"><span class="loading"></span> AI đang xử lý...</div>';
+        analyzeBtn.textContent = "⏳ Đang phân tích (có thể mất 15-20s)...";
+        addLog("🚀 Bắt đầu quá trình phân tích đa thuật toán + AI Vision...", "info");
         
         try {
-            // Bước 1: Kiểm tra chất lượng ảnh
-            addLog('🔍 Bước 1: Kiểm tra chất lượng ảnh...', 'info');
-            const quickCheck = await quickBlurCheck(currentImageBase64);
+            const userSymptom = symptomDesc.value.trim();
             
-            let qualityCheck = null;
-            if (quickCheck.isBlurry) {
-                addLog('⚠️ Ảnh có dấu hiệu mờ, đang xác nhận bằng AI...', 'warning');
-                qualityCheck = await aiQualityCheck(currentImageBase64);
-                if (!qualityCheck.is_clear) {
-                    addLog(`❌ Ảnh bị từ chối: ${qualityCheck.blur_reason || 'chất lượng kém'}`, 'error');
-                    resultContainer.innerHTML = `
-                        <div class="analysis-result result-danger">
-                            <strong>⚠️ ẢNH KHÔNG ĐẠT YÊU CẦU</strong><br>
-                            ${escapeHtml(qualityCheck.suggestion || 'Vui lòng chụp ảnh rõ nét hơn, đủ sáng và tránh rung tay.')}
-                        </div>
-                    `;
-                    return;
-                }
-                if (qualityCheck.has_personal_info) {
-                    addLog('❌ Ảnh chứa khuôn mặt hoặc thông tin cá nhân', 'error');
-                    resultContainer.innerHTML = `<div class="analysis-result result-danger"><strong>⚠️ VUI LÒNG KHÔNG TẢI ẢNH CÓ KHUÔN MẶT HOẶC THÔNG TIN CÁ NHÂN</strong></div>`;
-                    return;
-                }
+            // GỌI AI PHÂN TÍCH CHI TIẾT + KHOANH VÙNG
+            const analysisResult = await analyzeSkinImage(currentImageBase64, userSymptom);
+            
+            addLog(`📊 Kết quả: ${analysisResult.preliminary || 'Đã phân tích xong'}`, "success");
+            addLog(`🎯 Phát hiện ${analysisResult.disease_areas?.length || 0} vùng bất thường`, "info");
+            
+            // VẼ BOUNDING BOX LÊN ẢNH
+            let highlightedImage = currentImageBase64;
+            if (analysisResult.disease_areas && analysisResult.disease_areas.length > 0) {
+                addLog("✏️ Đang vẽ khung khoanh vùng lên ảnh...", "info");
+                highlightedImage = await drawBoundingBoxes(currentImageBase64, analysisResult.disease_areas);
+                addLog("✅ Đã vẽ xong bounding boxes", "success");
             }
             
-            // Bước 2: Phát hiện vùng bệnh và khoanh vùng
-            addLog('🔬 Bước 2: Phát hiện vùng bệnh và khoanh vùng...', 'info');
-            const detectionResult = await detectDiseaseAreas(currentImageBase64);
+            // HIỂN THỊ KẾT QUẢ
+            displayComparison(currentImageBase64, highlightedImage, analysisResult);
             
-            let highlightedImg = currentImageBase64;
-            if (detectionResult.disease_areas && detectionResult.disease_areas.length > 0) {
-                highlightedImg = await drawBoundingBoxes(currentImageBase64, detectionResult.disease_areas);
-                highlightedImageBase64 = highlightedImg;
-                diseaseAreas = detectionResult.disease_areas;
-                addLog(`✅ Đã vẽ ${detectionResult.disease_areas.length} bounding box`, 'success');
-            } else {
-                addLog('⚠️ Không phát hiện vùng bệnh rõ ràng', 'warning');
-            }
-            
-            // Bước 3: Phân tích triệu chứng
-            addLog('💊 Bước 3: Phân tích triệu chứng và đưa ra khuyến nghị...', 'info');
-            const analysisResult = await analyzeSymptoms(currentImageBase64, detectionResult);
-            
-            // Bước 4: Hiển thị kết quả
-            displayResults(detectionResult, analysisResult, currentImageBase64, highlightedImg);
-            addLog('✅ Phân tích hoàn tất!', 'success');
+            addLog("✅ PHÂN TÍCH HOÀN TẤT!", "success");
             
         } catch (error) {
-            addLog(`❌ LỖI: ${error.message}`, 'error');
-            resultContainer.innerHTML = `
-                <div class="analysis-result result-danger">
-                    <strong>⚠️ LỖI PHÂN TÍCH</strong><br>
-                    ${escapeHtml(error.message)}<br><br>
-                    Vui lòng thử lại với ảnh khác.
-                </div>
-            `;
+            console.error(error);
+            addLog(`❌ LỖI: ${error.message}`, "error");
+            analysisTextDiv.innerHTML = `<div style="color: #ff6b6b; padding: 20px;">⚠️ Lỗi phân tích: ${error.message}<br>Vui lòng thử lại với ảnh khác.</div>`;
+            analysisTextDiv.style.display = 'block';
         } finally {
             analyzeBtn.disabled = false;
-            analyzeBtn.innerHTML = '🔍 Phân tích ảnh';
+            analyzeBtn.textContent = "🚀 BẮT ĐẦU PHÂN TÍCH (AI + KHOANH VÙNG)";
         }
     }
 
-    // ==================== XỬ LÝ UPLOAD ẢNH ====================
-    async function handleImage(file) {
-        if (!file || !file.type.startsWith('image/')) {
-            addLog('❌ Vui lòng chọn file ảnh hợp lệ (JPG, PNG)', 'error');
+    // ========== EVENT HANDLERS ==========
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#e94560';
+    });
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = '#0f3460';
+    });
+    dropZone.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = '#0f3460';
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const base64 = await compressImageToBase64(file);
+            displayPreview(base64);
+        }
+    });
+    
+    fileInput.addEventListener('change', async (e) => {
+        if (e.target.files[0]) {
+            const base64 = await compressImageToBase64(e.target.files[0]);
+            displayPreview(base64);
+        }
+    });
+    
+    loadUrlBtn.addEventListener('click', async () => {
+        const url = imageUrlInput.value.trim();
+        if (!url) {
+            addLog("❌ Vui lòng nhập URL ảnh", "error");
             return;
         }
-        
-        addLog(`📁 Đã chọn ảnh: ${file.name} (${(file.size/1024).toFixed(1)} KB)`, 'info');
-        
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const rawBase64 = e.target.result;
-            currentImageBase64 = await compressImageTo720p(rawBase64);
-            originalImageBase64 = currentImageBase64;
-            
-            previewContainer.innerHTML = `
-                <div style="margin-top: 16px;">
-                    <strong>Ảnh đã chọn:</strong>
-                    <img src="${currentImageBase64}" style="max-width:100%; border-radius:16px;">
-                </div>
-            `;
-            analyzeBtn.disabled = false;
-            addLog('✅ Ảnh đã được nén và sẵn sàng phân tích', 'success');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // Event listeners
-    dropZone.onclick = () => fileInput.click();
-    dropZone.ondragover = (e) => { e.preventDefault(); dropZone.style.borderColor = '#3b82f6'; };
-    dropZone.ondragleave = () => { dropZone.style.borderColor = '#475569'; };
-    dropZone.ondrop = (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = '#475569';
-        if (e.dataTransfer.files[0]) handleImage(e.dataTransfer.files[0]);
-    };
-    fileInput.onchange = (e) => { if (e.target.files[0]) handleImage(e.target.files[0]); };
-    analyzeBtn.onclick = analyzeImage;
+        try {
+            addLog("📥 Đang tải ảnh từ URL...", "info");
+            const base64 = await urlToBase64(url);
+            displayPreview(base64);
+            addLog("✅ Đã tải ảnh từ URL thành công", "success");
+        } catch (error) {
+            addLog(`❌ Không thể tải ảnh từ URL: ${error.message}`, "error");
+        }
+    });
     
-    addLog('🚀 Hệ thống đã sẵn sàng. Vui lòng tải ảnh vùng da cần phân tích.', 'success');
+    analyzeBtn.addEventListener('click', processImage);
+    
+    clearBtn.addEventListener('click', () => {
+        currentImageBase64 = null;
+        previewContainer.innerHTML = '';
+        comparisonResult.innerHTML = '';
+        analysisTextDiv.style.display = 'none';
+        areasListDiv.style.display = 'none';
+        symptomDesc.value = '';
+        imageUrlInput.value = '';
+        addLog("🗑️ Đã xóa toàn bộ dữ liệu", "info");
+    });
+    
+    addLog("✅ Hệ thống sẵn sàng. API đã được cấu hình sẵn.", "success");
 </script>
 </body>
 </html>
