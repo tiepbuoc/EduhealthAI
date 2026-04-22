@@ -2,1937 +2,2350 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>EduHealth AI — Hỗ trợ chăm sóc sức khỏe học đường</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-:root {
-  --blue-primary: #3b82f6;
-  --blue-deep: #2563eb;
-  --pink-primary: #f472b6;
-  --pink-deep: #ec489a;
-  --grad-blue-pink: linear-gradient(135deg, #4f8eff, #ff7eb3);
-  --grad-pink-blue: linear-gradient(135deg, #ff6ba6, #4f8eff);
-  
-  --bg-body: linear-gradient(135deg, #ffffff 0%, #fff5f8 100%);
-  --bg-surface: #fff5f8;
-  --card-bg: #ffffff;
-  --text-dark: #0f172a;
-  --text-mid: #334155;
-  --text-dim: #64748b;
-  --border-light: #ffe0ec;
-  --border-soft: #fef0f5;
-  --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-  --hover-glow: rgba(59, 130, 246, 0.12);
-  --nav-bg: rgba(255, 255, 255, 0.95);
-  --tag-bg: #fce7f3;
-  --news-bg: #fff5f8;
-  --icon-soft: #fce7f3;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --glow-blue: rgba(79, 142, 255, 0.3);
-  --glow-pink: rgba(255, 110, 179, 0.3);
-}
-
-body.dark {
-  --bg-body: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%);
-  --bg-surface: #1e293b;
-  --card-bg: #1e293b;
-  --text-dark: #f1f5f9;
-  --text-mid: #cbd5e1;
-  --text-dim: #94a3b8;
-  --border-light: #334155;
-  --border-soft: #2d3a4e;
-  --shadow-sm: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
-  --hover-glow: rgba(244, 114, 182, 0.2);
-  --nav-bg: rgba(15, 23, 42, 0.95);
-  --tag-bg: #2d3a4e;
-  --news-bg: #1e293b;
-  --icon-soft: #2d3a4e;
-  --glow-blue: rgba(79, 142, 255, 0.2);
-  --glow-pink: rgba(255, 110, 179, 0.2);
-}
-
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg-body);
-  color: var(--text-dark);
-  overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.2s ease;
-  min-height: 100vh;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-/* ========== SCROLLBAR ========== */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--border-soft);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--pink-primary);
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--blue-primary);
-}
-
-/* ========== NAVIGATION ========== */
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 6%;
-  height: 74px;
-  background: var(--nav-bg);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border-light);
-  transition: all 0.25s ease;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-
-.logo-mark {
-  width: 42px;
-  height: 42px;
-  background: var(--grad-blue-pink);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 6px 14px var(--glow-blue);
-  color: white;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.logo-mark:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 20px var(--glow-pink);
-}
-
-.logo-type {
-  font-family: 'Fraunces', serif;
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  background: var(--grad-blue-pink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-}
-
-.nav-link {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-mid);
-  text-decoration: none;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-link i {
-  font-size: 15px;
-  color: var(--pink-primary);
-  transition: color 0.2s;
-}
-
-.nav-link:hover {
-  color: var(--blue-primary);
-}
-.nav-link:hover i {
-  color: var(--blue-primary);
-}
-
-.theme-toggle {
-  background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: 40px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-mid);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.2s;
-  font-family: 'DM Sans', sans-serif;
-}
-.theme-toggle:hover {
-  border-color: var(--blue-primary);
-  color: var(--blue-primary);
-}
-
-.menu-toggle {
-  display: none;
-  background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: 40px;
-  padding: 8px 18px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--pink-primary);
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: all 0.2s;
-  align-items: center;
-  gap: 8px;
-}
-.menu-toggle:hover {
-  background: var(--grad-pink-blue);
-  color: white;
-  border-color: transparent;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.mobile-menu-panel {
-  position: fixed;
-  top: 74px;
-  left: 0;
-  right: 0;
-  background: var(--bg-surface);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-light);
-  z-index: 99;
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  pointer-events: none;
-}
-.mobile-menu-panel.open {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-.mobile-menu-panel .nav-links-mobile {
-  display: flex;
-  flex-direction: column;
-  padding: 24px 6%;
-  gap: 20px;
-}
-.mobile-menu-panel .nav-link-mobile {
-  padding: 12px 0;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--text-dark);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid var(--border-light);
-}
-.mobile-menu-panel .nav-link-mobile i {
-  width: 28px;
-  color: var(--blue-primary);
-  font-size: 18px;
-}
-.mobile-menu-panel .nav-link-mobile:hover {
-  color: var(--pink-primary);
-}
-
-/* ========== MAIN CONTENT 2 CỘT ========== */
-.content-section {
-  padding: 100px 6% 60px;
-  position: relative;
-  z-index: 2;
-}
-
-.two-columns {
-  display: flex;
-  gap: 40px;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* Cột trái: Cẩm nang sức khỏe */
-.left-col {
-  flex: 3;
-  min-width: 0;
-}
-
-/* ========== HERO CARD CHÍNH ========== */
-.hero-card {
-  background: var(--grad-blue-pink);
-  border-radius: 28px;
-  padding: 32px 36px;
-  margin-bottom: 32px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 35px -10px rgba(79, 142, 255, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hero-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px -12px rgba(79, 142, 255, 0.4);
-}
-
-.hero-card::before {
-  content: "";
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 220px;
-  height: 220px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 50%;
-  filter: blur(50px);
-  pointer-events: none;
-}
-
-.hero-card::after {
-  content: "";
-  position: absolute;
-  bottom: -40px;
-  left: -40px;
-  width: 180px;
-  height: 180px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-}
-
-.hero-header {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-icon {
-  width: 70px;
-  height: 70px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  border-radius: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 34px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.hero-title {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  line-height: 1.2;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.hero-meta {
-  font-size: 15px;
-  opacity: 0.9;
-  margin-top: 6px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.hero-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.15);
-  padding: 4px 12px;
-  border-radius: 40px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.hero-note {
-  font-size: 13px;
-  opacity: 0.8;
-  font-style: italic;
-  margin-top: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.hero-desc {
-  margin-top: 18px;
-  font-size: 16px;
-  line-height: 1.5;
-  opacity: 0.95;
-  position: relative;
-  z-index: 2;
-  padding-right: 20px;
-  border-left: 3px solid rgba(255,255,255,0.5);
-  padding-left: 18px;
-}
-
-/* ========== KHỐI QUIZ HERO CARD ========== */
-.quiz-hero-card {
-  background: linear-gradient(135deg, #10b981, #3b82f6);
-  border-radius: 24px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 25px -8px rgba(16, 185, 129, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.quiz-hero-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.4);
-}
-
-.quiz-hero-card::before {
-  content: "✨";
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  font-size: 120px;
-  opacity: 0.12;
-  pointer-events: none;
-  font-family: monospace;
-}
-
-.quiz-hero-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  position: relative;
-  z-index: 2;
-}
-
-.quiz-hero-text {
-  flex: 2;
-}
-
-.quiz-hero-text h4 {
-  font-family: 'Fraunces', serif;
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.quiz-hero-text p {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 0;
-}
-
-.quiz-hero-btn {
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,255,255,0.3);
-  padding: 10px 24px;
-  border-radius: 60px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'DM Sans', sans-serif;
-  text-decoration: none;
-}
-
-.quiz-hero-btn i {
-  font-size: 14px;
-  transition: transform 0.2s;
-}
-
-.quiz-hero-btn:hover {
-  background: white;
-  color: #10b981;
-  border-color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-.quiz-hero-btn:hover i {
-  transform: translateX(4px);
-  color: #10b981;
-}
-
-/* ========== SEARCH BAR ========== */
-.search-wrapper {
-  margin-bottom: 32px;
-  position: relative;
-  z-index: 5;
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  background: var(--card-bg);
-  border-radius: 60px;
-  border: 1px solid var(--border-light);
-  padding: 4px 8px 4px 20px;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.search-container:focus-within {
-  border-color: var(--pink-primary);
-  box-shadow: 0 0 0 3px rgba(244, 114, 182, 0.2);
-  transform: translateY(-1px);
-}
-
-.search-container i {
-  color: var(--text-dim);
-  font-size: 18px;
-}
-
-.search-input {
-  flex: 1;
-  border: none;
-  padding: 14px 12px;
-  font-size: 16px;
-  background: transparent;
-  color: var(--text-dark);
-  outline: none;
-  font-family: 'DM Sans', sans-serif;
-}
-
-.search-input::placeholder {
-  color: var(--text-dim);
-  font-weight: 400;
-}
-
-.search-clear {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 40px;
-  transition: all 0.2s;
-  display: none;
-  font-size: 14px;
-}
-
-.search-clear:hover {
-  color: var(--pink-primary);
-  background: var(--bg-surface);
-}
-
-.search-results-info {
-  margin-top: 12px;
-  font-size: 14px;
-  color: var(--text-dim);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.search-results-info span i {
-  margin-right: 6px;
-}
-
-.search-reset-btn {
-  background: transparent;
-  border: none;
-  color: var(--blue-primary);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 12px;
-  border-radius: 30px;
-  transition: 0.2s;
-}
-
-.search-reset-btn:hover {
-  background: var(--bg-surface);
-  color: var(--pink-primary);
-}
-
-/* Category Grid - 2 cột bên trái */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  transition: all 0.3s ease;
-}
-
-.category-card {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 20px;
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.category-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--pink-primary);
-}
-
-.category-card.pink { border-color: #f9a8d4; }
-.category-card.blue { border-color: #93c5fd; }
-.category-card.purple { border-color: #c4b5fd; }
-.category-card.green { border-color: #86efac; }
-.category-card.orange { border-color: #fdba74; }
-.category-card.teal { border-color: #5eead4; }
-
-.category-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.category-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-}
-
-.category-icon.pink-bg { background: #fce7f3; color: #f472b6; }
-.category-icon.blue-bg { background: #dbeafe; color: #3b82f6; }
-.category-icon.purple-bg { background: #ede9fe; color: #8b5cf6; }
-.category-icon.green-bg { background: #dcfce7; color: #10b981; }
-.category-icon.orange-bg { background: #ffedd5; color: #f59e0b; }
-.category-icon.teal-bg { background: #ccfbf1; color: #14b8a6; }
-
-.category-info h3 {
-  font-family: 'Fraunces', serif;
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: var(--text-dark);
-}
-
-.category-count {
-  font-size: 13px;
-  color: var(--text-dim);
-}
-
-.category-preview {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border-light);
-}
-
-.category-preview ul {
-  list-style: none;
-  padding-left: 0;
-}
-
-.category-preview li {
-  font-size: 13px;
-  color: var(--text-mid);
-  padding: 5px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.category-preview li i {
-  font-size: 6px;
-  color: var(--pink-primary);
-}
-
-.category-more {
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--text-dim);
-  font-style: italic;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.category-more i {
-  font-size: 10px;
-  transition: transform 0.2s;
-}
-
-.category-card:hover .category-more i {
-  transform: translateX(4px);
-}
-
-/* Cột phải: Bản tin y tế học đường */
-.right-col {
-  flex: 1.2;
-  min-width: 0;
-}
-
-.news-card {
-  background: var(--card-bg);
-  border-radius: 28px;
-  border: 1px solid var(--border-light);
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-  position: sticky;
-  top: 94px;
-}
-
-.news-header {
-  background: var(--grad-blue-pink);
-  padding: 20px 24px;
-  color: white;
-}
-
-.news-header h3 {
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.news-header p {
-  font-size: 13px;
-  opacity: 0.85;
-}
-
-.news-list {
-  padding: 8px 0;
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.news-item {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
-.news-item:hover {
-  background: var(--bg-surface);
-  transform: translateX(4px);
-}
-
-.news-item-cover {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  object-fit: cover;
-  background: var(--tag-bg);
-  flex-shrink: 0;
-}
-
-.news-item-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.news-item-title {
-  font-family: 'Fraunces', serif;
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  line-height: 1.4;
-  color: var(--text-dark);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.news-item-meta {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--text-dim);
-}
-
-.news-item-meta span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.load-more-btn {
-  text-align: center;
-  padding: 16px 20px;
-  border-top: 1px solid var(--border-light);
-}
-
-.btn-load-more {
-  background: transparent;
-  border: 1px solid var(--border-light);
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-mid);
-  cursor: pointer;
-  transition: all 0.3s;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'DM Sans', sans-serif;
-}
-
-.btn-load-more:hover {
-  border-color: var(--blue-primary);
-  color: var(--blue-primary);
-  transform: translateY(-2px);
-}
-
-.empty-news {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--text-dim);
-}
-
-/* ========== STATS ========== */
-.stats-section {
-  padding: 50px 6% 60px;
-  background: var(--bg-surface);
-  border-top: 1px solid var(--border-light);
-  border-bottom: 1px solid var(--border-light);
-}
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-}
-.stat-number {
-  font-size: 48px;
-  font-weight: 700;
-  font-family: 'Fraunces', serif;
-  background: var(--grad-blue-pink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 8px;
-}
-.stat-label {
-  font-size: 14px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  font-weight: 500;
-}
-
-/* ========== FOOTER ========== */
-footer {
-  border-top: 1px solid var(--border-light);
-  padding: 40px 6% 32px;
-  background: var(--card-bg);
-}
-.footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-.footer-links {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-.footer-links a {
-  color: var(--text-dim);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.footer-links a:hover {
-  color: var(--pink-primary);
-}
-.footer-copyright {
-  font-size: 13px;
-  color: var(--text-dim);
-}
-
-/* ========== MODALS ========== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-}
-.modal-overlay.active { opacity: 1; visibility: visible; }
-
-.modal-content {
-  background: var(--card-bg);
-  border-radius: 32px;
-  max-width: 1000px;
-  width: 100%;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  border: 1px solid var(--border-light);
-  overflow: hidden;
-}
-
-.modal-header {
-  flex-shrink: 0;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-light);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--card-bg);
-}
-.modal-header h3 { 
-  font-family: 'Fraunces', serif; 
-  font-size: 22px; 
-  background: var(--grad-blue-pink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
-  color: var(--text-dim);
-  transition: 0.2s;
-}
-.modal-close:hover { color: var(--pink-primary); }
-
-.modal-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
-}
-
-/* ========== ARTICLE CONTENT STYLES - GIỐNG THUY-DAU.HTML ========== */
-.article-content {
-  font-family: 'Nunito', 'DM Sans', sans-serif;
-  line-height: 1.6;
-  color: var(--text-mid);
-}
-
-.article-content * {
-  max-width: 100%;
-}
-
-.article-content .handbook-header {
-  background: linear-gradient(120deg, #f7567c 0%, #ff9a3c 100%);
-  padding: 28px 32px 24px;
-  border-radius: 24px 24px 0 0;
-  margin: -24px -24px 0 0px;
-}
-
-.article-content .handbook-header-top {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 14px;
-}
-
-.article-content .handbook-emoji {
-  width: 64px;
-  height: 64px;
-  background: #fff;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-}
-
-.article-content .handbook-title h1 {
-  font-size: 1.7rem;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  margin: 0;
-}
-
-.article-content .handbook-subtitle {
-  color: rgba(255,255,255,0.85);
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-top: 2px;
-}
-
-.article-content .handbook-badges {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.article-content .handbook-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  border: 2px solid rgba(255,255,255,0.7);
-  color: #fff;
-  background: rgba(255,255,255,0.18);
-}
-
-.article-content .handbook-image-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 0;
-  background: #222;
-  max-height: 320px;
-  overflow: hidden;
-  margin: 0 -24px;
-}
-
-.article-content .handbook-image-wrap {
-  position: relative;
-  overflow: hidden;
-}
-
-.article-content .handbook-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.article-content .handbook-image-caption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0,0,0,0.55);
-  color: #fff;
-  font-size: 0.72rem;
-  padding: 6px 10px;
-  font-weight: 600;
-}
-
-.article-content .handbook-body {
-  padding: 28px 0 0;
-}
-
-.article-content .handbook-info-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 28px;
-}
-
-.article-content .handbook-info-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  background: var(--bg-surface);
-  border-radius: 14px;
-  padding: 14px 16px;
-}
-
-.article-content .handbook-info-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  flex-shrink: 0;
-}
-
-.article-content .handbook-info-label {
-  font-size: 0.82rem;
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-
-.article-content .handbook-info-text {
-  font-size: 0.9rem;
-  color: var(--text-mid);
-  line-height: 1.5;
-}
-
-.article-content .handbook-two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
-  margin-bottom: 28px;
-}
-
-.article-content .handbook-info-card {
-  border-radius: 18px;
-  padding: 20px;
-  border: 1.5px solid var(--border-light);
-  background: var(--card-bg);
-}
-
-.article-content .handbook-info-card-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.article-content .handbook-info-card-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.article-content .handbook-info-card-title {
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-.article-content .handbook-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 28px;
-}
-
-.article-content .handbook-step {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: var(--bg-surface);
-  border-radius: 16px;
-  padding: 16px 20px;
-  border: 1.5px solid var(--border-light);
-}
-
-.article-content .handbook-step-num {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 900;
-  flex-shrink: 0;
-}
-
-.article-content .handbook-step-text {
-  font-size: 0.92rem;
-  color: var(--text-dark);
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.article-content .handbook-danger-box {
-  border: 2px solid #ef4444;
-  border-radius: 18px;
-  padding: 20px 22px 18px;
-  background: rgba(239,68,68,0.07);
-  margin: 24px 0;
-}
-
-.article-content .handbook-defense-box,
-.handbook-defense-box {
-  border: 2px solid #0f766e;
-  border-radius: 18px;
-  padding: 20px 22px 18px;
-  background: rgba(15,118,110,0.08);
-  margin: -24px 28px;
-}
-
-.article-content .handbook-defense-header,
-.article-content .handbook-danger-header,
-.handbook-defense-header,
-.handbook-danger-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.article-content .handbook-defense-icon,
-.handbook-defense-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: #0f766e;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-}
-
-.article-content .handbook-defense-title,
-.handbook-defense-title {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #0f766e;
-}
-
-.article-content .handbook-danger-box {
-  border: 2px solid #ef4444;
-  border-radius: 18px;
-  padding: 20px 22px 18px;
-  background: rgba(239,68,68,0.07);
-  margin: 24px 0;
-}
-
-.article-content .handbook-danger-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.article-content .handbook-danger-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: #7f1d1d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-}
-
-.article-content .handbook-danger-title {
-  font-size: 1rem;
-  font-weight: 900;
-  color: #ef4444;
-}
-
-.article-content .handbook-danger-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.article-content .handbook-danger-list li {
-  font-size: 0.9rem;
-  color: #b91c1c;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.article-content ul {
-  margin: 0.8em 0 0.8em 1.8em;
-  padding-left: 0;
-}
-
-.article-content li {
-  margin: 0.3em 0;
-  line-height: 1.6;
-}
-
-.article-stats {
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  color: var(--text-dim);
-  padding-top: 16px;
-  border-top: 1px solid var(--border-light);
-  margin-top: 24px;
-}
-
-.article-stats span {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.loading-spinner {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-dim);
-}
-
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.post-card-mini {
-  background: var(--bg-surface);
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid var(--border-light);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.post-card-mini:hover {
-  transform: translateY(-4px);
-  border-color: var(--pink-primary);
-  box-shadow: var(--shadow-md);
-}
-
-.post-mini-cover {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  background: var(--tag-bg);
-}
-
-.post-mini-content {
-  padding: 14px;
-}
-
-.post-mini-title {
-  font-family: 'Fraunces', serif;
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  line-height: 1.4;
-  color: var(--text-dark);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.post-mini-excerpt {
-  font-size: 13px;
-  color: var(--text-mid);
-  line-height: 1.4;
-  margin-bottom: 10px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.post-mini-stats {
-  display: flex;
-  gap: 12px;
-  font-size: 12px;
-  color: var(--text-dim);
-  padding-top: 8px;
-  border-top: 1px solid var(--border-light);
-}
-
-.post-mini-stats span {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.empty-posts {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-dim);
-}
-
-@media (max-width: 1024px) {
-  .two-columns { flex-direction: column; }
-  .category-grid { grid-template-columns: repeat(2, 1fr); }
-  .posts-grid { grid-template-columns: repeat(2, 1fr); }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .news-card { position: relative; top: 0; }
-}
-
-@media (max-width: 768px) {
-  .nav-menu { display: none; }
-  .menu-toggle { display: flex; }
-  .category-grid { grid-template-columns: 1fr; }
-  .posts-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-  .stat-number { font-size: 36px; }
-  .content-section { padding: 90px 16px 40px; }
-  .hero-card { padding: 20px 20px; }
-  .hero-title { font-size: 24px; }
-  .hero-icon { width: 54px; height: 54px; font-size: 28px; }
-  .modal-content { max-width: 95%; }
-  .quiz-hero-content { flex-direction: column; align-items: flex-start; }
-  .quiz-hero-btn { align-self: stretch; justify-content: center; }
-  .footer-inner { flex-direction: column; text-align: center; }
-  .footer-links { justify-content: center; }
-  .article-content .handbook-image-grid { grid-template-columns: 1fr; max-height: none; }
-  .article-content .handbook-two-col { grid-template-columns: 1fr; }
-  .article-content .handbook-header { padding: 20px 16px; }
-  .article-content .handbook-header-top { flex-direction: column; text-align: center; }
-  .article-content .handbook-badges { justify-content: center; }
-}
-
-@media (max-width: 480px) {
-  .stats-grid { grid-template-columns: 1fr; }
-  .news-header h3 { font-size: 18px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Check-in sức khỏe cùng EduHealth AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --blue-primary: #3b82f6;
+            --blue-deep: #2563eb;
+            --pink-primary: #f472b6;
+            --pink-deep: #ec489a;
+            --grad-blue-pink: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
+            --grad-pink-blue: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            --bg-body: #ffffff;
+            --bg-surface: #fef9ff;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-mid: #334155;
+            --text-dim: #64748b;
+            --border-light: #ffe4f0;
+            --border-soft: #f1f5f9;
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+            --nav-bg: rgba(255, 255, 255, 0.92);
+            --tag-bg: #fce7f3;
+            --input-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --level1: #10b981;
+            --level2: #f59e0b;
+            --level3: #ef4444;
+        }
+
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --card-bg: #1e293b;
+            --text-dark: #f1f5f9;
+            --text-mid: #cbd5e1;
+            --text-dim: #94a3b8;
+            --border-light: #334155;
+            --border-soft: #2d3a4e;
+            --nav-bg: rgba(15, 23, 42, 0.94);
+            --tag-bg: #2d3a4e;
+            --input-bg: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            transition: background-color 0.3s ease;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--border-soft); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--pink-primary); border-radius: 10px; }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            height: 74px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            background: var(--grad-blue-pink);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .logo-type {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--pink-deep), var(--blue-primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-mid);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link i { color: var(--pink-primary); }
+        .nav-link:hover { color: var(--blue-primary); }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .theme-toggle:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+
+        .auth-btn {
+            background: var(--grad-blue-pink);
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .auth-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--tag-bg);
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: var(--text-dark);
+        }
+        .user-info i {
+            color: var(--pink-primary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--pink-primary);
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+        }
+        .menu-toggle:hover {
+            background: var(--grad-pink-blue);
+            color: white;
+            border-color: transparent;
+        }
+
+        .mobile-menu-panel {
+            position: fixed;
+            top: 74px;
+            left: 0;
+            right: 0;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 99;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            pointer-events: none;
+        }
+        .mobile-menu-panel.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mobile-menu-panel .nav-links-mobile {
+            display: flex;
+            flex-direction: column;
+            padding: 24px 6%;
+            gap: 20px;
+        }
+        .mobile-menu-panel .nav-link-mobile {
+            padding: 12px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .mobile-menu-panel .nav-link-mobile i {
+            width: 28px;
+            color: var(--blue-primary);
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 60px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 500;
+            background: var(--grad-blue-pink);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-nav-btn {
+            background: var(--grad-blue-pink);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'DM Sans', sans-serif;
+        }
+        .chat-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 28px 26px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            margin-bottom: 24px;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: 28px;
+            padding: 28px 16px;
+            text-align: center;
+            background: var(--bg-surface);
+            margin-bottom: 20px;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .upload-area.drag-over {
+            background: var(--tag-bg);
+            border-color: var(--blue-primary);
+        }
+        .upload-area i {
+            font-size: 52px;
+            color: var(--blue-primary);
+            margin-bottom: 12px;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            padding: 10px 20px;
+            border-radius: 48px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-mid);
+            font-family: 'DM Sans', sans-serif;
+        }
+        .btn-primary {
+            background: var(--grad-blue-pink);
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+        }
+        .btn-outline:hover {
+            border-color: var(--blue-primary);
+            color: var(--blue-primary);
+        }
+        .image-preview {
+            margin-top: 18px;
+            text-align: center;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 220px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-sm);
+            object-fit: cover;
+        }
+        textarea, .duration-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 28px;
+            border: 1px solid var(--border-light);
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin: 15px 0 10px;
+            background: var(--input-bg);
+            color: var(--text-dark);
+        }
+        .duration-input {
+            resize: none;
+            margin-top: 5px;
+        }
+        textarea:focus, .duration-input:focus {
+            outline: none;
+            border-color: var(--blue-primary);
+        }
+        .symptom-description {
+            font-weight: 500;
+            margin: 8px 0 5px;
+            color: var(--text-mid);
+        }
+
+        .checklist-container {
+            background: var(--bg-surface);
+            border-radius: 28px;
+            padding: 10px 8px;
+            margin-top: 10px;
+            max-height: 560px;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+        }
+        .checklist-category {
+            background: var(--card-bg);
+            margin-bottom: 18px;
+            border-radius: 24px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-light);
+        }
+        .category-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-left: 5px solid var(--pink-primary);
+            padding-left: 12px;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 12px 8px;
+            cursor: pointer;
+        }
+        .check-item input {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .check-item label {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            cursor: pointer;
+            color: var(--text-mid);
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 24px 0 10px;
+            flex-wrap: wrap;
+        }
+        .result-area {
+            background: var(--bg-surface);
+            border-radius: 28px;
+            padding: 24px;
+            margin-top: 0px;
+        }
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-family: 'Fraunces', serif;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+        .analysis-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            margin: 8px 0;
+            border: 1px solid var(--border-light);
+            line-height: 1.55;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 20px;
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .step-buttons {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .back-info {
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 12px;
+            color: var(--text-dim);
+        }
+        .chat-btn-section {
+            margin-top: 20px;
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .history-list {
+            margin-top: 20px;
+            background: var(--bg-surface);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-light);
+        }
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+        .history-item {
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            border: 1px solid var(--border-light);
+        }
+        .history-item:hover {
+            background: var(--tag-bg);
+            transform: translateX(5px);
+        }
+        .history-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .history-time {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 16px 0;
+            border-left: 6px solid;
+        }
+        .level-card.level-1 { border-left-color: var(--level1); }
+        .level-card.level-2 { border-left-color: var(--level2); }
+        .level-card.level-3 { border-left-color: var(--level3); }
+        .level-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .level-1 .level-title { color: var(--level1); }
+        .level-2 .level-title { color: var(--level2); }
+        .level-3 .level-title { color: var(--level3); }
+        .level-desc {
+            color: var(--text-mid);
+            line-height: 1.5;
+        }
+
+        .result-simple {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .result-simple h3 {
+            font-size: 1.2rem;
+            margin: 16px 0 8px;
+            color: var(--blue-primary);
+        }
+        .result-simple p {
+            margin: 8px 0;
+        }
+        .result-simple ul {
+            margin: 8px 0 8px 20px;
+        }
+        .result-simple li {
+            margin: 4px 0;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .pdf-print-container {
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 800px;
+            background: white;
+            padding: 40px;
+            font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif;
+            color: #1a202c;
+            line-height: 1.6;
+            z-index: -1;
+        }
+
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 16px;
+            border-radius: 16px;
+            margin-top: 20px;
+        }
+
+        .image-comparison {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .image-comparison-item {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+        .image-comparison-item h4 {
+            margin-bottom: 10px;
+            color: var(--text-mid);
+        }
+        .image-comparison-item img {
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 24px;
+            text-align: center;
+        }
+        .modal-content p { margin: 16px 0; }
+        .modal-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .menu-toggle { display: flex; }
+            .page-title { font-size: 24px; }
+            .card { padding: 20px; }
+            .container { padding: 90px 16px 40px; }
+            .chat-nav-btn { padding: 10px 20px; font-size: 14px; }
+            .image-comparison { flex-direction: column; }
+            .user-info span { display: none; }
+            .auth-btn span { display: none; }
+            .auth-btn { padding: 8px 12px; }
+        }
+    </style>
 </head>
 <body>
-
-<nav id="nav">
-  <a href="index.html" class="logo">
-    <div class="logo-mark"><i class="fas fa-heartbeat"></i></div>
-    <div class="logo-type">EduHealth AI</div>
-  </a>
-  <div class="nav-menu">
-    <a href="index.html" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
-    <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
-    <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
-    <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
-    <a href="EPH.html" class="nav-link" style="background: linear-gradient(135deg, #f59e0b, #ec489a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
+    <nav id="nav">
+        <a href="index.html" class="logo">
+            <div class="logo-mark"><i class="fas fa-heartbeat"></i></div>
+            <div class="logo-type">EduHealth AI</div>
+        </a>
+        <div class="nav-menu">
+            <a href="index.html" class="nav-link"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="EPH.html" class="nav-link" style="background: linear-gradient(135deg, #f59e0b, #ec489a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">
                 <i class="fas fa-gamepad" style="color: #f59e0b;"></i> EduPlay Health
             </a>
-  </div>
-  <div class="nav-right">
-    <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> <span>Chế độ tối</span></button>
-    <button class="menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i> Menu</button>
-  </div>
-</nav>
+        </div>
+        <div class="nav-right">
+            <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
+            <div id="authContainer"></div>
+            <button class="menu-toggle" id="menuToggleBtn"><i class="fas fa-bars"></i> Menu</button>
+        </div>
+    </nav>
+    <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="nav-links-mobile">
+            <a href="index.html" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
+            <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
+            <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
+            <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
+            <a href="EPH.html" class="nav-link-mobile"><i class="fas fa-gamepad"></i> EduPlay Health</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-stethoscope"></i> Check-in sức khỏe cùng EduHealth AI</h1>
+            <a href="chatbox.html" class="chat-nav-btn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI</a>
+        </div>
 
-<div class="mobile-menu-panel" id="mobileMenuPanel">
-  <div class="nav-links-mobile">
-    <a href="index.html" class="nav-link-mobile"><i class="fas fa-heartbeat"></i> Cẩm nang sức khỏe</a>
-    <a href="checkin.html" class="nav-link-mobile"><i class="fas fa-clipboard-list"></i> Check-in sức khỏe</a>
-    <a href="map.html" class="nav-link-mobile"><i class="fas fa-hospital-user"></i> Điểm hỗ trợ y tế</a>
-    <a href="forum.html" class="nav-link-mobile"><i class="fas fa-comments"></i> Diễn đàn</a>
-    <a href="EPH.html" class="nav-link-mobile"><i class="fas fa-gamepad"></i> EduPlay Health</a>
-  </div>
-</div>
-
-<section class="content-section">
-  <div class="two-columns">
-    <!-- Cột trái: Cẩm nang -->
-    <div class="left-col">
-      <div class="hero-card">
-        <div class="hero-header">
-          <div class="hero-icon">📚</div>
-          <div>
-            <div class="hero-title">Cẩm nang sức khỏe</div>
-            <div class="hero-meta">
-              <span><i class="fas fa-book-open"></i> <span id="totalPostsCount">0</span> bài viết</span>
-              <span><i class="fas fa-layer-group"></i> 6 danh mục</span>
-              <span><i class="fas fa-stethoscope"></i> 30+ bệnh lý</span>
+        <!-- BƯỚC 1: NHẬP ẢNH + MÔ TẢ + THỜI GIAN -->
+        <div id="step1Container" class="card">
+            <h3 style="margin-bottom: 16px;"><i class="fas fa-camera-retro"></i> Để EduHealth AI giúp bạn nhận biết sớm vấn đề!</h3>
+            <div class="upload-area" id="dropZone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Tải ảnh hoặc chụp trực tiếp <span style="color: var(--text-dim);">(không bắt buộc)</span></p>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display:none">
+                <div class="camera-controls">
+                    <button class="btn btn-outline" id="chooseFileBtn"><i class="fas fa-folder-open"></i> Bấm để chọn ảnh</button>
+                    <button class="btn btn-outline" id="cameraBtn"><i class="fas fa-camera"></i> Chụp ảnh</button>
+                </div>
+                <div class="image-preview" id="imagePreview"></div>
+                <!-- Popup cảnh báo khi upload ảnh -->
+                <div id="imageWarningModal" class="modal-overlay" style="z-index: 2001;">
+                    <div class="modal-content" style="max-width: 450px; text-align: center;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+                        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px; color: var(--warning);">Lưu ý về hình ảnh</h3>
+                        <p style="margin-bottom: 20px; line-height: 1.6;">
+                            Vui lòng <strong>không tải ảnh chứa khuôn mặt hoặc thông tin nhận diện cá nhân</strong> trong bản demo.
+                        </p>
+                        <button id="confirmImageWarningBtn" class="btn-primary" style="padding: 12px 32px;">
+                            <i class="fas fa-check-circle"></i> Tôi đã hiểu
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="hero-note"><i class="fas fa-shield-alt"></i> Nội dung mang tính giáo dục sức khỏe, không thay thế tư vấn y tế chuyên môn.</div>
-          </div>
+            
+            <label class="symptom-description"><i class="fas fa-edit"></i> 📝 Hãy mô tả cảm giác của bạn lúc này <span style="color: var(--danger);">*</span>:</label>
+            <textarea id="symptomText" rows="3" placeholder="Ví dụ: Em bị đau họng 2 ngày nay, kèm theo sốt nhẹ và mệt mỏi... Càng chi tiết, EduHealth AI càng hỗ trợ bạn tốt hơn."></textarea>
+            
+            <label class="symptom-description"><i class="fas fa-clock"></i> ⏱️ Bạn đã gặp tình trạng này trong bao lâu?</label>
+            <input type="text" id="durationText" class="duration-input" placeholder="Ví dụ: 2 ngày, 1 tuần, 1 tháng, từ hồi tháng trước..." autocomplete="off">
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="step1Btn"><i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe</button>
+            </div>
+            <div class="footer-note">
+                <i class="fas fa-shield-alt"></i> EduHealth AI hỗ trợ chăm sóc sức khỏe học đường, không thay thế bác sĩ hay chẩn đoán trực tiếp.
+            </div>
         </div>
-        <div class="hero-desc">Cẩm nang sức khỏe bỏ túi cho học sinh và phụ huynh. Chia sẻ những thông tin hữu ích về các dấu hiệu sức khỏe thường gặp và cách bảo vệ bản thân trong môi trường học đường.</div>
-      </div>
 
-      <div class="search-wrapper">
-        <div class="search-container">
-          <i class="fas fa-search"></i>
-          <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm bài viết theo tiêu đề hoặc nội dung...">
-          <button class="search-clear" id="searchClearBtn"><i class="fas fa-times-circle"></i> Xóa</button>
+        <!-- BƯỚC 2: CHECKLIST -->
+        <div id="step2Container" class="card" style="display: none;">
+            <h3 style="margin-bottom: 16px;"><i class="fas fa-check-square"></i> 2️⃣ Hãy cho EduHealth AI biết thêm về tình trạng của bạn</h3>
+            <div id="checklistArea" class="checklist-container">
+                <div style="text-align:center; color: var(--text-dim); padding: 40px 20px;">
+                    <i class="fas fa-spinner fa-pulse"></i> Đang tạo checklist...
+                </div>
+            </div>
+            <div class="step-buttons">
+                <button class="btn btn-primary" id="step2Btn"><i class="fas fa-stethoscope"></i> 🔍 Xem kết quả nhận biết</button>
+            </div>
+            <div class="back-info">
+                <i class="fas fa-arrow-left"></i> Checklist được tạo từ thông tin của bạn
+            </div>
         </div>
-        <div class="search-results-info" id="searchResultsInfo" style="display: none;">
-          <span><i class="fas fa-filter"></i> Đang lọc theo từ khóa: "<strong id="searchKeyword"></strong>"</span>
-          <button class="search-reset-btn" onclick="resetSearch()"><i class="fas fa-undo-alt"></i> Hiển thị tất cả</button>
+
+        <!-- BƯỚC 3: KẾT QUẢ -->
+        <div id="step3Container" class="card" style="display: none;">
+            <div class="result-area" style="padding: 0;">
+                <div class="result-title"><i class="fas fa-chart-line"></i> 📊 Kết quả nhận biết từ EduHealth AI</div>
+                <div id="analysisResult">✨ EduHealth AI đã sẵn sàng, hãy chia sẻ cùng mình nhé!</div>
+                <div id="imageAnalysisSection" style="display: none;"></div>
+                <div id="pdfButtonSection" class="chat-btn-section" style="display: none;">
+                    <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> Tải xuống PDF đánh giá</button>
+                </div>
+                <div id="chatButtonSection" class="chat-btn-section" style="display: none;">
+                    <button class="btn btn-primary" id="openNewChatBtn"><i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện EduhealthAI về kết quả</button>
+                </div>
+            </div>
+            <div id="historySection" class="history-list" style="display: none;">
+                <div class="history-title"><i class="fas fa-history"></i> 📋 Các cuộc trò chuyện trước đây</div>
+                <div id="chatHistoryList"></div>
+            </div>
+            <div class="step-buttons" style="margin-top: 20px;">
+                <button class="btn btn-outline" id="resetBtn"><i class="fas fa-redo-alt"></i> Check-in lại từ đầu</button>
+            </div>
         </div>
-      </div>
-      
-      <div class="category-grid" id="categoryGrid"></div>
     </div>
 
-    <!-- Cột phải: KHỐI QUIZ + Bản tin -->
-    <div class="right-col">
-      <div class="quiz-hero-card">
-        <div class="quiz-hero-content">
-          <div class="quiz-hero-text">
-            <h4><i class="fas fa-brain"></i> Trắc nghiệm sức khỏe học đường</h4>
-            <p>Kiểm tra kiến thức của bạn về chăm sóc sức khỏe, phòng bệnh và dinh dưỡng với bộ câu hỏi đúng/sai thú vị.</p>
-          </div>
-          <a href="minigame.html" class="quiz-hero-btn">
-            <i class="fas fa-question-circle"></i> Làm bài ngay
-          </a>
+    <!-- PDF Container ẩn -->
+    <div id="pdfPrintContainer" class="pdf-print-container"></div>
+    
+    <!-- Modal từ chối -->
+    <div id="rejectModal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-exclamation-triangle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+            <h3>⚠️ Không hỗ trợ vấn đề này</h3>
+            <p>EduHealth AI hiện tại chỉ hỗ trợ nhận biết <strong>các vấn đề về da liễu</strong> (mụn, phát ban, mẩn đỏ, vết thương, tổn thương da).</p>
+            <p>Thông tin bạn cung cấp (cả ảnh và mô tả) không liên quan đến da liễu.</p>
+            <p>Vui lòng quay lại <strong>Thư viện Cẩm nang sức khỏe</strong> để tìm hiểu thêm,<br>
+            và liên hệ với <strong>Cán bộ y tế nhà trường</strong> để được hỗ trợ kịp thời.</p>
+            <div class="modal-buttons">
+                <a href="index.html" class="btn btn-primary" style="text-decoration: none;"><i class="fas fa-book-open"></i> Đến Thư viện sức khỏe</a>
+                <button class="btn btn-outline" id="closeModalBtn">Đóng</button>
+            </div>
         </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-header">
-          <h3><i class="fas fa-newspaper"></i> Bản tin y tế học đường</h3>
-          <p>Cập nhật tin tức sức khỏe mới nhất</p>
-        </div>
-        <div class="news-list" id="newsList">
-          <div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> Đang tải tin tức...</div>
-        </div>
-        <div class="load-more-btn" id="loadMoreNewsBtn" style="display: none;">
-          <button class="btn-load-more" onclick="loadMoreNews()"><i class="fas fa-arrow-down"></i> Xem thêm bản tin</button>
-        </div>
-      </div>
     </div>
-  </div>
-</section>
 
-<section class="stats-section">
-  <div class="stats-grid">
-    <div class="stat-item"><div class="stat-number">50+</div><div class="stat-label">Cơ sở y tế</div></div>
-    <div class="stat-item"><div class="stat-number">200+</div><div class="stat-label">Bài viết y khoa</div></div>
-    <div class="stat-item"><div class="stat-number">1.2k+</div><div class="stat-label">Thành viên</div></div>
-    <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Hỗ trợ</div></div>
-  </div>
-</section>
-
-<footer>
-  <div class="footer-inner">
-    <div class="footer-copyright">
-      <i class="far fa-copyright"></i> 2026 EduHealth AI — Nền tảng chăm sóc sức khỏe học đường. Không thay thế bác sĩ.
-    </div>
-    <div class="footer-links">
-      <a href="dieukhoan.html"><i class="fas fa-file-contract"></i> Điều khoản sử dụng</a>
-      <a href="#"><i class="fas fa-shield-alt"></i> Chính sách bảo mật</a>
-      <a href="#"><i class="fas fa-envelope"></i> Liên hệ</a>
-    </div>
-  </div>
-</footer>
-
-<div id="categoryModal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header"><h3 id="categoryModalTitle">Danh sách bài viết</h3><button class="modal-close" onclick="closeCategoryModal()">&times;</button></div>
-    <div class="modal-body" id="categoryModalBody"><div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> Đang tải...</div></div>
-  </div>
-</div>
-
-<div id="articleModal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header"><h3 id="articleModalTitle">Bài viết</h3><button class="modal-close" onclick="closeArticleModal()">&times;</button></div>
-    <div class="modal-body" id="articleModalBody"><div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> Đang tải...</div></div>
-  </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-check-compat.js"></script>
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCwwBIP4gtGxz8GTbpBYfAu0YgjfhcS-ps",
-    authDomain: "eduhealth-4bcab.firebaseapp.com",
-    projectId: "eduhealth-4bcab",
-    storageBucket: "eduhealth-4bcab.firebasestorage.app",
-    messagingSenderId: "390541255938",
-    appId: "1:390541255938:web:aa7b5beca0105c28f70e1b",
-    measurementId: "G-GSP46EVLYG"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+// ========== POPUP CẢNH BÁO ẢNH ==========
+let imageWarningAccepted = false;
 
-  const categories = [
-    { id: 'da_lieu', name: 'I. Da liễu học đường', icon: '🧴', color: 'pink', iconBg: 'pink-bg', previewItems: ['Kẻ chấm đen lì lợm – Mụn đầu đen / Mụn đầu trắng', 'Cục đau khó ưa – Mụn viêm / Mụn bọc', 'Da phản ứng mạnh – Viêm da tiếp xúc / Dị ứng da'] },
-    { id: 'truyen_nhiem', name: 'II. Bệnh truyền nhiễm thường gặp', icon: '🤒', color: 'blue', iconBg: 'blue-bg', previewItems: ['Cơn sốt nhập trường – Cúm mùa', 'Nốt nước lấm drama – Thủy đậu', 'Má sưng bất ngờ – Quai bị'] },
-    { id: 'mat', name: 'III. Sức khỏe mắt và thị lực', icon: '👁️', color: 'purple', iconBg: 'purple-bg', previewItems: ['Tầm xa mờ mịt – Cận thị', 'Nhìn gần cũng không êm – Loạn thị', 'Đôi mắt overtime – Mỏi mắt'] },
-    { id: 'tinh_than', name: 'IV. Sức khỏe tinh thần và giấc ngủ', icon: '🧠', color: 'green', iconBg: 'green-bg', previewItems: ['Stress học tập kéo dài', 'Lo âu trong mùa thi', 'Rối loạn giấc ngủ ở tuổi teen'] },
-    { id: 'tuoi_day_thi', name: 'V. Sức khỏe tuổi dậy thì', icon: '🌱', color: 'orange', iconBg: 'orange-bg', previewItems: ['Thay đổi cơ thể tuổi dậy thì', 'Chăm sóc da tuổi dậy thì', 'Dinh dưỡng cho tuổi dậy thì'] },
-    { id: 'tieu_hoa', name: 'VI. Tiêu hóa - Dinh dưỡng - Thể chất', icon: '🥗', color: 'teal', iconBg: 'teal-bg', previewItems: ['Rối loạn tiêu hóa ở học đường', 'Chế độ ăn uống lành mạnh', 'Tập luyện thể dục thể thao'] }
-  ];
-
-  let allHandbook = [], filteredHandbook = [], allNews = [], displayedNewsCount = 5, currentSearchTerm = '';
-
-  // Hàm tạo HTML nội dung bài viết từ dữ liệu (giống admin)
-  function buildHandbookHTML(data) {
-    // Xử lý triệu chứng
-    let symptomsHtml = '';
-    if (data.symptoms) {
-      const symptomsList = typeof data.symptoms === 'string' ? data.symptoms.split('\n').filter(l => l.trim()) : data.symptoms;
-      if (symptomsList.length) {
-        symptomsHtml = `<ul style="margin: 0.8em 0 0.8em 1.8em;">${symptomsList.map(s => `<li>${escapeHtml(s.trim())}</li>`).join('')}</ul>`;
-      } else if (typeof data.symptoms === 'string' && data.symptoms.trim()) {
-        symptomsHtml = `<p>${escapeHtml(data.symptoms)}</p>`;
-      }
-    }
-
-    // Xử lý dấu hiệu nguy hiểm
-    let dangerHtml = '';
-    if (data.dangerSigns) {
-      const dangerList = typeof data.dangerSigns === 'string' ? data.dangerSigns.split('\n').filter(l => l.trim()) : data.dangerSigns;
-      if (dangerList.length) {
-        dangerHtml = `<div class="handbook-danger-box">
-          <div class="handbook-danger-header">
-            <div class="handbook-danger-icon">⚠️</div>
-            <div class="handbook-danger-title">SOS - Khi nào cần gặp bác sĩ?</div>
-          </div>
-          <ul class="handbook-danger-list">
-            ${dangerList.map(d => `<li><span>⚠️</span> ${escapeHtml(d.trim())}</li>`).join('')}
-          </ul>
-        </div>`;
-      } else if (typeof data.dangerSigns === 'string' && data.dangerSigns.trim()) {
-        dangerHtml = `<div class="handbook-danger-box">
-          <div class="handbook-danger-header">
-            <div class="handbook-danger-icon">⚠️</div>
-            <div class="handbook-danger-title">SOS - Khi nào cần gặp bác sĩ?</div>
-          </div>
-          <p style="color: #b91c1c; font-weight: 600;">${escapeHtml(data.dangerSigns)}</p>
-        </div>`;
-      }
-    }
-
-    // Xử lý 4 bước
-    let stepsHtml = '';
-    const steps = [
-      { num: 1, text: data.step1, color: '#f97316' },
-      { num: 2, text: data.step2, color: '#3b82f6' },
-      { num: 3, text: data.step3, color: '#f59e0b' },
-      { num: 4, text: data.step4, color: '#22c55e' }
-    ].filter(s => s.text && s.text.trim());
+function showImageWarning(callback) {
+    const modal = document.getElementById('imageWarningModal');
+    if (!modal) return;
     
-    if (steps.length) {
-      stepsHtml = `<div class="handbook-steps">
-        ${steps.map(s => `<div class="handbook-step">
-          <div class="handbook-step-num" style="background: ${s.color}">${s.num}</div>
-          <div class="handbook-step-text">${escapeHtml(s.text)}</div>
-        </div>`).join('')}
-      </div>`;
+    // Nếu đã chấp nhận trước đó thì không hiển thị lại
+    if (imageWarningAccepted) {
+        if (callback) callback();
+        return;
     }
+    
+    modal.classList.add('active');
+    
+    const confirmBtn = document.getElementById('confirmImageWarningBtn');
+    const handleConfirm = () => {
+        imageWarningAccepted = true;
+        modal.classList.remove('active');
+        if (callback) callback();
+        confirmBtn.removeEventListener('click', handleConfirm);
+    };
+    
+    confirmBtn.addEventListener('click', handleConfirm);
+}
 
-    let defenseHtml = '';
-    if (data.defenseTips && data.defenseTips.trim()) {
-      defenseHtml = `<div class="handbook-defense-box">
-          <div class="handbook-defense-header">
-            <div class="handbook-defense-icon">🛡️</div>
-            <div class="handbook-defense-title">Tips phòng thủ</div>
-          </div>
-          <div class="handbook-info-text">${escapeHtml(data.defenseTips)}</div>
-        </div>`;
+// Ghi đè các hàm upload ảnh để hiển thị popup trước
+const originalChooseFileHandler = chooseFileBtn.onclick;
+const originalCameraHandler = cameraBtn.onclick;
+const originalDropHandler = dropZone.ondrop;
+
+// Xử lý khi chọn file từ máy
+chooseFileBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(() => {
+        fileInput.click();
+    });
+};
+
+// Xử lý khi chụp ảnh
+cameraBtn.onclick = (e) => {
+    e.preventDefault();
+    showImageWarning(async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.autoplay = true;
+            const modalDiv = document.createElement('div');
+            modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+            video.width = 320;
+            video.height = 240;
+            videoContainer.appendChild(video);
+            const captureBtn = document.createElement('button');
+            captureBtn.innerText = 'Chụp ảnh';
+            captureBtn.className = 'btn btn-primary';
+            captureBtn.style.marginTop = '12px';
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'Hủy';
+            closeBtn.className = 'btn btn-outline';
+            closeBtn.style.marginLeft = '10px';
+            videoContainer.appendChild(captureBtn);
+            videoContainer.appendChild(closeBtn);
+            modalDiv.appendChild(videoContainer);
+            document.body.appendChild(modalDiv);
+            captureBtn.onclick = async () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+            closeBtn.onclick = () => {
+                stream.getTracks().forEach(track => track.stop());
+                document.body.removeChild(modalDiv);
+            };
+        } catch (err) {
+            alert("Không thể truy cập camera: " + err.message);
+        }
+    });
+};
+
+// Xử lý khi kéo thả ảnh
+dropZone.ondrop = async (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        });
+    } else alert('Vui lòng thả file ảnh hợp lệ');
+};
+
+// Ghi đè file input change event
+fileInput.onchange = async (e) => {
+    if (e.target.files.length) {
+        showImageWarning(async () => {
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                currentImageBase64 = ev.target.result;
+                currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
     }
+};
+        // ========== CẤU HÌNH ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOYFgLyliWFfNWtXHzxDQrbe_ISgmavno",
+            authDomain: "eduhealth-4bcab.firebaseapp.com",
+            projectId: "eduhealth-4bcab",
+            storageBucket: "eduhealth-4bcab.firebasestorage.app",
+            messagingSenderId: "390541255938",
+            appId: "1:390541255938:web:aa7b5beca0105c28f70e1b",
+            measurementId: "G-GSP46EVLYG"
+        };
+        firebase.initializeApp(firebaseConfig);
 
-    // Xử lý ảnh grid
-    let imageGridHtml = '';
-    if (data.image1 || data.image2) {
-      const hasBoth = data.image1 && data.image2;
-      imageGridHtml = `<div class="handbook-image-grid" style="display: grid; grid-template-columns: ${hasBoth ? '2fr 1fr' : '1fr'}; gap: 0; background: #222; max-height: 320px; overflow: hidden; margin: 0 -24px;">
-        ${data.image1 ? `<div class="handbook-image-wrap"><img src="${data.image1}" onerror="this.style.background='#ddd'"><div class="handbook-image-caption">${escapeHtml(data.image1Caption || '')}</div></div>` : ''}
-        ${data.image2 ? `<div class="handbook-image-wrap"><img src="${data.image2}" onerror="this.style.background='#ddd'"><div class="handbook-image-caption">${escapeHtml(data.image2Caption || '')}</div></div>` : ''}
-      </div>`;
-    }
+        // === TH�M �O?N CODE M?I ===
+        // Kh?i t?o App Check v?i reCAPTCHA Enterprise
+        const appCheck = firebase.appCheck();
+        appCheck.activate(
+          new firebase.appCheck.ReCaptchaEnterpriseProvider(
+            '6LfZOsIsAAAAAK_vBWSNgolKHjLsfWxGBicixs37'
+          ),
+          true
+        );
+        // ===============================
 
-    return `
-      <div class="article-content">
-        <div class="handbook-header">
-          <div class="handbook-header-top">
-            <div class="handbook-emoji">${data.emoji || '😟'}</div>
-            <div class="handbook-title">
-              <h1>${escapeHtml(data.title)}</h1>
-              <div class="handbook-subtitle">${escapeHtml(data.scientificName || '')}</div>
-            </div>
-          </div>
-          <div class="handbook-badges">
-            <span class="handbook-badge">⚠️ Cần biết</span>
-            <span class="handbook-badge"><span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #fff;"></span> Nguy hiểm</span>
-          </div>
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const API_KEY = "sk-uQmI5tk7o5FdWLq852gCLO2xZTd5OmG2K9RKy7C3raEqGx6v";
+        const BASE_URL = "https://api.shopaikey.com/v1";
+        const API_URL = BASE_URL + "/chat/completions";
+        const MODEL_NAME = "gpt-5.4-nano";
+
+        // ========== BIẾN TOÀN CỤC ==========
+        let currentImageBase64 = null;
+        let currentChecklistItems = [];
+        let isProcessing = false;
+        let lastAnalysisResult = null;
+        let lastCheckinData = null;
+        let currentUserId = null;
+        let currentUserData = null;
+        let userChats = [];
+        let highlightedImageBase64 = null;
+        let diseaseAreas = [];
+        let cachedChecklistQuestions = []; // Lưu cache câu hỏi từ Firestore để tham khảo
+
+        // DOM elements
+        const step1Container = document.getElementById('step1Container');
+        const step2Container = document.getElementById('step2Container');
+        const step3Container = document.getElementById('step3Container');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+        const cameraBtn = document.getElementById('cameraBtn');
+        const imagePreviewDiv = document.getElementById('imagePreview');
+        const symptomTextarea = document.getElementById('symptomText');
+        const durationInput = document.getElementById('durationText');
+        const step1Btn = document.getElementById('step1Btn');
+        const step2Btn = document.getElementById('step2Btn');
+        const checklistArea = document.getElementById('checklistArea');
+        const analysisResultDiv = document.getElementById('analysisResult');
+        const resetBtn = document.getElementById('resetBtn');
+        const openNewChatBtn = document.getElementById('openNewChatBtn');
+        const chatButtonSection = document.getElementById('chatButtonSection');
+        const pdfButtonSection = document.getElementById('pdfButtonSection');
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const historySection = document.getElementById('historySection');
+        const chatHistoryList = document.getElementById('chatHistoryList');
+        const pdfPrintContainer = document.getElementById('pdfPrintContainer');
+        const imageAnalysisSection = document.getElementById('imageAnalysisSection');
+        const authContainer = document.getElementById('authContainer');
+        const rejectModal = document.getElementById('rejectModal');
+
+        // ========== KIỂM TRA ĐĂNG NHẬP ==========
+        function checkAuth() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            currentUserId = user.uid;
+            return true;
+        }
+
+        async function loadUserData() {
+            const user = auth.currentUser;
+            if (!user) return null;
+            
+            let fullName = localStorage.getItem('healthUserName');
+            let phone = localStorage.getItem('healthUserPhone');
+            let dob = localStorage.getItem('healthUserDob');
+            let gender = localStorage.getItem('healthUserGender');
+            let email = user.email;
+            
+            if (!fullName || fullName === user.email.split('@')[0]) {
+                const doc = await db.collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    fullName = data.fullName;
+                    phone = data.phone || '';
+                    dob = data.dob || '';
+                    gender = data.gender || '';
+                    email = data.email || user.email;
+                    localStorage.setItem('healthUserName', fullName);
+                    localStorage.setItem('healthUserPhone', phone);
+                    localStorage.setItem('healthUserDob', dob);
+                    localStorage.setItem('healthUserGender', gender);
+                    currentUserData = data;
+                } else {
+                    currentUserData = { fullName: user.email.split('@')[0], phone: '', dob: '', gender: '', email: user.email };
+                }
+            } else {
+                currentUserData = {
+                    fullName: fullName,
+                    phone: phone || '',
+                    dob: dob || '',
+                    gender: gender || '',
+                    email: email
+                };
+            }
+            return currentUserData;
+        }
+
+        function updateAuthUI() {
+            const user = auth.currentUser;
+            if (user) {
+                const displayName = currentUserData?.fullName || user.email.split('@')[0];
+                authContainer.innerHTML = `
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${escapeHtml(displayName)}</span>
+                    </div>
+                    <button class="auth-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span></span></button>
+                `;
+                document.getElementById('logoutBtn').onclick = async () => {
+                    await auth.signOut();
+                    localStorage.removeItem('healthUserId');
+                    localStorage.removeItem('healthUserEmail');
+                    localStorage.removeItem('healthUserName');
+                    localStorage.removeItem('healthUserPhone');
+                    localStorage.removeItem('healthUserDob');
+                    localStorage.removeItem('healthUserGender');
+                    window.location.href = 'login.html';
+                };
+            } else {
+                authContainer.innerHTML = `<button class="auth-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i><span>Đăng nhập</span></button>`;
+                document.getElementById('loginBtn').onclick = () => {
+                    window.location.href = 'login.html';
+                };
+            }
+        }
+
+        // ========== NÉN ẢNH 720p ==========
+        async function compressImageTo720p(dataUrl, maxWidth = 720, quality = 0.7) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.src = dataUrl;
+            });
+        }
+
+function showRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    const modalBody = modal.querySelector('.modal-content');
+    
+    // Cập nhật nội dung modal
+    modalBody.innerHTML = `
+        <i class="fas fa-info-circle" style="font-size: 48px; color: var(--warning); margin-bottom: 16px;"></i>
+        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 16px;">⚠️ Thông báo</h3>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Hiện tại AI Check-in của EduHealth AI đang hỗ trợ chuyên sâu cho <strong>module mụn học đường</strong>. 
+            Với vấn đề bạn đang gặp, hệ thống chưa đủ cơ sở để đưa ra hỗ trợ check-in chuyên sâu một cách an toàn.
+        </p>
+        <p style="line-height: 1.6; margin-bottom: 16px; text-align: left;">
+            Để hỗ trợ bạn tốt hơn, bạn có thể chọn một trong các hướng sau:
+        </p>
+        <ul style="text-align: left; margin-bottom: 20px; padding-left: 20px; line-height: 1.8;">
+            <li><strong>(1)</strong> Xem thông tin phù hợp trong <strong>Thư viện sức khỏe</strong></li>
+            <li><strong>(2)</strong> Liên hệ <strong>CBYT / phụ huynh</strong> để được hỗ trợ thêm</li>
+            <li><strong>(3)</strong> Trò chuyện với <strong>EduHealth AI</strong> để được hướng dẫn bước tiếp theo</li>
+        </ul>
+        <p style="line-height: 1.6; margin-bottom: 20px; font-size: 13px; color: var(--text-dim);">
+            Nếu có dấu hiệu bất thường hoặc bạn đang lo lắng nhiều, hãy ưu tiên liên hệ người lớn hoặc cơ sở y tế.
+        </p>
+        <div class="modal-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="index.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px;">
+                <i class="fas fa-book-open"></i> Đến Thư viện sức khỏe
+            </a>
+            <a href="chatbox.html" class="btn-primary" style="text-decoration: none; background: linear-gradient(135deg, #10b981, #3b82f6); padding: 10px 20px;">
+                <i class="fas fa-comment-dots"></i> Trò chuyện với AI
+            </a>
+            <button class="btn-outline" id="closeModalBtn" style="padding: 10px 20px;">Đóng</button>
         </div>
-        
-        ${imageGridHtml}
-        
-        <div class="handbook-body">
-          <div class="handbook-info-rows">
-            <div class="handbook-info-row">
-              <div class="handbook-info-icon" style="background: #ede9fe;">💜</div>
-              <div>
-                <div class="handbook-info-label" style="color: #7c3aed;">Cái tên "sang chảnh"</div>
-                <div class="handbook-info-text">${escapeHtml(data.scientificName || '')}</div>
-              </div>
-            </div>
-            <div class="handbook-info-row">
-              <div class="handbook-info-icon" style="background: #fce7f3;">🧬</div>
-              <div>
-                <div class="handbook-info-label" style="color: #db2777;">Nó là gì thế?</div>
-                <div class="handbook-info-text">${escapeHtml(data.shortDesc || '')}</div>
-              </div>
-            </div>
-            <div class="handbook-info-row">
-              <div class="handbook-info-icon" style="background: #fff3e0;">🎭</div>
-              <div>
-                <div class="handbook-info-label" style="color: #ea580c;">"Drama" dễ gặp tại trường</div>
-                <div class="handbook-info-text">${escapeHtml(data.situation || '')}</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="handbook-two-col">
-            <div class="handbook-info-card">
-              <div class="handbook-info-card-header">
-                <div class="handbook-info-card-icon" style="background: #3b5ef6; color: white;">⚠</div>
-                <div class="handbook-info-card-title" style="color: #3b5ef6;">Nguyên nhân</div>
-              </div>
-              <div class="handbook-info-text">${escapeHtml(data.cause || '')}</div>
-            </div>
-            <div class="handbook-info-card">
-              <div class="handbook-info-card-header">
-                <div class="handbook-info-card-icon" style="background: #ef4444; color: white;">♥</div>
-                <div class="handbook-info-card-title" style="color: #ef4444;">Check-list dấu hiệu</div>
-              </div>
-              ${symptomsHtml || `<div class="handbook-info-text">${escapeHtml(data.symptoms || '')}</div>`}
-            </div>
-          </div>
-
-          <div style="margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 18px;">
-              <div style="width: 34px; height: 34px; border-radius: 50%; background: #4ade80; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem;">C</div>
-              <div style="font-size: 1.05rem; font-weight: 800; color: #16a34a;">Bí kíp xử lý tại chỗ</div>
-            </div>
-            ${stepsHtml}
-          </div>
-
-          ${defenseHtml}
-
-          ${dangerHtml}
-        </div>
-      </div>
     `;
-  }
-
-  function renderCategories() {
-    const container = document.getElementById('categoryGrid');
-    const dataSource = currentSearchTerm ? filteredHandbook : allHandbook;
-    if (dataSource.length === 0 && currentSearchTerm) {
-      container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: var(--card-bg); border-radius: 32px;">
-        <i class="fas fa-search" style="font-size: 48px; opacity: 0.5; margin-bottom: 16px; display: block;"></i>
-        <h3 style="font-family: 'Fraunces', serif; margin-bottom: 8px;">Không tìm thấy bài viết</h3>
-        <p style="color: var(--text-dim);">Không có bài viết nào phù hợp với từ khóa "<strong>${escapeHtml(currentSearchTerm)}</strong>"</p>
-        <button onclick="resetSearch()" style="margin-top: 20px; background: var(--blue-primary); border: none; color: white; padding: 8px 24px; border-radius: 40px; cursor: pointer;">Xóa tìm kiếm</button>
-      </div>`;
-      document.getElementById('totalPostsCount').innerText = '0';
-      return;
-    }
-    container.innerHTML = categories.map(cat => {
-      const count = dataSource.filter(post => post.category === cat.id).length;
-      return `<div class="category-card ${cat.color}" onclick="openCategoryPosts('${cat.id}', '${cat.name}')">
-        <div class="category-header"><div class="category-icon ${cat.iconBg}">${cat.icon}</div><div class="category-info"><h3>${cat.name}</h3><div class="category-count" id="count-${cat.id}">${count} bài viết</div></div></div>
-        <div class="category-preview"><ul>${cat.previewItems.map(item => `<li><i class="fas fa-circle"></i> ${item}</li>`).join('')}</ul><div class="category-more"><i class="fas fa-arrow-right"></i> Xem tất cả bài viết</div></div>
-      </div>`;
-    }).join('');
-    updateStatsAndCounts();
-  }
-
-  function updateStatsAndCounts() {
-    const dataSource = currentSearchTerm ? filteredHandbook : allHandbook;
-    categories.forEach(cat => { const el = document.getElementById(`count-${cat.id}`); if(el) el.textContent = `${dataSource.filter(p => p.category === cat.id).length} bài viết`; });
-    document.getElementById('totalPostsCount').innerText = dataSource.length;
-  }
-
-  async function loadHandbook() {
-    try {
-      const qs = await db.collection('handbook').orderBy('createdAt', 'desc').get();
-      allHandbook = qs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      filteredHandbook = [...allHandbook];
-      renderCategories();
-    } catch(e) { console.error(e); }
-  }
-
-  function searchHandbook(keyword) {
-    currentSearchTerm = keyword.trim().toLowerCase();
-    const infoDiv = document.getElementById('searchResultsInfo');
-    const clearBtn = document.getElementById('searchClearBtn');
-    if(!currentSearchTerm) {
-      filteredHandbook = [...allHandbook];
-      infoDiv.style.display = 'none';
-      clearBtn.style.display = 'none';
-    } else {
-      filteredHandbook = allHandbook.filter(p => (p.title && p.title.toLowerCase().includes(currentSearchTerm)) || 
-        (p.shortDesc && p.shortDesc.toLowerCase().includes(currentSearchTerm)) ||
-        (p.symptoms && p.symptoms.toLowerCase().includes(currentSearchTerm)) ||
-        (p.cause && p.cause.toLowerCase().includes(currentSearchTerm)));
-      document.getElementById('searchKeyword').innerText = currentSearchTerm;
-      infoDiv.style.display = 'flex';
-      clearBtn.style.display = 'block';
-    }
-    renderCategories();
-  }
-
-  function resetSearch() { document.getElementById('searchInput').value = ''; searchHandbook(''); }
-  function clearSearch() { resetSearch(); }
-
-  async function loadNews() {
-    try {
-      const qs = await db.collection('news').orderBy('createdAt', 'desc').get();
-      allNews = qs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      displayedNewsCount = 5;
-      displayNews();
-    } catch(e) { document.getElementById('newsList').innerHTML = '<div class="empty-news">⚠️ Lỗi tải dữ liệu</div>'; }
-  }
-
-  function displayNews() {
-    const container = document.getElementById('newsList');
-    const newsToShow = allNews.slice(0, displayedNewsCount);
-    if(allNews.length === 0) { container.innerHTML = '<div class="empty-news"><i class="fas fa-newspaper" style="font-size: 40px; opacity:0.5"></i><p>Chưa có bản tin.</p></div>'; document.getElementById('loadMoreNewsBtn').style.display = 'none'; return; }
-    container.innerHTML = newsToShow.map(n => `<div class="news-item" onclick="openNewsArticle('${n.id}')"><img class="news-item-cover" src="${n.coverImage}" onerror="this.src='https://placehold.co/60x60?text=News'"><div class="news-item-content"><h4 class="news-item-title">${escapeHtml(n.title)}</h4><div class="news-item-meta"><span><i class="far fa-eye"></i> ${n.views||0}</span><span><i class="far fa-calendar-alt"></i> ${n.createdAt ? new Date(n.createdAt.toDate()).toLocaleDateString('vi-VN') : 'N/A'}</span></div></div></div>`).join('');
-    document.getElementById('loadMoreNewsBtn').style.display = allNews.length > displayedNewsCount ? 'block' : 'none';
-  }
-  function loadMoreNews() { displayedNewsCount += 5; displayNews(); }
-
-  function openCategoryPosts(categoryId, categoryName) {
-    const dataSource = currentSearchTerm ? filteredHandbook : allHandbook;
-    const posts = dataSource.filter(p => p.category === categoryId);
-    const modal = document.getElementById('categoryModal');
-    document.getElementById('categoryModalTitle').innerHTML = `<i class="fas fa-folder-open"></i> ${categoryName}`;
-    const body = document.getElementById('categoryModalBody');
-    if(!posts.length) body.innerHTML = `<div class="empty-posts"><i class="fas fa-book-open" style="font-size:48px;opacity:0.5"></i><p>Chưa có bài viết.</p></div>`;
-    else body.innerHTML = `<div class="posts-grid">${posts.map(p => `<div class="post-card-mini" onclick="openArticle('${p.id}')"><img class="post-mini-cover" src="${p.coverImage}" onerror="this.src='https://placehold.co/400x200?text=No+Image'"><div class="post-mini-content"><h4 class="post-mini-title">${escapeHtml(p.title)}</h4><div class="post-mini-excerpt">${escapeHtml(p.shortDesc || '').substring(0, 80)}...</div><div class="post-mini-stats"><span><i class="far fa-eye"></i> ${p.views||0}</span><span><i class="far fa-calendar-alt"></i> ${p.createdAt ? new Date(p.createdAt.toDate()).toLocaleDateString('vi-VN') : 'N/A'}</span></div></div></div>`).join('')}</div>`;
-    modal.classList.add('active');
-  }
-  
-  async function openArticle(id) {
-    const post = allHandbook.find(p => p.id === id);
-    if(!post) return;
-    await db.collection('handbook').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
-    post.views = (post.views||0)+1;
-    const modal = document.getElementById('articleModal');
-    document.getElementById('articleModalTitle').innerHTML = escapeHtml(post.title);
     
-    // Sử dụng fullContent nếu có, nếu không thì build từ dữ liệu
-    let contentHtml = '';
-    if (post.fullContent) {
-      contentHtml = post.fullContent;
-      if (post.defenseTips && post.defenseTips.trim() && !contentHtml.includes('Tips phòng thủ')) {
-        contentHtml += `<div class="handbook-defense-box">
-          <div class="handbook-defense-header">
-            <div class="handbook-defense-icon">🛡️</div>
-            <div class="handbook-defense-title">Tips phòng thủ</div>
-          </div>
-          <div class="handbook-info-text">${escapeHtml(post.defenseTips)}</div>
-        </div>`;
-      }
-    } else {
-      contentHtml = buildHandbookHTML(post);
+    modal.classList.add('active');
+    
+    // Gắn lại event cho nút đóng
+    const closeBtn = document.getElementById('closeModalBtn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            modal.classList.remove('active');
+            resetToStep1();
+        };
     }
     
-    document.getElementById('articleModalBody').innerHTML = `
-      ${contentHtml}
-      <div class="article-stats">
-        <span><i class="far fa-eye"></i> ${post.views||0}</span>
-        <span><i class="far fa-calendar-alt"></i> ${post.createdAt ? new Date(post.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
-        <span><i class="fas fa-folder"></i> ${getCategoryName(post.category)}</span>
-      </div>
-    `;
-    modal.classList.add('active');
-  }
-  
-  async function openNewsArticle(id) {
-    const news = allNews.find(n => n.id === id);
-    if(!news) return;
-    await db.collection('news').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
-    news.views = (news.views||0)+1;
-    const modal = document.getElementById('articleModal');
-    document.getElementById('articleModalTitle').innerHTML = escapeHtml(news.title);
-    document.getElementById('articleModalBody').innerHTML = `<div class="article-content" style="font-family: 'DM Sans', sans-serif;">${news.content||''}</div><div class="article-stats"><span><i class="far fa-eye"></i> ${news.views||0}</span><span><i class="far fa-calendar-alt"></i> ${news.createdAt ? new Date(news.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span><span><i class="fas fa-newspaper"></i> Bản tin y tế</span></div>`;
-    modal.classList.add('active');
-  }
-  
-  function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
-  function closeArticleModal() { document.getElementById('articleModal').classList.remove('active'); }
-  
-  function getCategoryName(id) { const c = categories.find(c => c.id === id); return c ? c.name : 'Chưa phân loại'; }
-  
-  function escapeHtml(t) { if(!t) return ''; const div = document.createElement('div'); div.textContent = t; return div.innerHTML; }
+    // Gắn event cho overlay
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+            resetToStep1();
+        }
+    };
+}
 
-  document.getElementById('categoryModal').addEventListener('click', e => { if(e.target === document.getElementById('categoryModal')) closeCategoryModal(); });
-  document.getElementById('articleModal').addEventListener('click', e => { if(e.target === document.getElementById('articleModal')) closeArticleModal(); });
+        document.getElementById('closeModalBtn').onclick = () => {
+            rejectModal.classList.remove('active');
+        };
+        rejectModal.onclick = (e) => {
+            if (e.target === rejectModal) rejectModal.classList.remove('active');
+        };
 
-  loadHandbook(); loadNews();
+        // ========== LẤY CÂU HỎI CHECKLIST TỪ FIRESTORE (ĐỂ THAM KHẢO) ==========
+        async function loadChecklistQuestionsFromFirestore() {
+            if (cachedChecklistQuestions.length > 0) {
+                return cachedChecklistQuestions;
+            }
+            
+            try {
+                const snapshot = await db.collection('knowledge_base').where('type', '==', 'checklist').get();
+                let allQuestions = [];
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.questions && Array.isArray(data.questions)) {
+                        allQuestions.push(...data.questions);
+                    } else if (data.answer && typeof data.answer === 'string') {
+                        const lines = data.answer.split('\n');
+                        lines.forEach(line => {
+                            const trimmed = line.trim();
+                            if (trimmed && (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.match(/^\d+\./))) {
+                                let cleanQuestion = trimmed.replace(/^[-•\d\.\s]+/, '').trim();
+                                if (cleanQuestion) {
+                                    allQuestions.push(cleanQuestion);
+                                }
+                            } else if (trimmed && trimmed.length > 5) {
+                                allQuestions.push(trimmed);
+                            }
+                        });
+                    }
+                });
+                
+                allQuestions = [...new Set(allQuestions)].filter(q => q && q.length > 3);
+                
+                if (allQuestions.length === 0) {
+                    allQuestions = [
+                        "Bạn có bị đau đầu không?",
+                        "Bạn có cảm thấy mệt mỏi, uể oải không?",
+                        "Bạn có bị sốt (trên 38°C) không?",
+                        "Bạn có bị ho khan hoặc có đờm không?",
+                        "Bạn có bị đau họng, khó nuốt không?",
+                        "Bạn có bị nghẹt mũi, chảy nước mũi không?",
+                        "Bạn có bị khó thở, tức ngực không?",
+                        "Bạn có bị đau nhức cơ thể không?",
+                        "Bạn có bị đau bụng không?",
+                        "Bạn có bị buồn nôn, nôn không?",
+                        "Bạn có bị chán ăn, ăn không ngon không?",
+                        "Bạn có bị khó ngủ, ngủ không sâu giấc không?",
+                        "Bạn có uống ít nước hơn bình thường không?",
+                        "Bạn có bị mất vị giác hoặc khứu giác không?",
+                        "Bạn có cảm thấy căng thẳng, lo âu không?",
+                        "Bạn có bị mất tập trung, khó học bài không?",
+                        "Bạn có cảm thấy buồn bã, chán nản không?",
+                        "Bạn có ít vận động, ngồi nhiều không?",
+                        "Bạn có bị đau nhức cơ thể sau vận động không?",
+                        "Bạn có bị chóng mặt, hoa mắt không?",
+                        "Bạn có bị phát ban, nổi mẩn đỏ không?",
+                        "Bạn có bị sưng hạch bạch huyết không?",
+                        "Bạn có bị đi ngoài phân lỏng không?",
+                        "Bạn có bị ngứa da không?",
+                        "Bạn có bị nổi mụn trên da không?"
+                    ];
+                }
+                
+                cachedChecklistQuestions = allQuestions;
+                return allQuestions;
+            } catch (error) {
+                console.error('Lỗi load checklist từ Firestore:', error);
+                const fallback = [
+                    "Bạn có bị đau đầu không?",
+                    "Bạn có bị mệt mỏi không?",
+                    "Bạn có bị sốt không?",
+                    "Bạn có bị ho không?",
+                    "Bạn có bị đau họng không?"
+                ];
+                cachedChecklistQuestions = fallback;
+                return fallback;
+            }
+        }
 
-  // Theme
-  const themeBtn = document.getElementById('themeToggleBtn');
-  const setTheme = (theme) => {
-    if(theme === 'dark') { document.body.classList.add('dark'); themeBtn.innerHTML = '<i class="fas fa-sun"></i> <span>Chế độ sáng</span>'; localStorage.setItem('eduhealth-theme','dark'); }
-    else { document.body.classList.remove('dark'); themeBtn.innerHTML = '<i class="fas fa-moon"></i> <span>Chế độ tối</span>'; localStorage.setItem('eduhealth-theme','light'); }
-  };
-  const saved = localStorage.getItem('eduhealth-theme');
-  if(saved === 'dark') setTheme('dark'); else if(saved === 'light') setTheme('light'); else setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  themeBtn.addEventListener('click', () => setTheme(document.body.classList.contains('dark') ? 'light' : 'dark'));
+        // ========== KIỂM TRA TỪ CHỐI SONG SONG (ẢNH + MÔ TẢ) ==========
+        async function checkImageRelevance(imageBase64, userSymptom) {
+            const prompt = `Bạn là chuyên gia y tế. Hãy xác định xem ảnh này có liên quan đến vấn đề về da như mụn, phát ban, mẩn đỏ, vết thương, tổn thương da, hoặc các dấu hiệu bệnh ngoài da không.
+            
+Trả về JSON: {"is_relevant": true/false, "reason": "lý do"}`;
 
-  // Mobile menu
-  const menuToggle = document.getElementById('menuToggleBtn'), mobilePanel = document.getElementById('mobileMenuPanel');
-  if(menuToggle) menuToggle.addEventListener('click', () => { mobilePanel.classList.toggle('open'); const icon = menuToggle.querySelector('i'); icon.classList.toggle('fa-bars'); icon.classList.toggle('fa-times'); });
-  document.querySelectorAll('.nav-link-mobile').forEach(l => l.addEventListener('click', () => { mobilePanel.classList.remove('open'); if(menuToggle){ const icon=menuToggle.querySelector('i'); icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } }));
-  document.getElementById('searchInput').addEventListener('input', e => searchHandbook(e.target.value));
+            const messages = [
+                { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                { role: "user", content: [
+                    { type: "text", text: prompt },
+                    { type: "image_url", image_url: { url: imageBase64 } }
+                ]}
+            ];
+            
+            const rawResponse = await callAI(messages, 0.3);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            return JSON.parse(clean);
+        }
+        
+        async function checkDescriptionRelevance(userSymptom) {
+            const prompt = `Bạn là chuyên gia y tế. Dựa vào mô tả triệu chứng sau đây, hãy xác định xem người dùng đang gặp vấn đề về da liễu (mụn, phát ban, mẩn đỏ, ngứa, vết thương, tổn thương da, nấm da, dị ứng da) hay không.
 
-  window.openCategoryPosts = openCategoryPosts; 
-  window.openArticle = openArticle; 
-  window.openNewsArticle = openNewsArticle;
-  window.closeCategoryModal = closeCategoryModal; 
-  window.closeArticleModal = closeArticleModal;
-  window.loadMoreNews = loadMoreNews; 
-  window.resetSearch = resetSearch; 
-  window.clearSearch = clearSearch;
-</script>
+Mô tả triệu chứng: "${userSymptom}"
+
+Trả về JSON: {"is_relevant": true/false, "reason": "lý do ngắn gọn"}
+
+Quy tắc:
+- is_relevant = true nếu mô tả liên quan đến da liễu (kể cả có kèm triệu chứng khác)
+- is_relevant = false nếu mô tả KHÔNG liên quan đến da liễu (ví dụ: chỉ đau bụng, đau đầu, sốt, ho, đau họng, mệt mỏi, khó thở, rối loạn tiêu hóa, đau cơ không kèm biểu hiện da)`;
+
+            const messages = [
+                { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                { role: "user", content: prompt }
+            ];
+            
+            const rawResponse = await callAI(messages, 0.3);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            return JSON.parse(clean);
+        }
+        
+        async function checkDermatologyRelevanceParallel(imageBase64, userSymptom) {
+            const promises = [];
+            
+            if (imageBase64) {
+                promises.push(checkImageRelevance(imageBase64, userSymptom));
+            } else {
+                promises.push(Promise.resolve({ is_relevant: true, reason: "Không có ảnh" }));
+            }
+            
+            promises.push(checkDescriptionRelevance(userSymptom));
+            
+            const results = await Promise.all(promises);
+            const imageResult = results[0];
+            const descriptionResult = results[1];
+            
+            if (imageBase64 && !imageResult.is_relevant) {
+                return { 
+                    is_relevant: false, 
+                    reason: `Ảnh không liên quan đến da liễu: ${imageResult.reason}` 
+                };
+            }
+            
+            if (!descriptionResult.is_relevant) {
+                return { 
+                    is_relevant: false, 
+                    reason: `Mô tả không liên quan đến da liễu: ${descriptionResult.reason}` 
+                };
+            }
+            
+            return { is_relevant: true, reason: "Cả ảnh và mô tả đều liên quan đến da liễu" };
+        }
+
+        // ========== TẠO CHECKLIST (AI TỰ DO TẠO, NHƯNG CÓ THAM KHẢO DATABASE) ==========
+        async function createChecklistFromAI(userSymptom, userDuration, hasImage) {
+            // Lấy câu hỏi từ Firestore để tham khảo
+            const referenceQuestions = await loadChecklistQuestionsFromFirestore();
+            const referenceText = referenceQuestions.map((q, idx) => `${idx + 1}. ${q}`).join('\n');
+            
+            const prompt = `Bạn là trợ lý y tế của EduHealth AI. Hãy tạo một CHECKLIST các triệu chứng để hỏi người dùng dựa trên thông tin sau:
+
+THÔNG TIN NGƯỜI DÙNG:
+- Mô tả triệu chứng: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+- ${hasImage ? "Người dùng có cung cấp ảnh (có thể liên quan đến da liễu)" : "Người dùng không cung cấp ảnh"}
+
+=== DANH SÁCH CÂU HỎI THAM KHẢO (CÓ SẴN TRONG DATABASE) ===
+${referenceText}
+
+YÊU CẦU:
+1. Hãy tạo một checklist gồm các câu hỏi về triệu chứng (khoảng 15-25 câu)
+2. Bạn có thể THAM KHẢO các câu hỏi từ danh sách trên, nhưng cũng có thể TẠO CÂU HỎI MỚI nếu cần thiết
+3. Mỗi câu hỏi nên rõ ràng, dễ hiểu, tập trung vào các triệu chứng liên quan
+4. Phân loại câu hỏi thành các nhóm (category) phù hợp (ví dụ: Triệu chứng hô hấp, Tiêu hóa, Da liễu, Thần kinh, Sinh hoạt...)
+
+Trả về JSON theo format:
+{
+    "checklist": [
+        {"id": 1, "category": "Tên nhóm", "text": "Câu hỏi triệu chứng?"},
+        {"id": 2, "category": "Tên nhóm", "text": "Câu hỏi triệu chứng?"}
+    ]
+}
+
+Trả về JSON thuần túy, không có markdown.`;
+
+            const messages = [
+                { role: "system", content: "Bạn là trợ lý y tế chuyên nghiệp. Hãy tạo checklist câu hỏi chi tiết, hữu ích. Trả về JSON." },
+                { role: "user", content: prompt }
+            ];
+            
+            const rawResponse = await callAI(messages, 0.6);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            
+            const result = JSON.parse(clean);
+            let checklist = result.checklist || [];
+            
+            // Đảm bảo mỗi item có đủ trường
+            checklist = checklist.map((item, idx) => ({
+                id: item.id || idx + 1,
+                category: item.category || "📋 Triệu chứng cần đánh giá",
+                text: item.text,
+                checked: false
+            }));
+            
+            if (checklist.length === 0) {
+                throw new Error("AI không tạo được checklist");
+            }
+            
+            return checklist;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function showToast(message, isError = false) {
+            const oldToast = document.querySelector('.custom-toast');
+            if (oldToast) oldToast.remove();
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${isError ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 50px;
+                z-index: 10000;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                max-width: 90%;
+                text-align: center;
+            `;
+            toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}" style="margin-right: 8px;"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast && toast.remove) toast.remove(); }, 3000);
+        }
+
+        // ========== GỌI API AI ==========
+        async function callAI(messages, temperature = 0.7) {
+            const payload = {
+                model: MODEL_NAME,
+                messages: messages,
+                temperature: temperature,
+                max_tokens: 2800,
+                top_p: 0.9,
+                stream: false
+            };
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                let errDetail = `HTTP ${response.status}`;
+                try { const errData = await response.json(); errDetail = errData.error?.message || errDetail; } catch(e) {}
+                throw new Error(errDetail);
+            }
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        // ========== LẤY KIẾN THỨC TỪ FIRESTORE ==========
+        async function getKnowledgeByType(type) {
+            try {
+                const snapshot = await db.collection('knowledge_base').where('type', '==', type).get();
+                let knowledgeText = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    knowledgeText += data.answer || '';
+                });
+                return knowledgeText;
+            } catch (e) {
+                console.warn('Lỗi lấy knowledge từ Firestore:', e);
+                return '';
+            }
+        }
+
+        // ========== VẼ BOUNDING BOX TRÊN ẢNH ==========
+        async function drawBoundingBoxes(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    
+                    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6'];
+                    
+                    areas.forEach((area, idx) => {
+                        const color = colors[idx % colors.length];
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(area.x, area.y, area.width, area.height);
+                        ctx.fillStyle = color + '33';
+                        ctx.fillRect(area.x, area.y, area.width, area.height);
+                        
+                        ctx.font = 'bold 14px "DM Sans"';
+                        ctx.fillStyle = color;
+                        ctx.fillRect(area.x, area.y - 22, area.label.length * 8 + 12, 22);
+                        ctx.fillStyle = 'white';
+                        ctx.fillText(area.label, area.x + 6, area.y - 8);
+                    });
+                    
+                    resolve(canvas.toDataURL('image/jpeg', 0.9));
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== AI PHÁT HIỆN VÙNG BỆNH ==========
+        async function detectDiseaseAreas(imageBase64, userSymptom) {
+            try {
+                const prompt = `Phân tích ảnh y tế này. Xác định các vùng bất thường trên da (mụn, phát ban, mẩn đỏ, tổn thương).
+Trả về JSON: {"disease_areas": [{"label": "tên vùng", "x_percent": 0.35, "y_percent": 0.42, "width_percent": 0.25, "height_percent": 0.20, "confidence": 0.92}], "summary": "tóm tắt"}
+Nếu không có, trả về mảng rỗng.`;
+
+                const messages = [
+                    { role: "system", content: "Bạn là AI y tế. Chỉ trả về JSON." },
+                    { role: "user", content: [
+                        { type: "text", text: prompt },
+                        { type: "image_url", image_url: { url: imageBase64 } }
+                    ]}
+                ];
+                
+                const rawResponse = await callAI(messages, 0.4);
+                let clean = rawResponse.trim();
+                if (clean.startsWith("```json")) clean = clean.slice(7);
+                if (clean.startsWith("```")) clean = clean.slice(3);
+                if (clean.endsWith("```")) clean = clean.slice(0, -3);
+                const detection = JSON.parse(clean);
+                
+                if (!detection.disease_areas || detection.disease_areas.length === 0) {
+                    return { imageBase64: imageBase64, areas: [], summary: "Không phát hiện vùng bất thường" };
+                }
+                
+                const areasInPixels = await convertPercentToPixels(imageBase64, detection.disease_areas);
+                const highlightedImage = await drawBoundingBoxes(imageBase64, areasInPixels);
+                
+                return { imageBase64: highlightedImage, areas: areasInPixels, summary: detection.summary };
+            } catch (error) {
+                return { imageBase64: imageBase64, areas: [], summary: "Lỗi phân tích ảnh" };
+            }
+        }
+        
+        function convertPercentToPixels(imageBase64, areas) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const width = img.width;
+                    const height = img.height;
+                    const pixelAreas = areas.map(area => ({
+                        label: area.label,
+                        x: area.x_percent * width,
+                        y: area.y_percent * height,
+                        width: area.width_percent * width,
+                        height: area.height_percent * height,
+                        confidence: area.confidence
+                    }));
+                    resolve(pixelAreas);
+                };
+                img.src = imageBase64;
+            });
+        }
+
+        // ========== HIỂN THỊ ẢNH SO SÁNH ==========
+        function displayComparisonImages(originalImage, highlightedImage, detectionSummary, areas) {
+            let areasHtml = '';
+            if (areas && areas.length > 0) {
+                areasHtml = `<div style="margin-top: 15px;"><strong><i class="fas fa-tag"></i> Vùng phát hiện:</strong><ul style="margin-top: 8px;">`;
+                areas.forEach(area => {
+                    areasHtml += `<li><span style="color:#ef4444;">●</span> <strong>${escapeHtml(area.label)}</strong> - Độ tin cậy: ${Math.round(area.confidence * 100)}%</li>`;
+                });
+                areasHtml += `</ul></div>`;
+            }
+            
+            imageAnalysisSection.innerHTML = `
+                <div style="margin: 20px 0; padding: 15px; background: var(--bg-surface); border-radius: 24px;">
+                    <h3><i class="fas fa-robot"></i> 🔍 Phân tích ảnh - AI khoanh vùng</h3>
+                    <div class="image-comparison">
+                        <div class="image-comparison-item">
+                            <h4>Ảnh gốc</h4>
+                            <img src="${originalImage}" style="max-width:100%; border-radius:16px;">
+                        </div>
+                        <div class="image-comparison-item">
+                            <h4>Vùng bệnh phát hiện</h4>
+                            <img src="${highlightedImage}" style="max-width:100%; border-radius:16px;">
+                            ${detectionSummary ? `<div style="margin-top:8px; font-size:12px;">📊 ${escapeHtml(detectionSummary)}</div>` : ''}
+                        </div>
+                    </div>
+                    ${areasHtml}
+                    <div class="warning-box" style="margin-top:15px; font-size:12px;">
+                        <i class="fas fa-info-circle"></i> Việc khoanh vùng do AI thực hiện, có thể không hoàn toàn chính xác.
+                    </div>
+                </div>
+            `;
+            imageAnalysisSection.style.display = "block";
+        }
+
+        // ========== TẠO KẾT QUẢ THEO MẪU ==========
+        async function getAnalysisInNewFormat(userSymptom, userDuration, selectedSymptoms, hasImage, imageBase64 = null) {
+            const selectedText = selectedSymptoms.map(s => `- ${s}`).join("\n");
+            const hasImageText = hasImage ? "Có ảnh chụp" : "Không có ảnh";
+            
+            let diagnosisKnowledge = await getKnowledgeByType('diagnosis');
+            if (diagnosisKnowledge) {
+                diagnosisKnowledge = "\n\n=== KIẾN THỨC Y TẾ THAM KHẢO ===\n" + diagnosisKnowledge;
+            } else {
+                diagnosisKnowledge = "";
+            }
+            
+            const prompt = `Bạn là trợ lý y tế của EduHealth AI, hỗ trợ nhận biết sớm vấn đề sức khỏe cho HỌC SINH.
+
+THÔNG TIN:
+- Mô tả triệu chứng: "${userSymptom}"
+- Thời gian mắc: ${userDuration || "không rõ"}
+- Triệu chứng đã chọn: ${selectedText || "không có"}
+- ${hasImageText}
+${diagnosisKnowledge}
+
+YÊU CẦU: Trả về JSON:
+{
+    "preliminary": "nhận biết sơ bộ (1-2 câu)",
+    "explanation": "giải thích ngắn gọn",
+    "warning_signs": ["dấu hiệu 1", "dấu hiệu 2", "dấu hiệu 3"],
+    "action_level": 1 hoặc 2 hoặc 3,
+    "action_text": "khuyến nghị cụ thể"
+}
+
+QUY TẮC ACTION_LEVEL:
+- Mức 1: Triệu chứng nhẹ, theo dõi tại nhà
+- Mức 2: Triệu chứng rõ, cần đi khám sớm
+- Mức 3: Triệu chứng nặng, cần đi khám ngay
+
+Trả về JSON thuần túy.`;
+
+            let messages = [{ role: "system", content: "Bạn là trợ lý y tế. Trả về JSON." }];
+            
+            if (hasImage && imageBase64) {
+                messages.push({ role: "user", content: [
+                    { type: "text", text: prompt },
+                    { type: "image_url", image_url: { url: imageBase64 } }
+                ]});
+            } else {
+                messages.push({ role: "user", content: prompt });
+            }
+            
+            const rawResponse = await callAI(messages, 0.5);
+            let clean = rawResponse.trim();
+            if (clean.startsWith("```json")) clean = clean.slice(7);
+            if (clean.startsWith("```")) clean = clean.slice(3);
+            if (clean.endsWith("```")) clean = clean.slice(0, -3);
+            let result = JSON.parse(clean);
+            
+            if (!result.warning_signs || !Array.isArray(result.warning_signs)) {
+                result.warning_signs = ["Theo dõi thêm triệu chứng", "Ghi nhận sự thay đổi"];
+            }
+            if (![1,2,3].includes(result.action_level)) result.action_level = 1;
+            
+            return result;
+        }
+
+        // ========== BƯỚC 1: KIỂM TRA DA LIỄU SONG SONG + TẠO CHECKLIST ==========
+        async function step1CreateChecklist() {
+            const userSymptom = symptomTextarea.value.trim();
+            const userDuration = durationInput.value.trim();
+            
+            if (!userSymptom) { 
+                alert("Vui lòng mô tả cảm giác của bạn để EduHealth AI hỗ trợ tốt hơn."); 
+                return; 
+            }
+            
+            if (isProcessing) return;
+            isProcessing = true;
+            step1Btn.disabled = true;
+            step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
+            
+            try {
+                // KIỂM TRA SONG SONG: ẢNH + MÔ TẢ có liên quan đến da liễu không
+                const relevanceResult = await checkDermatologyRelevanceParallel(currentImageBase64, userSymptom);
+                
+                if (!relevanceResult.is_relevant) {
+                    step1Container.style.display = "none";
+                    step2Container.style.display = "none";
+                    step3Container.style.display = "block";
+                    showRejectModal();
+                    isProcessing = false;
+                    step1Btn.disabled = false;
+                    step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+                    return;
+                }
+                
+                // TẠO CHECKLIST BẰNG AI (có tham khảo câu hỏi từ database)
+                const checklist = await createChecklistFromAI(userSymptom, userDuration, !!currentImageBase64);
+                
+                currentChecklistItems = checklist.map(item => ({ 
+                    id: item.id, 
+                    category: item.category, 
+                    text: item.text, 
+                    checked: false 
+                }));
+                
+                renderChecklistUI();
+                step1Container.style.display = "none";
+                step2Container.style.display = "block";
+                step3Container.style.display = "none";
+                
+            } catch (error) {
+                console.error(error);
+                showToast("Có lỗi xảy ra: " + error.message, true);
+                // Fallback: dùng câu hỏi mặc định từ database
+                const fallbackQuestions = await loadChecklistQuestionsFromFirestore();
+                const fallbackChecklist = fallbackQuestions.slice(0, 15).map((q, idx) => ({
+                    id: idx + 1,
+                    category: "📋 Triệu chứng cần đánh giá",
+                    text: q,
+                    checked: false
+                }));
+                currentChecklistItems = fallbackChecklist;
+                renderChecklistUI();
+                step1Container.style.display = "none";
+                step2Container.style.display = "block";
+                step3Container.style.display = "none";
+            } finally {
+                isProcessing = false;
+                step1Btn.disabled = false;
+                step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+            }
+        }
+        
+        function renderChecklistUI() {
+            if (!currentChecklistItems.length) {
+                checklistArea.innerHTML = '<div style="padding:20px; text-align:center;">Đang tạo checklist...</div>';
+                return;
+            }
+            
+            const groups = {};
+            currentChecklistItems.forEach(item => { 
+                const cat = item.category || "Khác";
+                if (!groups[cat]) groups[cat] = []; 
+                groups[cat].push(item); 
+            });
+            
+            let html = '';
+            for (let cat in groups) {
+                html += `<div class="checklist-category"><div class="category-title">${escapeHtml(cat)}</div>`;
+                groups[cat].forEach(item => { 
+                    const isChecked = item.checked ? 'checked' : ''; 
+                    html += `<div class="check-item"><input type="checkbox" id="chk_${item.id}" ${isChecked}><label for="chk_${item.id}">${escapeHtml(item.text)}</label></div>`; 
+                });
+                html += `</div>`;
+            }
+            checklistArea.innerHTML = html;
+            
+            currentChecklistItems.forEach(item => { 
+                const chk = document.getElementById(`chk_${item.id}`); 
+                if (chk) { 
+                    chk.addEventListener('change', (e) => { item.checked = e.target.checked; }); 
+                } 
+            });
+        }
+
+        // ========== BƯỚC 2: PHÂN TÍCH ==========
+        async function step2FinalAnalysis() {
+            const selectedItems = currentChecklistItems.filter(i => i.checked === true);
+            const userDuration = durationInput.value.trim();
+            const userSymptom = symptomTextarea.value.trim();
+            
+            if (isProcessing) return;
+            isProcessing = true;
+            step2Btn.disabled = true;
+            step2Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
+            
+            step2Container.style.display = "none";
+            step3Container.style.display = "block";
+            analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-brain"></i> EduHealth AI đang xem xét thông tin của bạn... (15-20s)</div>';
+            chatButtonSection.style.display = "none";
+            pdfButtonSection.style.display = "none";
+            historySection.style.display = "none";
+            imageAnalysisSection.style.display = "none";
+            
+            try {
+                if (currentImageBase64) {
+                    analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-microscope"></i> Đang phân tích ảnh và khoanh vùng...</div>';
+                    const detectionResult = await detectDiseaseAreas(currentImageBase64, userSymptom);
+                    highlightedImageBase64 = detectionResult.imageBase64;
+                    diseaseAreas = detectionResult.areas;
+                    displayComparisonImages(currentImageBase64, highlightedImageBase64, detectionResult.summary, diseaseAreas);
+                }
+                
+                analysisResultDiv.innerHTML = '<div class="loading"><i class="fas fa-stethoscope"></i> Đang tổng hợp kết quả...</div>';
+                
+                const analysisData = await getAnalysisInNewFormat(
+                    userSymptom, 
+                    userDuration, 
+                    selectedItems.map(i => i.text),
+                    !!currentImageBase64,
+                    currentImageBase64
+                );
+                
+                lastAnalysisResult = JSON.stringify(analysisData);
+                analysisResultDiv.innerHTML = formatSimpleResult(analysisData);
+                
+                const studentName = currentUserData?.fullName || (auth.currentUser?.email?.split('@')[0]) || 'Học sinh';
+                const studentPhone = currentUserData?.phone || localStorage.getItem('healthUserPhone') || '';
+                const studentDob = currentUserData?.dob || localStorage.getItem('healthUserDob') || '';
+                const studentGender = currentUserData?.gender || localStorage.getItem('healthUserGender') || '';
+                const studentEmail = auth.currentUser?.email || '';
+                
+                lastCheckinData = {
+                    checkinId: 'CHK_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                    userId: currentUserId,
+                    userName: studentName,
+                    userPhone: studentPhone,
+                    userDob: studentDob,
+                    userGender: studentGender,
+                    userEmail: studentEmail,
+                    symptomDescription: userSymptom,
+                    duration: userDuration || "Không cung cấp",
+                    analysisResult: lastAnalysisResult,
+                    selectedSymptoms: selectedItems.map(i => i.text),
+                    originalImageBase64: currentImageBase64 || null,
+                    highlightedImageBase64: highlightedImageBase64 || null,
+                    timestamp: new Date().toISOString(),
+                    formattedResult: analysisData
+                };
+                
+                await db.collection('checkin_records').add({
+                    ...lastCheckinData,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                pdfButtonSection.style.display = "flex";
+                chatButtonSection.style.display = "flex";
+                await loadUserChatHistory();
+                if (userChats.length > 0) historySection.style.display = "block";
+                
+            } catch (error) {
+                console.error(error);
+                analysisResultDiv.innerHTML = `<div style="color: var(--danger); padding: 20px; text-align: center;">⚠️ Có lỗi xảy ra: ${error.message}. Vui lòng thử lại.</div>`;
+            } finally {
+                isProcessing = false;
+                step2Btn.disabled = false;
+                step2Btn.innerHTML = '<i class="fas fa-stethoscope"></i> 🔍 Xem kết quả nhận biết';
+            }
+        }
+
+        function formatSimpleResult(analysisData) {
+            const preliminary = analysisData.preliminary || "Chưa có thông tin nhận biết sơ bộ";
+            const explanation = analysisData.explanation || "Đang phân tích thông tin bạn cung cấp.";
+            const warningSigns = Array.isArray(analysisData.warning_signs) && analysisData.warning_signs.length > 0 
+                ? analysisData.warning_signs 
+                : ["Theo dõi thêm các triệu chứng", "Ghi nhận sự thay đổi của cơ thể"];
+            const actionLevel = analysisData.action_level && [1,2,3].includes(analysisData.action_level) ? analysisData.action_level : 1;
+            const actionText = analysisData.action_text || "Hãy theo dõi thêm, báo cho phụ huynh và liên hệ với cán bộ y tế.";
+            
+            const levelTitles = { 1: "🟢 Mức 1 - Theo dõi", 2: "🟡 Mức 2 - Đi khám sớm", 3: "🔴 Mức 3 - Đi khám ngay" };
+            
+            let levelDesc = "";
+            if (actionLevel === 1) levelDesc = "Theo dõi, báo phụ huynh và liên hệ với cán bộ y tế để được tư vấn thêm";
+            else if (actionLevel === 2) levelDesc = "Đi khám sớm tại cơ sở y tế gần nhất";
+            else levelDesc = "Đi khám ngay lập tức tại cơ sở y tế";
+            
+            return `
+                <div class="result-simple">
+                    <div style="background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary)); border-radius: 20px; padding: 20px; margin-bottom: 20px; color: white;">
+                        <h3 style="color: white; margin: 0 0 8px 0;"><i class="fas fa-clipboard-list"></i> Nhận biết sơ bộ</h3>
+                        <p style="margin: 0; font-size: 1.1rem;">${escapeHtml(preliminary)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-lightbulb"></i> Giải thích ngắn gọn</h3>
+                        <p>${escapeHtml(explanation)}</p>
+                    </div>
+                    
+                    <div class="analysis-card" style="background: var(--bg-surface);">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Dấu hiệu cần lưu ý</h3>
+                        <ul>${warningSigns.map(sign => `<li>${escapeHtml(sign)}</li>`).join('')}</ul>
+                    </div>
+                    
+                    <div class="level-card level-${actionLevel}">
+                        <div class="level-title">
+                            <i class="fas ${actionLevel === 1 ? 'fa-eye' : (actionLevel === 2 ? 'fa-stethoscope' : 'fa-ambulance')}"></i>
+                            ${levelTitles[actionLevel]}
+                        </div>
+                        <div class="level-desc">
+                            <strong>${levelDesc}</strong><br><br>
+                            ${escapeHtml(actionText)}
+                        </div>
+                    </div>
+                    
+                    <div class="warning-box">
+                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Đây là kết quả nhận biết bước đầu từ AI, không thay thế chẩn đoán của bác sĩ.
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========== LỊCH SỬ CHAT ==========
+        async function loadUserChatHistory() {
+            try {
+                const snapshot = await db.collection('health_chats').where('userId', '==', currentUserId).orderBy('createdAt', 'desc').get();
+                userChats = [];
+                snapshot.forEach(doc => { userChats.push({ id: doc.id, ...doc.data() }); });
+                if (userChats.length > 0) {
+                    let historyHtml = '';
+                    userChats.forEach(chat => { 
+                        const date = chat.createdAt ? chat.createdAt.toDate() : new Date(); 
+                        historyHtml += `<div class="history-item" onclick="window.location.href='chatbox.html?chatId=${chat.id}'"><span class="history-name">${escapeHtml(chat.name || 'Cuộc trò chuyện')}</span><span class="history-time">${date.toLocaleDateString('vi-VN')}</span></div>`; 
+                    });
+                    chatHistoryList.innerHTML = historyHtml;
+                }
+            } catch(e) { console.error("Load history error:", e); }
+        }
+
+        // ========== TẠO CHAT MỚI ==========
+        async function createNewChat() {
+            if (!lastCheckinData) { alert("Không có dữ liệu!"); return null; }
+            const chatId = 'SK_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+            const symptomSummary = symptomTextarea.value.trim().substring(0, 500);
+            const durationSummary = durationInput.value.trim();
+            
+            let resultMessage = "";
+            if (lastCheckinData.formattedResult) {
+                const fr = lastCheckinData.formattedResult;
+                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Ngày sinh: ${lastCheckinData.userDob || 'Chưa cập nhật'}\n- Giới tính: ${lastCheckinData.userGender || 'Chưa cập nhật'}\n- SĐT: ${lastCheckinData.userPhone || 'Chưa cập nhật'}\n- Email: ${lastCheckinData.userEmail || 'Chưa cập nhật'}\n- Mô tả: ${symptomSummary}\n- Thời gian mắc: ${durationSummary || "Không cung cấp"}\n\n📊 **Kết quả nhận biết:**\n\n**🔍 Nhận biết sơ bộ:** ${fr.preliminary}\n\n**💡 Giải thích:** ${fr.explanation}\n\n**⚠️ Dấu hiệu cần lưu ý:**\n${fr.warning_signs.map(s => `- ${s}`).join('\n')}\n\n**🎯 Khuyến nghị:** ${fr.action_text}`;
+            } else {
+                resultMessage = `🏥 **KẾT QUẢ CHECK-IN SỨC KHỎE**\n\n📋 **Thông tin học sinh:**\n- Tên: ${lastCheckinData.userName}\n- Mô tả: ${symptomSummary}\n\n📊 Kết quả: ${lastAnalysisResult || "Đã có kết quả"}`;
+            }
+            
+            try {
+                await db.collection('health_chats').doc(chatId).set({ 
+                    id: chatId, 
+                    name: `Check-in ${new Date().toLocaleString('vi-VN')}`, 
+                    userId: currentUserId, 
+                    userName: lastCheckinData.userName,
+                    userInfo: {
+                        displayName: lastCheckinData.userName,
+                        phone: lastCheckinData.userPhone,
+                        dob: lastCheckinData.userDob,
+                        gender: lastCheckinData.userGender,
+                        email: lastCheckinData.userEmail,
+                        analysisResult: lastAnalysisResult
+                    },
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(), 
+                    lastMessage: "Đã gửi kết quả nhận biết", 
+                    lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(), 
+                    isHealthChat: true, 
+                    aiEnabled: true
+                });
+                await db.collection('health_chats').doc(chatId).collection('messages').add({ 
+                    text: resultMessage, 
+                    senderId: 'system', 
+                    senderName: 'EduHealth AI', 
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(), 
+                    isSystem: true 
+                });
+                return chatId;
+            } catch (error) { 
+                alert('Không thể tạo cuộc trò chuyện.'); 
+                return null; 
+            }
+        }
+
+        // ========== TẠO PDF ==========
+        function generatePDFHTML(data) {
+            const now = new Date();
+            const formattedDate = now.toLocaleString('vi-VN');
+            
+            const studentName = data.userName || 'Học sinh';
+            const studentPhone = data.userPhone || 'Chưa cập nhật';
+            const studentDob = data.userDob || 'Chưa cập nhật';
+            const studentGender = data.userGender || 'Chưa cập nhật';
+            const studentEmail = data.userEmail || 'Chưa cập nhật';
+            
+            let imageComparisonHtml = '';
+            if (data.originalImageBase64) {
+                const originalImg = data.originalImageBase64;
+                const highlightedImg = data.highlightedImageBase64 || data.originalImageBase64;
+                imageComparisonHtml = `
+                    <div style="margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 16px;">
+                        <h3 style="color: #2563eb;">🖼️ Phân tích ảnh</h3>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                            <div style="flex: 1; min-width: 200px; text-align: center;">
+                                <p><strong>Ảnh gốc</strong></p>
+                                <img src="${originalImg}" style="max-width: 100%; max-height: 250px; border-radius: 12px;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px; text-align: center;">
+                                <p><strong>AI khoanh vùng bệnh</strong></p>
+                                <img src="${highlightedImg}" style="max-width: 100%; max-height: 250px; border-radius: 12px;">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            let formattedResult = "";
+            if (data.formattedResult) {
+                const fr = data.formattedResult;
+                const warningSigns = Array.isArray(fr.warning_signs) ? fr.warning_signs : [];
+                const levelText = fr.action_level === 1 ? '🟢 Mức 1 - Theo dõi' : (fr.action_level === 2 ? '🟡 Mức 2 - Đi khám sớm' : '🔴 Mức 3 - Đi khám ngay');
+                formattedResult = `
+                    <div style="margin: 15px 0;">
+                        <div style="background: linear-gradient(135deg, #3b82f6, #f472b6); border-radius: 16px; padding: 20px; color: white;">
+                            <h3 style="color: white; margin: 0 0 8px 0;">🔍 Nhận biết sơ bộ</h3>
+                            <p style="margin: 0;">${escapeHtml(fr.preliminary || '')}</p>
+                        </div>
+                        
+                        <h3 style="margin-top: 20px; color: #3b82f6;">💡 Giải thích</h3>
+                        <p>${escapeHtml(fr.explanation || '')}</p>
+                        
+                        <h3 style="margin-top: 20px; color: #f59e0b;">⚠️ Dấu hiệu cần lưu ý</h3>
+                        <ul>${warningSigns.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>
+                        
+                        <div style="background: #fef5e7; border-left: 6px solid ${fr.action_level === 1 ? '#10b981' : (fr.action_level === 2 ? '#f59e0b' : '#ef4444')}; padding: 16px; border-radius: 12px; margin: 20px 0;">
+                            <h3 style="margin: 0 0 8px 0; color: ${fr.action_level === 1 ? '#10b981' : (fr.action_level === 2 ? '#f59e0b' : '#ef4444')};">${levelText}</h3>
+                            <p>${escapeHtml(fr.action_text || '')}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `<!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"><title>Kết quả check-in</title>
+            <style>
+                body { font-family: 'DM Sans', Arial, sans-serif; padding: 40px; }
+                .header { text-align: center; border-bottom: 2px solid #f472b6; padding-bottom: 15px; margin-bottom: 20px; }
+                .info { background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+                .row { margin: 8px 0; }
+                .label { font-weight: bold; display: inline-block; width: 140px; }
+                .warning { background: #fef5e7; padding: 12px; border-radius: 8px; margin-top: 20px; }
+                .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #718096; }
+                img { max-width: 100%; height: auto; }
+            </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>🏥 EduHealth AI - Kết quả check-in</h1>
+                    <p>Ngày: ${formattedDate} | Mã: ${data.checkinId || ''}</p>
+                </div>
+                <div class="info">
+                    <h3 style="margin-bottom: 12px; color: #2563eb;">📋 Thông tin học sinh</h3>
+                    <div class="row"><span class="label">👤 Họ và tên:</span> ${escapeHtml(studentName)}</div>
+                    <div class="row"><span class="label">📞 Số điện thoại:</span> ${escapeHtml(studentPhone)}</div>
+                    <div class="row"><span class="label">🎂 Ngày sinh:</span> ${escapeHtml(studentDob)}</div>
+                    <div class="row"><span class="label">⚥ Giới tính:</span> ${escapeHtml(studentGender)}</div>
+                    <div class="row"><span class="label">📧 Email:</span> ${escapeHtml(studentEmail)}</div>
+                </div>
+                <div class="info">
+                    <h3 style="margin-bottom: 12px; color: #2563eb;">📝 Triệu chứng</h3>
+                    <div class="row"><span class="label">Mô tả:</span> ${escapeHtml((data.symptomDescription || '').substring(0, 500))}</div>
+                    <div class="row"><span class="label">Thời gian:</span> ${escapeHtml(data.duration || '')}</div>
+                    <div class="row"><span class="label">Triệu chứng chọn:</span> ${escapeHtml((data.selectedSymptoms || []).join(', '))}</div>
+                </div>
+                ${imageComparisonHtml}
+                ${formattedResult}
+                <div class="warning"><strong>⚠️ Lưu ý:</strong> Kết quả từ AI, không thay thế bác sĩ.</div>
+                <div class="footer">© 2026 EduHealth AI</div>
+            </body>
+            </html>`;
+        }
+        
+        async function exportToPDF() {
+            if (!lastCheckinData) { showToast('Không có dữ liệu!', true); return; }
+            const btn = downloadPdfBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo PDF...';
+            btn.disabled = true;
+            try {
+                const pdfHtml = generatePDFHTML(lastCheckinData);
+                pdfPrintContainer.innerHTML = pdfHtml;
+                await new Promise(resolve => setTimeout(resolve, 500));
+                const canvas = await html2canvas(pdfPrintContainer, { scale: 2.5, backgroundColor: '#ffffff' });
+                const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                const { jsPDF } = window.jspdf;
+                const imgWidth = 190;
+                const pageHeight = 277;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+                const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'JPEG', 10, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                const safeName = (lastCheckinData.userName || 'hocsinh').replace(/[^a-zA-Z0-9]/g, '_');
+                doc.save(`EduHealth_Checkin_${safeName}_${Date.now()}.pdf`);
+                showToast('Đã tải PDF thành công!');
+            } catch (error) {
+                showToast('Lỗi: ' + error.message, true);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                pdfPrintContainer.innerHTML = '';
+            }
+        }
+
+        // ========== KHỞI TẠO DỮ LIỆU MẪU CHO KNOWLEDGE_BASE ==========
+        async function initKnowledgeBase() {
+            try {
+                const checklistSnapshot = await db.collection('knowledge_base').where('type', '==', 'checklist').limit(1).get();
+                
+                if (checklistSnapshot.empty) {
+                    const sampleChecklistQuestions = [
+                        "Bạn có bị đau đầu không?",
+                        "Bạn có cảm thấy mệt mỏi, uể oải không?",
+                        "Bạn có bị sốt (trên 38°C) không?",
+                        "Bạn có bị ho khan hoặc có đờm không?",
+                        "Bạn có bị đau họng, khó nuốt không?",
+                        "Bạn có bị nghẹt mũi, chảy nước mũi không?",
+                        "Bạn có bị khó thở, tức ngực không?",
+                        "Bạn có bị đau nhức cơ thể không?",
+                        "Bạn có bị đau bụng không?",
+                        "Bạn có bị buồn nôn, nôn không?",
+                        "Bạn có bị chán ăn, ăn không ngon không?",
+                        "Bạn có bị khó ngủ, ngủ không sâu giấc không?",
+                        "Bạn có uống ít nước hơn bình thường không?",
+                        "Bạn có bị mất vị giác hoặc khứu giác không?",
+                        "Bạn có cảm thấy căng thẳng, lo âu không?",
+                        "Bạn có bị mất tập trung, khó học bài không?",
+                        "Bạn có cảm thấy buồn bã, chán nản không?",
+                        "Bạn có ít vận động, ngồi nhiều không?",
+                        "Bạn có bị đau nhức cơ thể sau vận động không?",
+                        "Bạn có bị chóng mặt, hoa mắt không?",
+                        "Bạn có bị phát ban, nổi mẩn đỏ không?",
+                        "Bạn có bị sưng hạch bạch huyết không?",
+                        "Bạn có bị đi ngoài phân lỏng không?",
+                        "Bạn có bị ngứa da không?",
+                        "Bạn có bị nổi mụn trên da không?"
+                    ];
+                    
+                    await db.collection('knowledge_base').add({
+                        type: 'checklist',
+                        answer: sampleChecklistQuestions.join('\n'),
+                        questions: sampleChecklistQuestions,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        description: "Danh sách câu hỏi triệu chứng cho học sinh (tham khảo)"
+                    });
+                    console.log("Đã tạo dữ liệu mẫu cho checklist");
+                }
+                
+                const diagnosisSnapshot = await db.collection('knowledge_base').where('type', '==', 'diagnosis').limit(1).get();
+                
+                if (diagnosisSnapshot.empty) {
+                    await db.collection('knowledge_base').add({
+                        type: 'diagnosis',
+                        answer: `Hướng dẫn phân loại bệnh học đường:
+1. Cảm cúm: sốt, ho, đau họng, mệt mỏi, đau nhức cơ
+2. Viêm họng: đau họng, sốt nhẹ, khó nuốt, ho khan
+3. Rối loạn tiêu hóa: đau bụng, buồn nôn, tiêu chảy
+4. Dị ứng da: phát ban, ngứa, mẩn đỏ, sưng
+5. Căng thẳng: đau đầu, mất ngủ, lo âu, mất tập trung
+6. Mụn trứng cá: nổi mụn trên mặt, lưng, ngực
+7. Viêm da cơ địa: da khô, ngứa, mẩn đỏ
+8. Nhiễm trùng da: vết thương sưng đỏ, có mủ`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        description: "Kiến thức chẩn đoán sơ bộ"
+                    });
+                    console.log("Đã tạo dữ liệu mẫu cho diagnosis");
+                }
+            } catch (error) {
+                console.error("Lỗi khởi tạo knowledge_base:", error);
+            }
+        }
+
+        // ========== SỰ KIỆN UPLOAD ẢNH ==========
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            } else alert('Vui lòng thả file ảnh hợp lệ');
+        });
+        
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', async (e) => {
+            if (e.target.files.length) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    currentImageBase64 = ev.target.result;
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+        
+        cameraBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                const modalDiv = document.createElement('div');
+                modalDiv.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; display:flex; justify-content:center; align-items:center;';
+                const videoContainer = document.createElement('div');
+                videoContainer.style.cssText = 'background:white; padding:16px; border-radius:32px;';
+                video.width = 320;
+                video.height = 240;
+                videoContainer.appendChild(video);
+                const captureBtn = document.createElement('button');
+                captureBtn.innerText = 'Chụp ảnh';
+                captureBtn.className = 'btn btn-primary';
+                captureBtn.style.marginTop = '12px';
+                const closeBtn = document.createElement('button');
+                closeBtn.innerText = 'Hủy';
+                closeBtn.className = 'btn btn-outline';
+                closeBtn.style.marginLeft = '10px';
+                videoContainer.appendChild(captureBtn);
+                videoContainer.appendChild(closeBtn);
+                modalDiv.appendChild(videoContainer);
+                document.body.appendChild(modalDiv);
+                captureBtn.onclick = async () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext('2d').drawImage(video, 0, 0);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    currentImageBase64 = await compressImageTo720p(currentImageBase64);
+                    imagePreviewDiv.innerHTML = `<img src="${currentImageBase64}" alt="Preview">`;
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+                closeBtn.onclick = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(modalDiv);
+                };
+            } catch (err) {
+                alert("Không thể truy cập camera: " + err.message);
+            }
+        });
+
+        // ========== KHỞI TẠO ==========
+        openNewChatBtn.addEventListener('click', async () => { 
+            openNewChatBtn.disabled = true; 
+            openNewChatBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang tạo...'; 
+            const chatId = await createNewChat(); 
+            if (chatId) window.location.href = 'chatbox.html?chatId=' + chatId; 
+            else { 
+                openNewChatBtn.disabled = false; 
+                openNewChatBtn.innerHTML = '<i class="fas fa-comment-dots"></i> Liên hệ CBYT/Trò chuyện'; 
+            } 
+        });
+        
+        downloadPdfBtn.addEventListener('click', exportToPDF);
+        
+        function resetToStep1() {
+            currentImageBase64 = null;
+            currentChecklistItems = [];
+            lastAnalysisResult = null;
+            lastCheckinData = null;
+            diseaseAreas = [];
+            highlightedImageBase64 = null;
+            imagePreviewDiv.innerHTML = '';
+            symptomTextarea.value = "";
+            if (durationInput) durationInput.value = "";
+            fileInput.value = '';
+            step1Container.style.display = "block";
+            step2Container.style.display = "none";
+            step3Container.style.display = "none";
+            step1Btn.disabled = false;
+            step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+            analysisResultDiv.innerHTML = '✨ EduHealth AI đã sẵn sàng, hãy chia sẻ cùng mình nhé!';
+            chatButtonSection.style.display = "none";
+            pdfButtonSection.style.display = "none";
+            historySection.style.display = "none";
+            imageAnalysisSection.style.display = "none";
+        }
+        
+        step1Btn.addEventListener('click', step1CreateChecklist);
+        step2Btn.addEventListener('click', step2FinalAnalysis);
+        resetBtn.addEventListener('click', resetToStep1);
+        
+        // ========== KHỞI TẠO APP ==========
+        async function initApp() {
+            if (!checkAuth()) return;
+            await loadUserData();
+            await initKnowledgeBase();
+            updateAuthUI();
+            resetToStep1();
+        }
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                initApp();
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // ========== CHẾ ĐỘ TỐI/SÁNG ==========
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const body = document.body;
+        function setTheme(theme) { 
+            body.classList.toggle('dark', theme === 'dark'); 
+            localStorage.setItem('eduhealth-theme', theme); 
+            const icon = themeBtn.querySelector('i'); 
+            if (theme === 'dark') { icon.className = 'fas fa-sun'; } 
+            else { icon.className = 'fas fa-moon'; } 
+        }
+        const savedTheme = localStorage.getItem('eduhealth-theme'); 
+        setTheme(savedTheme === 'dark' ? 'dark' : 'light');
+        themeBtn.onclick = () => setTheme(body.classList.contains('dark') ? 'light' : 'dark');
+        
+        // ========== MOBILE MENU ==========
+        const menuToggle = document.getElementById('menuToggleBtn');
+        const mobilePanel = document.getElementById('mobileMenuPanel');
+        if (menuToggle) { 
+            menuToggle.addEventListener('click', () => { 
+                mobilePanel.classList.toggle('open'); 
+                const icon = menuToggle.querySelector('i'); 
+                if (mobilePanel.classList.contains('open')) { 
+                    icon.classList.remove('fa-bars'); 
+                    icon.classList.add('fa-times'); 
+                } else { 
+                    icon.classList.remove('fa-times'); 
+                    icon.classList.add('fa-bars'); 
+                } 
+            }); 
+        }
+    </script>
 </body>
 </html>
+
+
