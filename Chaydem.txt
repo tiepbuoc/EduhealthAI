@@ -1,2 +1,4 @@
 hi
 Chun: hi em
+admin@eduhealth-ai.com
+pass: admin1234@
