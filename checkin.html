@@ -3318,7 +3318,9 @@ async function initApp() {
     await initKnowledgeBase();
     updateAuthUI();
     resetToStep1();
-    
+    setTimeout(() => {
+        showImageWarning(() => {});
+    }, 500);
     // === HIỂN THỊ POPUP THÔNG BÁO DEMO ===
     setTimeout(() => {
         showDemoNotice();
