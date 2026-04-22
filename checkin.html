@@ -2560,7 +2560,37 @@ async function step1CreateChecklist() {
     step1Btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> EduHealth AI đang phân tích...';
     
     try {
-        // ========== BƯỚC 1.1: KIỂM TRA DA LIỄU (ẢNH + MÔ TẢ) ==========
+        // ========== BƯỚC 1: KIỂM TRA ĐỘ NÉT ẢNH TRƯỚC TIÊN ==========
+        if (currentImageBase64) {
+            addLog("🔍 Đang kiểm tra độ nét ảnh bằng thuật toán Laplacian...");
+            const blurResult = await detectImageBlur(currentImageBase64);
+            addLog(`📐 Laplacian variance: ${blurResult.laplacian} - ${blurResult.qualityLevel}`);
+            
+            // Nếu ảnh quá mờ - TỪ CHỐI NGAY, KHÔNG PHÂN TÍCH TIẾP
+            if (!blurResult.canAnalyze) {
+                // Đóng popup nếu đang mở
+                const blurModal = document.getElementById('blurWarningModal');
+                if (blurModal) blurModal.classList.remove('active');
+                
+                                // Hiển thị thông báo lỗi và yêu cầu chụp lại
+                showToast("❌ Ảnh quá mờ, vui lòng chụp lại ảnh rõ nét hơn!", true);
+                
+                // Reset ảnh
+                currentImageBase64 = null;
+                imagePreviewDiv.innerHTML = '';
+                fileInput.value = '';
+                
+                isProcessing = false;
+                step1Btn.disabled = false;
+                step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
+                return; // DỪNG LẠI, KHÔNG PHÂN TÍCH TIẾP
+            }
+            
+            // Ảnh đủ chất lượng, hiển thị thông báo tốt
+            showToast(`✅ Ảnh đạt yêu cầu (${blurResult.qualityLevel})`, false);
+        }
+        
+        // ========== BƯỚC 2: KIỂM TRA DA LIỄU (ẢNH + MÔ TẢ) ==========
         const relevanceResult = await checkDermatologyRelevanceParallel(currentImageBase64, userSymptom);
         
         if (!relevanceResult.is_relevant) {
@@ -2574,58 +2604,7 @@ async function step1CreateChecklist() {
             return;
         }
         
-        // ========== BƯỚC 1.2: KIỂM TRA ĐỘ NÉT ẢNH (LAPLACIAN) ==========
-        let blurCheckPassed = true;
-        let blurResult = null;
-        
-        if (currentImageBase64) {
-            addLog("🔍 Đang kiểm tra độ nét ảnh bằng thuật toán Laplacian...");
-            blurResult = await detectImageBlur(currentImageBase64);
-            addLog(`📐 Laplacian variance: ${blurResult.laplacian} - ${blurResult.qualityLevel}`);
-            
-            if (!blurResult.canAnalyze) {
-                // Ảnh quá mờ, hiển thị modal yêu cầu quyết định
-                blurCheckPassed = false;
-                
-                // Tạo promise để chờ người dùng quyết định
-                const userDecision = await new Promise((resolve) => {
-                    // Hiển thị modal cảnh báo
-                    showBlurWarning(blurResult.laplacian, blurResult.qualityLevel, async () => {
-                        // Người dùng chọn "Vẫn phân tích" - bỏ qua cảnh báo
-                        addLog("⚠️ Người dùng bỏ qua cảnh báo ảnh mờ, tiếp tục phân tích với ảnh hiện tại.", true);
-                        resolve('skip');
-                    });
-                    
-                    // Lắng nghe sự kiện đóng modal (khi người dùng chọn chụp lại)
-                    const checkModalClosed = setInterval(() => {
-                        const modal = document.getElementById('blurWarningModal');
-                        if (!modal || !modal.classList.contains('active')) {
-                            clearInterval(checkModalClosed);
-                            // Nếu modal không còn active và chưa resolve -> người dùng đã chụp lại
-                            resolve('retake');
-                        }
-                    }, 200);
-                    
-                    // Timeout sau 30 giây nếu không có tương tác
-                    setTimeout(() => {
-                        clearInterval(checkModalClosed);
-                        resolve('retake');
-                    }, 30000);
-                });
-                
-                if (userDecision === 'retake') {
-                    // Người dùng chọn chụp lại - reset và dừng
-                    showToast("Vui lòng chụp lại ảnh rõ nét hơn!", true);
-                    isProcessing = false;
-                    step1Btn.disabled = false;
-                    step1Btn.innerHTML = '<i class="fas fa-magic"></i> Bắt đầu check-in sức khỏe';
-                    return;
-                }
-                // userDecision === 'skip' - tiếp tục với ảnh mờ
-            }
-        }
-        
-        // ========== BƯỚC 1.3: TẠO CHECKLIST BẰNG AI ==========
+        // ========== BƯỚC 3: TẠO CHECKLIST BẰNG AI ==========
         addLog("📋 Đang tạo checklist triệu chứng từ AI...");
         const checklist = await createChecklistFromAI(userSymptom, userDuration, !!currentImageBase64);
         
@@ -2642,13 +2621,6 @@ async function step1CreateChecklist() {
         step1Container.style.display = "none";
         step2Container.style.display = "block";
         step3Container.style.display = "none";
-        
-        // Hiển thị cảnh báo nếu ảnh bị mờ nhưng người dùng vẫn tiếp tục
-        if (!blurCheckPassed && blurResult && !blurResult.canAnalyze) {
-            setTimeout(() => {
-                showToast("⚠️ Ảnh của bạn bị mờ, kết quả phân tích có thể không chính xác! Vui lòng chụp ảnh rõ hơn cho lần sau.", true);
-            }, 500);
-        }
         
         addLog("✅ Hoàn tất bước 1, chuyển sang bước 2 (checklist).");
         
