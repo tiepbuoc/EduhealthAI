@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Điều khoản sử dụng - EduHealth AI</title>
+    <title>Điều khoản sử dụng & Chính sách quyền riêng tư - EduHealth AI</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,600;1,300;1,500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -247,13 +247,13 @@
 
         .terms-title {
             font-family: 'Fraunces', serif;
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 500;
             background: linear-gradient(135deg, var(--blue-primary), var(--pink-primary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
         .terms-subtitle {
@@ -269,6 +269,63 @@
             font-size: 12px;
             color: var(--text-mid);
             margin-top: 16px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-mid);
+            cursor: pointer;
+            border-radius: 40px 40px 0 0;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--blue-primary);
+            background: var(--tag-bg);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--grad-blue-pink);
+            border-radius: 3px;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: var(--bg-surface);
+            color: var(--pink-primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .terms-section {
@@ -403,6 +460,11 @@
             border-top: 1px solid var(--border-light);
         }
 
+        /* Ẩn các phần tử để load nội dung vào modal */
+        #terms-full-content, #privacy-full-content {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .nav-menu { display: none; }
             .menu-toggle { display: flex; }
@@ -411,6 +473,7 @@
             .section-title { font-size: 18px; }
             .grid-2 { grid-template-columns: 1fr; }
             .container { padding: 90px 16px 40px; }
+            .tab-btn { padding: 10px 16px; font-size: 14px; }
         }
     </style>
 </head>
@@ -451,157 +514,345 @@
                 <div class="terms-icon">
                     <i class="fas fa-file-contract"></i>
                 </div>
-                <h1 class="terms-title">Điều khoản sử dụng</h1>
-                <p class="terms-subtitle">EduHealth AI - Nền tảng chăm sóc sức khỏe học đường</p>
-                <span class="last-updated"><i class="far fa-calendar-alt"></i> Cập nhật lần cuối: 01/04/2026</span>
+                <h1 class="terms-title">EduHealth AI</h1>
+                <p class="terms-subtitle">Điều khoản sử dụng & Chính sách quyền riêng tư</p>
+                <span class="last-updated"><i class="far fa-calendar-alt"></i> Cập nhật lần cuối: 22/04/2026</span>
             </div>
 
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-handshake"></i>
-                    <span>1. Chấp nhận điều khoản</span>
-                </div>
-                <div class="section-content">
-                    <p>Bằng việc truy cập và sử dụng nền tảng EduHealth AI (bao gồm website, ứng dụng di động và các dịch vụ liên quan), bạn đồng ý tuân thủ và bị ràng buộc bởi các Điều khoản sử dụng này. Nếu bạn không đồng ý với bất kỳ điều khoản nào, vui lòng không sử dụng dịch vụ của chúng tôi.</p>
-                    <p>EduHealth AI được xây dựng dành riêng cho học sinh, phụ huynh, giáo viên và cán bộ y tế học đường. Người dùng dưới 18 tuổi nên sử dụng dịch vụ dưới sự giám sát của phụ huynh hoặc người giám hộ hợp pháp.</p>
-                </div>
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="terms">Điều khoản sử dụng</button>
+                <button class="tab-btn" data-tab="privacy">Chính sách quyền riêng tư</button>
             </div>
 
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-stethoscope"></i>
-                    <span>2. Tính chất tham khảo của dịch vụ y tế</span>
-                </div>
-                <div class="section-content">
-                    <div class="highlight-box danger">
-                        <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
-                        <strong>LƯU Ý QUAN TRỌNG:</strong> EduHealth AI KHÔNG thay thế cho việc khám, chẩn đoán hoặc điều trị y tế chuyên nghiệp.
+            <!-- Nội dung Điều khoản sử dụng -->
+            <div id="terms-tab" class="tab-content active">
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-handshake"></i>
+                        <span>1. Chấp nhận điều khoản</span>
                     </div>
-                    <p>Mọi thông tin, phân tích, khuyến nghị và kết quả nhận biết từ EduHealth AI chỉ mang tính chất <strong>tham khảo và hỗ trợ nhận biết sớm</strong>. Không được sử dụng thông tin từ nền tảng để tự ý chẩn đoán, điều trị hoặc thay thế lời khuyên của bác sĩ.</p>
-                    <p>Trong các trường hợp khẩn cấp như: khó thở, đau ngực, chảy máu nghiêm trọng, mất ý thức, co giật, hoặc bất kỳ triệu chứng nguy hiểm nào khác, hãy <strong>gọi cấp cứu 115 hoặc đến cơ sở y tế gần nhất ngay lập tức</strong>.</p>
-                </div>
-            </div>
-
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-user-shield"></i>
-                    <span>3. Quyền riêng tư và bảo mật dữ liệu</span>
-                </div>
-                <div class="section-content">
-                    <p>EduHealth AI cam kết bảo vệ thông tin cá nhân của người dùng. Chúng tôi thu thập và xử lý dữ liệu theo Chính sách bảo mật riêng biệt, bao gồm:</p>
-                    <ul>
-                        <li>Thông tin đăng nhập và hồ sơ người dùng (lưu trữ an toàn trên Firebase)</li>
-                        <li>Kết quả check-in sức khỏe, hình ảnh triệu chứng (được mã hóa và bảo mật)</li>
-                        <li>Lịch sử trò chuyện với AI và cán bộ y tế</li>
-                        <li>Dữ liệu tương tác trên diễn đàn (bài viết, bình luận, lượt thích)</li>
-                    </ul>
-                    <p>Chúng tôi <strong>không bán hoặc chia sẻ dữ liệu cá nhân</strong> cho bên thứ ba vì mục đích thương mại. Hình ảnh y tế được phân tích bởi AI và không được lưu trữ vĩnh viễn trừ khi người dùng đồng ý.</p>
-                </div>
-            </div>
-
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-code-branch"></i>
-                    <span>4. Trí tuệ nhân tạo (AI) và giới hạn trách nhiệm</span>
-                </div>
-                <div class="section-content">
-                    <p>EduHealth AI sử dụng công nghệ trí tuệ nhân tạo (AI) để hỗ trợ nhận biết sớm các vấn đề sức khỏe. Bạn hiểu và đồng ý rằng:</p>
-                    <ul>
-                        <li>AI có thể mắc lỗi hoặc đưa ra phân tích không chính xác</li>
-                        <li>Kết quả phân tích ảnh (bao gồm cả việc khoanh vùng bệnh) chỉ mang tính tham khảo</li>
-                        <li>EduHealth AI không chịu trách nhiệm cho bất kỳ thiệt hại nào phát sinh từ việc dựa vào kết quả phân tích của AI</li>
-                        <li>Chúng tôi liên tục cải thiện mô hình AI nhưng không đảm bảo độ chính xác tuyệt đối</li>
-                    </ul>
-                    <div class="highlight-box">
-                        <i class="fas fa-robot" style="margin-right: 10px;"></i>
-                        <strong>Lưu ý:</strong> Các cuộc trò chuyện với AI có thể được giám sát bởi cán bộ y tế để đảm bảo chất lượng hỗ trợ.
+                    <div class="section-content">
+                        <p>Chào mừng bạn đến với <strong>EduHealth AI</strong> -- nền tảng hỗ trợ giáo dục sức khỏe, nhận biết ban đầu và kết nối hỗ trợ trong học đường.</p>
+                        <p>Khi truy cập, đăng nhập hoặc sử dụng EduHealth AI, bạn xác nhận rằng mình đã đọc, hiểu và đồng ý với các điều khoản dưới đây.</p>
                     </div>
                 </div>
-            </div>
 
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-users"></i>
-                    <span>5. Hành vi người dùng trên diễn đàn</span>
-                </div>
-                <div class="section-content">
-                    <p>Diễn đàn EduHealth AI là không gian chia sẻ lành mạnh, văn minh. Người dùng cam kết:</p>
-                    <ul>
-                        <li>Không đăng tải nội dung sai sự thật, gây hiểu lầm về y tế</li>
-                        <li>Không quấy rối, xúc phạm hoặc đe dọa người dùng khác</li>
-                        <li>Không chia sẻ thông tin y tế cá nhân của người khác khi chưa được phép</li>
-                        <li>Không đăng quảng cáo, spam hoặc nội dung thương mại trái phép</li>
-                        <li>Không đăng tải hình ảnh phản cảm, bạo lực hoặc vi phạm pháp luật</li>
-                    </ul>
-                    <p>Vi phạm các quy định trên có thể dẫn đến khóa tài khoản tạm thời hoặc vĩnh viễn mà không cần thông báo trước.</p>
-                </div>
-            </div>
-
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-copyright"></i>
-                    <span>6. Quyền sở hữu trí tuệ</span>
-                </div>
-                <div class="section-content">
-                    <p>Toàn bộ nội dung trên EduHealth AI (bao gồm nhưng không giới hạn: giao diện, logo, hình ảnh, bài viết cẩm nang, mã nguồn, hệ thống AI) thuộc bản quyền của EduHealth AI hoặc các đối tác cấp phép.</p>
-                    <p>Người dùng được phép:</p>
-                    <ul>
-                        <li>Chia sẻ bài viết từ diễn đàn với trích dẫn nguồn đầy đủ</li>
-                        <li>Tải xuống PDF kết quả check-in cho mục đích cá nhân</li>
-                        <li>Sao chép nội dung cẩm nang cho mục đích học tập phi thương mại</li>
-                    </ul>
-                    <p>Nghiêm cấm sao chép, chỉnh sửa, phân phối lại toàn bộ hệ thống hoặc sử dụng vì mục đích thương mại khi chưa có sự cho phép bằng văn bản.</p>
-                </div>
-            </div>
-
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-shield-virus"></i>
-                    <span>7. Giới hạn trách nhiệm pháp lý</span>
-                </div>
-                <div class="section-content">
-                    <div class="grid-2">
-                        <div class="info-card">
-                            <h4><i class="fas fa-check-circle" style="color: var(--success);"></i> EduHealth AI cam kết</h4>
-                            <p>✓ Cung cấp dịch vụ ổn định, bảo mật thông tin<br>
-                            ✓ Hỗ trợ người dùng trong khả năng tốt nhất<br>
-                            ✓ Liên tục cập nhật kiến thức y tế chính xác<br>
-                            ✓ Tuân thủ quy định pháp luật Việt Nam</p>
-                        </div>
-                        <div class="info-card">
-                            <h4><i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> EduHealth AI không chịu trách nhiệm</h4>
-                            <p>✗ Sai sót do AI hoặc dữ liệu từ bên thứ ba<br>
-                            ✗ Hậu quả từ việc tự ý điều trị dựa trên thông tin tham khảo<br>
-                            ✗ Gián đoạn dịch vụ do bảo trì hoặc sự cố kỹ thuật<br>
-                            ✗ Nội dung do người dùng đăng tải trên diễn đàn</p>
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-bullseye"></i>
+                        <span>2. Mục đích của nền tảng</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI được xây dựng nhằm hỗ trợ người dùng:</p>
+                        <ul>
+                            <li>tiếp cận thông tin sức khỏe học đường theo cách dễ hiểu, phù hợp;</li>
+                            <li>thực hiện check-in sức khỏe ban đầu trong phạm vi hỗ trợ hiện tại của hệ thống;</li>
+                            <li>nhận định hướng hành động ban đầu và kết nối với nguồn hỗ trợ phù hợp khi cần.</li>
+                        </ul>
+                        <div class="highlight-box danger">
+                            <i class="fas fa-exclamation-triangle" style="margin-right: 10px;"></i>
+                            <strong>LƯU Ý QUAN TRỌNG:</strong> EduHealth AI là <strong>công cụ hỗ trợ ban đầu</strong>, <strong>không phải công cụ chẩn đoán y khoa</strong>, <strong>không kê đơn</strong>, và <strong>không thay thế bác sĩ, phụ huynh, cán bộ y tế học đường hoặc cơ sở khám chữa bệnh</strong>.
                         </div>
                     </div>
                 </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-user-check"></i>
+                        <span>3. Phạm vi sử dụng</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Người dùng được phép sử dụng EduHealth AI cho mục đích học tập, tìm hiểu, hỗ trợ nhận biết ban đầu và tham khảo thông tin sức khỏe trong phạm vi phù hợp với định hướng của nền tảng.</p>
+                        <p>Người dùng <strong>không được</strong> sử dụng EduHealth AI để:</p>
+                        <ul>
+                            <li>thay thế hoàn toàn việc thăm khám hoặc tư vấn chuyên môn;</li>
+                            <li>xử lý tình huống khẩn cấp;</li>
+                            <li>đăng tải nội dung sai sự thật, gây hiểu nhầm, xúc phạm hoặc vi phạm pháp luật;</li>
+                            <li>can thiệp, phá hoại hoặc sử dụng hệ thống sai mục đích.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-id-card"></i>
+                        <span>4. Tài khoản và quyền truy cập</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Khi tạo tài khoản hoặc sử dụng hệ thống, người dùng có trách nhiệm:</p>
+                        <ul>
+                            <li>cung cấp thông tin phù hợp và trung thực trong phạm vi cần thiết;</li>
+                            <li>giữ an toàn cho tài khoản và thông tin đăng nhập của mình;</li>
+                            <li>không chia sẻ tài khoản cho người khác sử dụng sai mục đích;</li>
+                            <li>thông báo cho nhóm vận hành nếu phát hiện truy cập trái phép hoặc sự cố liên quan đến tài khoản.</li>
+                        </ul>
+                        <p>Nhóm phát triển có quyền tạm ngừng hoặc giới hạn quyền truy cập trong trường hợp phát hiện hành vi vi phạm điều khoản hoặc gây rủi ro cho hệ thống.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-upload"></i>
+                        <span>5. Nội dung người dùng cung cấp</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Khi sử dụng các chức năng như Check-in sức khỏe, người dùng có thể cung cấp một số nội dung như:</p>
+                        <ul>
+                            <li>mô tả triệu chứng;</li>
+                            <li>câu trả lời checklist;</li>
+                            <li>hình ảnh tải lên;</li>
+                            <li>nội dung trò chuyện hoặc phản hồi trong quá trình sử dụng.</li>
+                        </ul>
+                        <p>Người dùng cam kết chỉ cung cấp thông tin cần thiết, phù hợp với mục đích sử dụng của hệ thống và không cố ý nhập thông tin sai lệch, gây nhiễu hoặc làm ảnh hưởng đến kết quả hỗ trợ ban đầu.</p>
+                        <p>Người dùng <strong>không được</strong> tải lên nội dung:</p>
+                        <ul>
+                            <li>vi phạm pháp luật;</li>
+                            <li>xâm phạm quyền riêng tư của người khác;</li>
+                            <li>có tính xúc phạm, phản cảm hoặc không phù hợp với môi trường học đường.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>6. Giới hạn chuyên môn của hệ thống</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI chỉ cung cấp <strong>hỗ trợ nhận biết ban đầu</strong> dựa trên dữ liệu người dùng cung cấp và trong phạm vi phát triển hiện tại của hệ thống.</p>
+                        <p>Kết quả do hệ thống hiển thị:</p>
+                        <ul>
+                            <li>chỉ mang tính tham khảo ban đầu;</li>
+                            <li>không phải kết luận chuyên môn cuối cùng;</li>
+                            <li>không được dùng để tự chẩn đoán hoặc tự điều trị;</li>
+                            <li>không thay thế ý kiến của bác sĩ hoặc cơ sở y tế.</li>
+                        </ul>
+                        <div class="highlight-box warning">
+                            <i class="fas fa-ambulance" style="margin-right: 10px;"></i>
+                            <strong>Trong trường hợp khẩn cấp:</strong> Nếu người dùng có dấu hiệu bất thường, triệu chứng kéo dài, đau nhiều, sưng nặng, sốt, khó thở, hoặc bất kỳ biểu hiện nào gây lo ngại, người dùng cần <strong>ưu tiên liên hệ phụ huynh, cán bộ y tế học đường hoặc cơ sở y tế</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-copyright"></i>
+                        <span>7. Quyền sở hữu nội dung và hệ thống</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Toàn bộ giao diện, tên gọi, cấu trúc nội dung, thiết kế, hình ảnh, văn bản và các thành phần thuộc EduHealth AI là tài sản của nhóm phát triển hoặc được sử dụng hợp pháp cho mục đích của dự án.</p>
+                        <p>Người dùng không được sao chép, chỉnh sửa, phát tán hoặc sử dụng lại nội dung/hệ thống của EduHealth AI cho mục đích thương mại hoặc mục đích không được phép nếu chưa có sự đồng ý phù hợp.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-shield-virus"></i>
+                        <span>8. Giới hạn trách nhiệm</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI được xây dựng như một nền tảng hỗ trợ ban đầu. Nhóm phát triển không chịu trách nhiệm cho các quyết định y khoa, điều trị hoặc xử trí cá nhân được thực hiện chỉ dựa trên kết quả hiển thị từ hệ thống mà không có đánh giá chuyên môn phù hợp.</p>
+                        <p>Người dùng hiểu rằng chất lượng kết quả hỗ trợ ban đầu có thể phụ thuộc vào:</p>
+                        <ul>
+                            <li>độ đầy đủ của thông tin đã nhập;</li>
+                            <li>chất lượng hình ảnh tải lên;</li>
+                            <li>phạm vi hỗ trợ hiện tại của hệ thống;</li>
+                            <li>các giới hạn kỹ thuật và chuyên môn của nền tảng.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>9. Thay đổi điều khoản</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI có thể cập nhật Điều khoản sử dụng trong quá trình hoàn thiện sản phẩm và nâng cấp hệ thống. Phiên bản mới nhất sẽ được đăng tải trên nền tảng và có hiệu lực kể từ thời điểm công bố.</p>
+                        <p>Người dùng nên kiểm tra lại nội dung điều khoản khi tiếp tục sử dụng hệ thống.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-envelope"></i>
+                        <span>10. Liên hệ</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Nếu bạn có câu hỏi, góp ý hoặc yêu cầu hỗ trợ liên quan đến việc sử dụng EduHealth AI, vui lòng liên hệ:</p>
+                        <div class="contact-info">
+                            <h4><i class="fas fa-headset"></i> Đội ngũ hỗ trợ EduHealth AI</h4>
+                            <p><i class="fas fa-envelope"></i> Email: <a href="mailto:eduhealthai08@gmail.com">eduhealthai08@gmail.com</a></p>
+                            <p><i class="fas fa-phone"></i> Hotline: <a href="tel:0374180395">0374180395</a></p>
+                            <p><small>Hoặc sử dụng tính năng trò chuyện trên website để được hỗ trợ nhanh nhất</small></p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>8. Thay đổi điều khoản</span>
+            <!-- Nội dung Chính sách quyền riêng tư -->
+            <div id="privacy-tab" class="tab-content">
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>1. Phạm vi áp dụng</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Chính sách này áp dụng đối với người dùng truy cập, đăng nhập hoặc sử dụng các chức năng của EduHealth AI, bao gồm website, các tính năng check-in sức khỏe, thư viện sức khỏe và các khu vực liên quan trên nền tảng.</p>
+                    </div>
                 </div>
-                <div class="section-content">
-                    <p>EduHealth AI có quyền thay đổi, cập nhật Điều khoản sử dụng bất kỳ lúc nào. Các thay đổi quan trọng sẽ được thông báo qua website hoặc email (nếu có). Việc tiếp tục sử dụng dịch vụ sau khi thay đổi có hiệu lực đồng nghĩa với việc bạn chấp nhận các điều khoản mới.</p>
-                    <p>Khuyến khích người dùng định kỳ xem lại trang Điều khoản sử dụng để cập nhật những thay đổi mới nhất.</p>
-                </div>
-            </div>
 
-            <div class="terms-section">
-                <div class="section-title">
-                    <i class="fas fa-envelope"></i>
-                    <span>9. Liên hệ và hỗ trợ</span>
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-database"></i>
+                        <span>2. Dữ liệu có thể được thu thập</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Trong quá trình sử dụng EduHealth AI, hệ thống có thể tiếp nhận một số dữ liệu do người dùng chủ động cung cấp hoặc phát sinh trong quá trình sử dụng, bao gồm:</p>
+                        <ul>
+                            <li>thông tin tài khoản đăng nhập (nếu có);</li>
+                            <li>mô tả triệu chứng hoặc nội dung người dùng nhập vào;</li>
+                            <li>câu trả lời checklist trong quá trình check-in;</li>
+                            <li>hình ảnh tải lên để phục vụ hỗ trợ ban đầu;</li>
+                            <li>nội dung trò chuyện, phản hồi hoặc tương tác với hệ thống;</li>
+                            <li>một số dữ liệu kỹ thuật cơ bản phục vụ vận hành, bảo mật và cải thiện trải nghiệm sử dụng.</li>
+                        </ul>
+                        <div class="highlight-box">
+                            <i class="fas fa-info-circle" style="margin-right: 10px;"></i>
+                            EduHealth AI <strong>không khuyến khích</strong> người dùng cung cấp thông tin định danh cá nhân không cần thiết hoặc tải lên nội dung ngoài phạm vi hỗ trợ của hệ thống.
+                        </div>
+                    </div>
                 </div>
-                <div class="section-content">
-                    <p>Nếu bạn có bất kỳ câu hỏi, thắc mắc hoặc khiếu nại liên quan đến Điều khoản sử dụng, vui lòng liên hệ với chúng tôi:</p>
-                    <div class="contact-info">
-                        <h4><i class="fas fa-headset"></i> Đội ngũ hỗ trợ EduHealth AI</h4>
-                        <p><i class="fas fa-envelope"></i> Email: <a href="mailto:eduhealthai08@gmail.com">eduhealthai08@gmail.com</a></p>
-                        <p><i class="fas fa-phone"></i> Hotline: <a href="tel:1900xxxx">0374180395</a></p>
-                        <p><small>Hoặc sử dụng tính năng trò chuyện trên website để được hỗ trợ nhanh nhất</small></p>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-bullseye"></i>
+                        <span>3. Mục đích sử dụng dữ liệu</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Dữ liệu người dùng cung cấp có thể được sử dụng để:</p>
+                        <ul>
+                            <li>vận hành các chức năng của EduHealth AI;</li>
+                            <li>hỗ trợ check-in sức khỏe ban đầu trong phạm vi hỗ trợ hiện tại của hệ thống;</li>
+                            <li>hiển thị kết quả phù hợp hơn với dữ liệu người dùng đã cung cấp;</li>
+                            <li>duy trì, cải thiện và nâng cao tính an toàn của nền tảng;</li>
+                            <li>hỗ trợ xử lý lỗi kỹ thuật, bảo trì hệ thống và bảo vệ an ninh nền tảng;</li>
+                            <li>tiếp nhận, phản hồi và xử lý các yêu cầu hỗ trợ từ người dùng.</li>
+                        </ul>
+                        <p>EduHealth AI <strong>không sử dụng dữ liệu người dùng để thay thế hồ sơ bệnh án</strong> và không xem dữ liệu này là kết luận y khoa chính thức.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-check-circle"></i>
+                        <span>4. Nguyên tắc xử lý dữ liệu</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI định hướng xử lý dữ liệu theo các nguyên tắc sau:</p>
+                        <ul>
+                            <li>chỉ thu thập dữ liệu trong phạm vi cần thiết cho chức năng của hệ thống;</li>
+                            <li>sử dụng dữ liệu đúng với mục đích đã thông báo;</li>
+                            <li>hạn chế truy cập không cần thiết đối với dữ liệu người dùng;</li>
+                            <li>ưu tiên cách diễn giải và vận hành an toàn trong môi trường học đường;</li>
+                            <li>không cố mở rộng xử lý chuyên sâu đối với các nội dung nằm ngoài phạm vi hiện tại của hệ thống.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-lock"></i>
+                        <span>5. Lưu trữ và bảo vệ dữ liệu</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI nỗ lực áp dụng các biện pháp kỹ thuật và tổ chức phù hợp để bảo vệ dữ liệu người dùng khỏi truy cập trái phép, mất mát, thay đổi hoặc sử dụng sai mục đích.</p>
+                        <p>Dữ liệu có thể được lưu trữ trong thời gian phù hợp với mục đích vận hành, hỗ trợ kỹ thuật, bảo mật hệ thống và hoàn thiện sản phẩm, hoặc cho đến khi có yêu cầu hợp lệ về việc xóa dữ liệu, trừ trường hợp pháp luật có quy định khác.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-share-alt"></i>
+                        <span>6. Chia sẻ dữ liệu</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI không chủ động bán hoặc công khai dữ liệu người dùng cho bên thứ ba.</p>
+                        <p>Dữ liệu chỉ có thể được chia sẻ trong các trường hợp thật sự cần thiết như:</p>
+                        <ul>
+                            <li>phục vụ vận hành kỹ thuật, bảo trì hoặc bảo mật hệ thống;</li>
+                            <li>phục vụ xử lý sự cố, phản hồi hỗ trợ hoặc bảo vệ quyền lợi hợp pháp của nền tảng;</li>
+                            <li>theo yêu cầu của cơ quan có thẩm quyền theo quy định pháp luật.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-user-check"></i>
+                        <span>7. Quyền của người dùng</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Người dùng có quyền:</p>
+                        <ul>
+                            <li>được biết dữ liệu nào của mình đang được hệ thống xử lý;</li>
+                            <li>yêu cầu chỉnh sửa thông tin nếu phát hiện chưa chính xác;</li>
+                            <li>yêu cầu rút lại sự đồng ý trong phạm vi phù hợp;</li>
+                            <li>yêu cầu xóa dữ liệu theo điều kiện áp dụng của hệ thống và quy định liên quan;</li>
+                            <li>liên hệ với nhóm phát triển để được giải thích thêm về việc xử lý dữ liệu.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>8. Trách nhiệm của người dùng</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Khi sử dụng EduHealth AI, người dùng có trách nhiệm:</p>
+                        <ul>
+                            <li>chỉ cung cấp thông tin cần thiết và phù hợp với mục đích sử dụng;</li>
+                            <li>không tải lên dữ liệu của người khác khi chưa có căn cứ phù hợp;</li>
+                            <li>không cung cấp nội dung sai sự thật, xúc phạm, trái pháp luật hoặc không phù hợp với môi trường học đường;</li>
+                            <li>chủ động liên hệ phụ huynh, cán bộ y tế hoặc cơ sở y tế khi có dấu hiệu nghiêm trọng hoặc cần hỗ trợ chuyên môn.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>9. Đối với người dùng là học sinh</span>
+                    </div>
+                    <div class="section-content">
+                        <p>EduHealth AI được định hướng phục vụ trong môi trường học đường. Với người dùng là học sinh, hệ thống khuyến khích việc sử dụng có sự đồng hành của phụ huynh, người giám hộ hoặc cán bộ y tế học đường, đặc biệt trong các tình huống cần đánh giá thêm hoặc cần hỗ trợ chuyên môn.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>10. Thay đổi chính sách</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Chính sách quyền riêng tư này có thể được cập nhật trong quá trình hoàn thiện sản phẩm và nâng cấp nền tảng. Phiên bản mới nhất sẽ được đăng tải trên hệ thống tại thời điểm phù hợp.</p>
+                        <p>Người dùng nên kiểm tra lại nội dung chính sách khi tiếp tục sử dụng EduHealth AI.</p>
+                    </div>
+                </div>
+
+                <div class="terms-section">
+                    <div class="section-title">
+                        <i class="fas fa-envelope"></i>
+                        <span>11. Liên hệ</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Nếu bạn có câu hỏi, góp ý hoặc yêu cầu liên quan đến dữ liệu và quyền riêng tư, vui lòng liên hệ:</p>
+                        <div class="contact-info">
+                            <h4><i class="fas fa-headset"></i> Đội ngũ hỗ trợ EduHealth AI</h4>
+                            <p><i class="fas fa-envelope"></i> Email: <a href="mailto:eduhealthai08@gmail.com">eduhealthai08@gmail.com</a></p>
+                            <p><i class="fas fa-phone"></i> Hotline: <a href="tel:0374180395">0374180395</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -614,7 +865,41 @@
         </div>
     </div>
 
+    <!-- Phần này để lưu nội dung cho modal của login -->
+    <div id="terms-full-content" style="display: none;">
+        <!-- Nội dung sẽ được sao chép từ phần terms-tab -->
+    </div>
+    <div id="privacy-full-content" style="display: none;">
+        <!-- Nội dung sẽ được sao chép từ phần privacy-tab -->
+    </div>
+
     <script>
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = {
+            terms: document.getElementById('terms-tab'),
+            privacy: document.getElementById('privacy-tab')
+        };
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                Object.values(tabContents).forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                if (tabId === 'terms') {
+                    tabContents.terms.classList.add('active');
+                } else if (tabId === 'privacy') {
+                    tabContents.privacy.classList.add('active');
+                }
+            });
+        });
+
         // Theme toggle
         const themeBtn = document.getElementById('themeToggleBtn');
         const body = document.body;
@@ -668,6 +953,24 @@
                 }
             });
         });
+
+        // Copy nội dung để phục vụ modal login
+        function copyContentForModal() {
+            const termsContent = document.getElementById('terms-tab').cloneNode(true);
+            const privacyContent = document.getElementById('privacy-tab').cloneNode(true);
+            
+            const termsContainer = document.getElementById('terms-full-content');
+            const privacyContainer = document.getElementById('privacy-full-content');
+            
+            if (termsContainer) {
+                termsContainer.innerHTML = termsContent.innerHTML;
+            }
+            if (privacyContainer) {
+                privacyContainer.innerHTML = privacyContent.innerHTML;
+            }
+        }
+        
+        copyContentForModal();
     </script>
 </body>
 </html>
