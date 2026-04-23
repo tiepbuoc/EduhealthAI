@@ -1445,6 +1445,140 @@ footer {
   .stats-grid { grid-template-columns: 1fr; }
   .news-header h3 { font-size: 18px; }
 }
+/* Style cho nội dung bản tin trong modal */
+.modal-body .article-content .news-content {
+    font-family: 'Nunito', 'DM Sans', sans-serif;
+    line-height: 1.7;
+    color: var(--text-mid);
+}
+
+.modal-body .article-content .news-content p {
+    margin-bottom: 1.2em;
+}
+
+.modal-body .article-content .news-content h1,
+.modal-body .article-content .news-content h2,
+.modal-body .article-content .news-content h3,
+.modal-body .article-content .news-content h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    margin: 1.2em 0 0.6em;
+    color: var(--text-dark);
+}
+
+.modal-body .article-content .news-content h1 { font-size: 1.8em; }
+.modal-body .article-content .news-content h2 { font-size: 1.5em; }
+.modal-body .article-content .news-content h3 { font-size: 1.3em; }
+
+.modal-body .article-content .news-content ul,
+.modal-body .article-content .news-content ol {
+    margin: 0.8em 0 0.8em 1.8em;
+    padding-left: 0;
+}
+
+.modal-body .article-content .news-content li {
+    margin: 0.3em 0;
+}
+
+.modal-body .article-content .news-content blockquote {
+    border-left: 4px solid var(--pink-primary);
+    padding-left: 1.2em;
+    margin: 1em 0;
+    font-style: italic;
+    color: var(--text-dim);
+}
+
+.modal-body .article-content .news-content img {
+    max-width: 100%;
+    border-radius: 16px;
+    margin: 1em 0;
+}
+/* Style đầy đủ cho nội dung bản tin */
+.news-content {
+    font-family: 'Nunito', 'DM Sans', sans-serif;
+    line-height: 1.7;
+    color: var(--text-mid);
+}
+
+.news-content p {
+    margin-bottom: 1.2em;
+}
+
+.news-content h1, .news-content h2, .news-content h3, .news-content h4 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    margin: 1.2em 0 0.6em;
+    color: var(--text-dark);
+}
+
+.news-content h1 { font-size: 1.8em; }
+.news-content h2 { font-size: 1.5em; }
+.news-content h3 { font-size: 1.3em; }
+.news-content h4 { font-size: 1.1em; }
+
+.news-content ul, .news-content ol {
+    margin: 0.8em 0 0.8em 1.8em;
+    padding-left: 0;
+}
+
+.news-content li {
+    margin: 0.3em 0;
+}
+
+.news-content strong, .news-content b {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.news-content em, .news-content i {
+    font-style: italic;
+}
+
+.news-content a {
+    color: var(--blue-primary);
+    text-decoration: none;
+}
+
+.news-content a:hover {
+    text-decoration: underline;
+}
+
+.news-content blockquote {
+    border-left: 4px solid var(--pink-primary);
+    padding-left: 1.2em;
+    margin: 1em 0;
+    font-style: italic;
+    color: var(--text-dim);
+}
+
+.news-content img {
+    max-width: 100%;
+    border-radius: 16px;
+    margin: 1em 0;
+}
+
+.news-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+.news-content th, .news-content td {
+    border: 1px solid var(--border-light);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.news-content th {
+    background: var(--bg-surface);
+    font-weight: 600;
+}
+
+.news-content hr {
+    border: none;
+    border-top: 1px solid var(--border-light);
+    margin: 1.5em 0;
+}
 </style>
 </head>
 <body>
@@ -1898,16 +2032,40 @@ footer {
     modal.classList.add('active');
   }
   
-  async function openNewsArticle(id) {
+async function openNewsArticle(id) {
     const news = allNews.find(n => n.id === id);
     if(!news) return;
     await db.collection('news').doc(id).update({ views: firebase.firestore.FieldValue.increment(1) });
     news.views = (news.views||0)+1;
     const modal = document.getElementById('articleModal');
     document.getElementById('articleModalTitle').innerHTML = escapeHtml(news.title);
-    document.getElementById('articleModalBody').innerHTML = `<div class="article-content" style="font-family: 'DM Sans', sans-serif;">${news.content||''}</div><div class="article-stats"><span><i class="far fa-eye"></i> ${news.views||0}</span><span><i class="far fa-calendar-alt"></i> ${news.createdAt ? new Date(news.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span><span><i class="fas fa-newspaper"></i> Bản tin y tế</span></div>`;
+    document.getElementById('articleModalBody').innerHTML = `
+        <div class="article-content" style="font-family: 'Nunito', 'DM Sans', sans-serif; line-height: 1.7; color: var(--text-mid);">
+            <div style="background: linear-gradient(120deg, #f7567c 0%, #ff9a3c 100%); padding: 28px 32px 24px; border-radius: 24px 24px 0 0; margin: -24px -24px 0 -24px;">
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 14px; flex-wrap: wrap;">
+                    <div style="width: 64px; height: 64px; background: #fff; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 4px 16px rgba(0,0,0,0.12);">📰</div>
+                    <div>
+                        <h1 style="font-size: 1.7rem; font-weight: 900; color: #fff; letter-spacing: -0.5px; line-height: 1.2; margin: 0;">${escapeHtml(news.title)}</h1>
+                        <div style="color: rgba(255,255,255,0.85); font-size: 0.95rem; font-weight: 600; margin-top: 2px;">Bản tin y tế học đường</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; border: 2px solid rgba(255,255,255,0.7); color: #fff; background: rgba(255,255,255,0.18);"><i class="fas fa-newspaper"></i> Tin mới</span>
+                </div>
+            </div>
+            ${news.coverImage ? `<div style="margin: 20px 0 0 0; border-radius: 20px; overflow: hidden;"><img src="${news.coverImage}" style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 20px;" onerror="this.style.display='none'"></div>` : ''}
+            <div class="news-content" style="padding: 28px 24px; font-size: 1rem; line-height: 1.7;">
+                ${news.content || ''}
+            </div>
+        </div>
+        <div class="article-stats" style="display: flex; gap: 20px; font-size: 14px; color: var(--text-dim); padding-top: 16px; border-top: 1px solid var(--border-light); margin-top: 24px;">
+            <span><i class="far fa-eye"></i> ${news.views||0}</span>
+            <span><i class="far fa-calendar-alt"></i> ${news.createdAt ? new Date(news.createdAt.toDate()).toLocaleString('vi-VN') : 'N/A'}</span>
+            <span><i class="fas fa-newspaper"></i> Bản tin y tế học đường</span>
+        </div>
+    `;
     modal.classList.add('active');
-  }
+}
   
   function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
   function closeArticleModal() { document.getElementById('articleModal').classList.remove('active'); }
