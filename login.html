@@ -162,6 +162,26 @@
             border-color: var(--blue-primary);
         }
 
+        .form-control.error {
+            border-color: var(--danger);
+        }
+
+        .form-control.success {
+            border-color: var(--success);
+        }
+
+        .field-error {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 6px;
+            margin-left: 12px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
         .row-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -209,26 +229,6 @@
             color: var(--text-mid);
             font-family: 'DM Sans', sans-serif;
             z-index: 100;
-        }
-
-        .error-message {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            padding: 12px;
-            border-radius: 16px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .success-message {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            padding: 12px;
-            border-radius: 16px;
-            font-size: 13px;
-            margin-bottom: 20px;
-            text-align: center;
         }
 
         .password-wrapper {
@@ -430,10 +430,10 @@
             </div>
 
             <div id="loginForm">
-                <div id="loginError" class="error-message" style="display: none;"></div>
                 <div class="form-group">
                     <label>Email <span class="required">*</span></label>
                     <input type="email" id="loginEmail" class="form-control" placeholder="example@email.com">
+                    <div class="field-error" id="loginEmailError"></div>
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu <span class="required">*</span></label>
@@ -441,26 +441,27 @@
                         <input type="password" id="loginPassword" class="form-control" placeholder="••••••••">
                         <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
                     </div>
+                    <div class="field-error" id="loginPasswordError"></div>
                 </div>
                 <button class="btn-primary" id="loginBtn">Đăng nhập</button>
             </div>
 
             <div id="registerForm" style="display: none;">
-                <div id="registerError" class="error-message" style="display: none;"></div>
-                <div id="registerSuccess" class="success-message" style="display: none;"></div>
-                
                 <div class="form-group">
                     <label>Họ và tên <span class="required">*</span></label>
                     <input type="text" id="regFullName" class="form-control" placeholder="Nguyễn Văn A">
+                    <div class="field-error" id="regFullNameError"></div>
                 </div>
                 <div class="form-group">
                     <label>Số điện thoại <span class="required">*</span></label>
-                    <input type="tel" id="regPhone" class="form-control" placeholder="0912345678">
+                    <input type="tel" id="regPhone" class="form-control" placeholder="0912345678" oninput="validatePhone()">
+                    <div class="field-error" id="regPhoneError"></div>
                 </div>
                 <div class="row-2">
                     <div class="form-group">
                         <label>Ngày sinh <span class="required">*</span></label>
                         <input type="date" id="regDob" class="form-control">
+                        <div class="field-error" id="regDobError"></div>
                     </div>
                     <div class="form-group">
                         <label>Giới tính <span class="required">*</span></label>
@@ -470,25 +471,29 @@
                             <option value="Nữ">Nữ</option>
                             <option value="Khác">Khác</option>
                         </select>
+                        <div class="field-error" id="regGenderError"></div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Email <span class="required">*</span></label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="example@email.com">
+                    <input type="email" id="regEmail" class="form-control" placeholder="example@email.com" oninput="validateRegEmail()">
+                    <div class="field-error" id="regEmailError"></div>
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu <span class="required">*</span></label>
                     <div class="password-wrapper">
-                        <input type="password" id="regPassword" class="form-control" placeholder="••••••••">
+                        <input type="password" id="regPassword" class="form-control" placeholder="••••••••" oninput="validatePassword()">
                         <i class="fas fa-eye toggle-password" onclick="togglePassword('regPassword', this)"></i>
                     </div>
+                    <div class="field-error" id="regPasswordError"></div>
                 </div>
                 <div class="form-group">
                     <label>Xác nhận mật khẩu <span class="required">*</span></label>
                     <div class="password-wrapper">
-                        <input type="password" id="regConfirmPassword" class="form-control" placeholder="••••••••">
+                        <input type="password" id="regConfirmPassword" class="form-control" placeholder="••••••••" oninput="validateConfirmPassword()">
                         <i class="fas fa-eye toggle-password" onclick="togglePassword('regConfirmPassword', this)"></i>
                     </div>
+                    <div class="field-error" id="regConfirmPasswordError"></div>
                 </div>
 
                 <!-- PHẦN ĐIỀU KHOẢN BẮT BUỘC ĐỒNG Ý -->
@@ -498,18 +503,18 @@
                         <span>Trước khi đăng ký, vui lòng xác nhận:</span>
                     </div>
                     
-                    <div class="terms-checkbox-item" onclick="toggleCheckbox('termsChk1')">
-                        <input type="checkbox" id="termsChk1">
+                    <div class="terms-checkbox-item">
+                        <input type="checkbox" id="termsChk1" onchange="checkAllTermsAccepted()">
                         <label>Tôi đồng ý với <a href="javascript:void(0)" onclick="event.stopPropagation(); openTermsModal('terms')">Điều khoản sử dụng</a></label>
                     </div>
                     
-                    <div class="terms-checkbox-item" onclick="toggleCheckbox('termsChk2')">
-                        <input type="checkbox" id="termsChk2">
+                    <div class="terms-checkbox-item">
+                        <input type="checkbox" id="termsChk2" onchange="checkAllTermsAccepted()">
                         <label>Tôi đồng ý với <a href="javascript:void(0)" onclick="event.stopPropagation(); openTermsModal('privacy')">Chính sách quyền riêng tư</a></label>
                     </div>
                     
-                    <div class="terms-checkbox-item" onclick="toggleCheckbox('termsChk3')">
-                        <input type="checkbox" id="termsChk3">
+                    <div class="terms-checkbox-item">
+                        <input type="checkbox" id="termsChk3" onchange="checkAllTermsAccepted()">
                         <label>Tôi hiểu EduHealth AI <strong>không phải công cụ chẩn đoán y khoa</strong>, không thay thế bác sĩ</label>
                     </div>
                     
@@ -678,15 +683,183 @@
             }
         };
 
-        window.toggleCheckbox = function(id) {
-            const chk = document.getElementById(id);
-            if (chk) {
-                chk.checked = !chk.checked;
-                checkAllTermsAccepted();
+        // Validation functions
+        function validatePhone() {
+            const phone = document.getElementById('regPhone').value.trim();
+            const errorDiv = document.getElementById('regPhoneError');
+            const phoneRegex = /^[0-9]{10,11}$/;
+            
+            if (phone && !phoneRegex.test(phone)) {
+                errorDiv.textContent = 'Số điện thoại phải có 10-11 chữ số';
+                errorDiv.classList.add('show');
+                return false;
+            } else {
+                errorDiv.classList.remove('show');
+                return true;
             }
-        };
+        }
 
-        function checkAllTermsAccepted() {
+        function validateRegEmail() {
+            const email = document.getElementById('regEmail').value.trim();
+            const errorDiv = document.getElementById('regEmailError');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email && !emailRegex.test(email)) {
+                errorDiv.textContent = 'Email không hợp lệ (VD: ten@email.com)';
+                errorDiv.classList.add('show');
+                return false;
+            } else if (email === "admin@eduhealth-ai.com") {
+                errorDiv.textContent = 'Email này không thể đăng ký';
+                errorDiv.classList.add('show');
+                return false;
+            } else {
+                errorDiv.classList.remove('show');
+                return true;
+            }
+        }
+
+        function validatePassword() {
+            const password = document.getElementById('regPassword').value;
+            const errorDiv = document.getElementById('regPasswordError');
+            
+            if (password && password.length < 6) {
+                errorDiv.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+                errorDiv.classList.add('show');
+                return false;
+            } else {
+                errorDiv.classList.remove('show');
+                validateConfirmPassword();
+                return true;
+            }
+        }
+
+        function validateConfirmPassword() {
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const errorDiv = document.getElementById('regConfirmPasswordError');
+            
+            if (confirmPassword && password !== confirmPassword) {
+                errorDiv.textContent = 'Mật khẩu xác nhận không khớp';
+                errorDiv.classList.add('show');
+                return false;
+            } else {
+                errorDiv.classList.remove('show');
+                return true;
+            }
+        }
+
+        function validateLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            let isValid = true;
+            
+            const emailError = document.getElementById('loginEmailError');
+            const passwordError = document.getElementById('loginPasswordError');
+            
+            if (!email) {
+                emailError.textContent = 'Vui lòng nhập email';
+                emailError.classList.add('show');
+                isValid = false;
+            } else {
+                emailError.classList.remove('show');
+            }
+            
+            if (!password) {
+                passwordError.textContent = 'Vui lòng nhập mật khẩu';
+                passwordError.classList.add('show');
+                isValid = false;
+            } else {
+                passwordError.classList.remove('show');
+            }
+            
+            return isValid;
+        }
+
+        function validateRegisterForm() {
+            const fullName = document.getElementById('regFullName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const dob = document.getElementById('regDob').value;
+            const gender = document.getElementById('regGender').value;
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            let isValid = true;
+            
+            // Full name
+            const fullNameError = document.getElementById('regFullNameError');
+            if (!fullName) {
+                fullNameError.textContent = 'Vui lòng nhập họ và tên';
+                fullNameError.classList.add('show');
+                isValid = false;
+            } else {
+                fullNameError.classList.remove('show');
+            }
+            
+            // Phone
+            if (!phone) {
+                const phoneError = document.getElementById('regPhoneError');
+                phoneError.textContent = 'Vui lòng nhập số điện thoại';
+                phoneError.classList.add('show');
+                isValid = false;
+            } else if (!validatePhone()) {
+                isValid = false;
+            }
+            
+            // DOB
+            const dobError = document.getElementById('regDobError');
+            if (!dob) {
+                dobError.textContent = 'Vui lòng chọn ngày sinh';
+                dobError.classList.add('show');
+                isValid = false;
+            } else {
+                dobError.classList.remove('show');
+            }
+            
+            // Gender
+            const genderError = document.getElementById('regGenderError');
+            if (!gender) {
+                genderError.textContent = 'Vui lòng chọn giới tính';
+                genderError.classList.add('show');
+                isValid = false;
+            } else {
+                genderError.classList.remove('show');
+            }
+            
+            // Email
+            if (!email) {
+                const emailError = document.getElementById('regEmailError');
+                emailError.textContent = 'Vui lòng nhập email';
+                emailError.classList.add('show');
+                isValid = false;
+            } else if (!validateRegEmail()) {
+                isValid = false;
+            }
+            
+            // Password
+            if (!password) {
+                const passwordError = document.getElementById('regPasswordError');
+                passwordError.textContent = 'Vui lòng nhập mật khẩu';
+                passwordError.classList.add('show');
+                isValid = false;
+            } else if (!validatePassword()) {
+                isValid = false;
+            }
+            
+            // Confirm password
+            if (!confirmPassword) {
+                const confirmError = document.getElementById('regConfirmPasswordError');
+                confirmError.textContent = 'Vui lòng xác nhận mật khẩu';
+                confirmError.classList.add('show');
+                isValid = false;
+            } else if (!validateConfirmPassword()) {
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        window.checkAllTermsAccepted = function() {
             const chk1 = document.getElementById('termsChk1');
             const chk2 = document.getElementById('termsChk2');
             const chk3 = document.getElementById('termsChk3');
@@ -696,11 +869,7 @@
                 const allChecked = chk1.checked && chk2.checked && chk3.checked;
                 registerBtn.disabled = !allChecked;
             }
-        }
-
-        document.getElementById('termsChk1')?.addEventListener('change', checkAllTermsAccepted);
-        document.getElementById('termsChk2')?.addEventListener('change', checkAllTermsAccepted);
-        document.getElementById('termsChk3')?.addEventListener('change', checkAllTermsAccepted);
+        };
 
         // Modal functions
         window.openTermsModal = function(type) {
@@ -788,17 +957,11 @@
 
         // Login
         document.getElementById('loginBtn').onclick = async () => {
+            if (!validateLogin()) return;
+            
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
-            const errorDiv = document.getElementById('loginError');
-
-            if (!email || !password) {
-                errorDiv.textContent = 'Vui lòng nhập đầy đủ email và mật khẩu';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            errorDiv.style.display = 'none';
+            
             const btn = document.getElementById('loginBtn');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Đang đăng nhập...';
@@ -807,13 +970,16 @@
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 await handleSuccessfulLogin(userCredential.user, email);
             } catch (error) {
-                let message = 'Đăng nhập thất bại';
+                let message = '';
                 if (error.code === 'auth/user-not-found') message = 'Email chưa được đăng ký';
                 else if (error.code === 'auth/wrong-password') message = 'Mật khẩu không đúng';
                 else if (error.code === 'auth/invalid-email') message = 'Email không hợp lệ';
                 else message = error.message;
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
+                
+                // Hiển thị lỗi dưới ô password
+                const passwordError = document.getElementById('loginPasswordError');
+                passwordError.textContent = message;
+                passwordError.classList.add('show');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Đăng nhập';
@@ -822,65 +988,29 @@
 
         // Register
         document.getElementById('registerBtn').onclick = async () => {
+            if (!validateRegisterForm()) return;
+            
             const fullName = document.getElementById('regFullName').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const dob = document.getElementById('regDob').value;
             const gender = document.getElementById('regGender').value;
             const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
             
-            const errorDiv = document.getElementById('registerError');
-            const successDiv = document.getElementById('registerSuccess');
-
-            errorDiv.style.display = 'none';
-            successDiv.style.display = 'none';
-
             const chk1 = document.getElementById('termsChk1');
             const chk2 = document.getElementById('termsChk2');
             const chk3 = document.getElementById('termsChk3');
             
             if (!chk1.checked || !chk2.checked || !chk3.checked) {
-                errorDiv.textContent = 'Vui lòng đọc và đồng ý với tất cả Điều khoản sử dụng, Chính sách quyền riêng tư và xác nhận hiểu đây không phải công cụ chẩn đoán';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            if (email === "admin@eduhealth-ai.com") {
-                errorDiv.textContent = 'Email này không thể đăng ký. Vui lòng sử dụng email khác.';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            if (!fullName || !phone || !dob || !gender || !email || !password || !confirmPassword) {
-                errorDiv.textContent = 'Vui lòng nhập đầy đủ tất cả thông tin';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                errorDiv.textContent = 'Mật khẩu xác nhận không khớp';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            if (password.length < 6) {
-                errorDiv.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            const phoneRegex = /^[0-9]{10,11}$/;
-            if (!phoneRegex.test(phone)) {
-                errorDiv.textContent = 'Số điện thoại không hợp lệ (10-11 số)';
-                errorDiv.style.display = 'block';
-                return;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                errorDiv.textContent = 'Email không hợp lệ';
-                errorDiv.style.display = 'block';
+                const termsError = document.createElement('div');
+                termsError.className = 'field-error show';
+                termsError.textContent = 'Vui lòng đọc và đồng ý với tất cả Điều khoản';
+                termsError.style.marginBottom = '16px';
+                const termsSection = document.querySelector('.terms-section');
+                const existingError = termsSection.querySelector('.field-error');
+                if (existingError) existingError.remove();
+                termsSection.insertAdjacentElement('beforebegin', termsError);
+                setTimeout(() => termsError.remove(), 3000);
                 return;
             }
 
@@ -907,20 +1037,27 @@
                 localStorage.setItem('healthUserDob', dob);
                 localStorage.setItem('healthUserGender', gender);
 
+                // Hiển thị thông báo thành công tạm thời
+                const successDiv = document.createElement('div');
+                successDiv.className = 'field-error show';
+                successDiv.style.color = 'var(--success)';
                 successDiv.textContent = 'Đăng ký thành công! Đang chuyển hướng...';
-                successDiv.style.display = 'block';
-
+                const registerForm = document.getElementById('registerForm');
+                registerForm.insertBefore(successDiv, registerForm.firstChild);
+                
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1500);
             } catch (error) {
-                let message = 'Đăng ký thất bại';
+                let message = '';
                 if (error.code === 'auth/email-already-in-use') message = 'Email này đã được đăng ký';
                 else if (error.code === 'auth/invalid-email') message = 'Email không hợp lệ';
                 else if (error.code === 'auth/weak-password') message = 'Mật khẩu quá yếu';
                 else message = error.message;
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
+                
+                const emailError = document.getElementById('regEmailError');
+                emailError.textContent = message;
+                emailError.classList.add('show');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Đăng ký';
@@ -933,9 +1070,8 @@
             document.getElementById('registerForm').style.display = 'none';
             document.getElementById('loginTabBtn').classList.add('active');
             document.getElementById('registerTabBtn').classList.remove('active');
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('registerError').style.display = 'none';
-            document.getElementById('registerSuccess').style.display = 'none';
+            // Clear errors
+            document.querySelectorAll('.field-error').forEach(err => err.classList.remove('show'));
         };
 
         document.getElementById('registerTabBtn').onclick = () => {
@@ -943,9 +1079,8 @@
             document.getElementById('registerForm').style.display = 'block';
             document.getElementById('registerTabBtn').classList.add('active');
             document.getElementById('loginTabBtn').classList.remove('active');
-            document.getElementById('loginError').style.display = 'none';
-            document.getElementById('registerError').style.display = 'none';
-            document.getElementById('registerSuccess').style.display = 'none';
+            // Clear errors
+            document.querySelectorAll('.field-error').forEach(err => err.classList.remove('show'));
         };
 
         // Theme toggle
